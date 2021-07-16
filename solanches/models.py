@@ -34,9 +34,33 @@ class Produto:
         
         return list(produtos)
 
-    @staticmethod
-    def delete_by_id(id):
-        query = {"_id": id}
-        produto = db.produto.find_one_and_delete(query)
+class Comercio:
 
-        return produto
+    def __init__(self, nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais):
+        self._id = cnpj
+        self.nome = nome
+        self.endereco = endereco
+        self.telefone = telefone
+        self.email = email
+        self.horarios = horarios
+        self.link_imagem = link_imagem
+        self.tags = tags
+        self.redes_sociais = redes_sociais
+
+    def save(self):
+        id = db.comercio.insert_one(vars(self))
+        return id
+    
+    @staticmethod
+    def get_by_id(id):
+        query = {"_id": id}
+        comercio = db.comercio.find_one(query)
+
+        return comercio
+
+    @staticmethod
+    def get_all():
+        comercios = db.comercio.find()
+        
+        return list(comercios)
+
