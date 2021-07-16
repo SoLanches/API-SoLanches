@@ -33,10 +33,3 @@ class Produto:
         produtos = db.produto.find()
         
         return list(produtos)
-
-    @staticmethod
-    def delete_by_id(id):
-        query = {"_id": id}
-        produto = db.produto.find_one_and_delete(query)
-
-        return produto
