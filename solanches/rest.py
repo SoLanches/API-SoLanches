@@ -45,3 +45,13 @@ def cadastra_produto():
         raise
 
     return jsonify(produto_id), 201
+
+
+@app.route("/produto/<produto_id>", methods=['GET'])
+def get_produto(produto_id):
+    try:
+        produto = controller.get_produto(produto_id)
+    except:
+        raise
+
+    return jsonify(produto), 200
