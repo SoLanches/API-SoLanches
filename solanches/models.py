@@ -34,6 +34,7 @@ class Produto:
         
         return list(produtos)
 
+
 class Comercio:
 
     def __init__(self, nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais):
@@ -62,5 +63,4 @@ class Comercio:
     def get_all():
         comercios = db.comercio.find()
         
-        return list(comercios)
-
+        return list(comercios
