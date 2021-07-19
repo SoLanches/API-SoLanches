@@ -1,6 +1,9 @@
 import time
 
 from flask import Flask
+from flask import jsonify
+from flask import request
+import controller
 
 app = Flask(__name__)
 
@@ -17,3 +20,28 @@ def status():
         "timestamp": time.time()
     }
     return status, 200
+
+
+@app.route("/produto", methods=['POST'])
+def cadastra_produto():
+    req = request.get_json()
+    
+    assert(req, "Erro: json inválido!")
+    assert("titulo" in req, "Erro: titulo não informado!")
+    assert("descricao" in req, "Erro: descricao não informada!")
+    assert("imagem" in req, "Erro: imagem não informada!")
+    assert("preco" in req, "Erro: preco não informado!")
+    assert("categoria" in req, "Erro: categoria não informada!")
+
+    titulo = req.get("titulo")
+    descricao = req.get("descricao")
+    imagem = req.get("imagem")
+    preco = req.get("preco")
+    categoria = req.get("categoria")
+
+    try:
+        produto_id = controller.cadastra_produto(titulo, descricao, imagem, preco, categoria)
+    except:
+        raise
+
+    return jsonify(produto_id), 201
