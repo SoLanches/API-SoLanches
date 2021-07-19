@@ -3,7 +3,7 @@ import time
 from flask import Flask
 from flask import jsonify
 from flask import request
-import controller
+from . import controller
 
 app = Flask(__name__)
 
