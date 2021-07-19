@@ -1,3 +1,5 @@
+import hashlib
+import json
 from bson.objectid import ObjectId
 from . connect2db import db
 
@@ -8,17 +10,17 @@ class Produto:
         self.descricao = descricao
         self.preco = preco
         self.categoria = categoria
+        self.id()
     
     def save(self):
-        id = db.produto.insert_one({
-            "titulo": self.titulo,
-            "descricao": self.descricao,
-            "preco": self.preco,
-            "categoria": self.categoria
-        })
-
-        self._id = id
+        id = db.produto.insert_one(vars(self))
         return id
+    
+    def id(self):
+        id_fields = vars(self)
+        serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
+        self._id = self.id
+        return hashlib.sha1(serialized.encode('utf-8')).hexdigest()    
 
     @staticmethod
     def get_by_id(id):
@@ -63,4 +65,4 @@ class Comercio:
     def get_all():
         comercios = db.comercio.find()
         
-        return list(comercios
+        return list(comercios)
