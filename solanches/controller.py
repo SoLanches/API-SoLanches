@@ -20,3 +20,10 @@ def get_produto(produto_id):
     assert(produto, "Erro: produto com id não cadastrado!")
 
     return produto
+
+
+def get_produtos():
+    produtos = Produto.get_all()
+
+    return produtos
+    

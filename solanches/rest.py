@@ -55,3 +55,14 @@ def get_produto(produto_id):
         raise
 
     return jsonify(produto), 200
+
+
+@app.route("/produtos", methods=['GET'])
+def get_produtos():
+    try:
+        produtos = controller.get_produtos()
+    except:
+        raise
+
+    return jsonify(produtos), 200 
+    
