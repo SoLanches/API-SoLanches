@@ -26,12 +26,18 @@ def status():
 def cadastra_produto():
     req = request.get_json()
     
-    assert(req, "Erro: json inválido!")
-    assert("titulo" in req, "Erro: titulo não informado!")
-    assert("descricao" in req, "Erro: descricao não informada!")
-    assert("imagem" in req, "Erro: imagem não informada!")
-    assert("preco" in req, "Erro: preco não informado!")
-    assert("categoria" in req, "Erro: categoria não informada!")
+    assert req, \
+        "Erro: json inválido!"
+    assert "titulo" in req, \
+         "Erro: titulo não informado!"
+    assert "descricao" in req, \
+         "Erro: descricao não informada!"
+    assert "imagem" in req, \
+         "Erro: imagem não informada!"
+    assert "preco" in req, \
+         "Erro: preco não informado!"
+    assert "categoria" in req, \
+         "Erro: categoria não informada!"
 
     titulo = req.get("titulo")
     descricao = req.get("descricao")
@@ -67,7 +73,7 @@ def get_produtos():
     return jsonify(produtos), 200 
 
 @app.route("/comercios", methods=['GET'])
-def get_produtos():
+def get_comercios():
     try:
         comercios = controller.get_comercios()
     except:
@@ -89,16 +95,26 @@ def cadastra_comercio():
     req = request.get_json()
     
     
-    assert(req, "Erro: json inválido!")
-    assert("nome" in req, "Erro: nome não informado!")
-    assert("endereco" in req, "Erro: endereco não informado!")
-    assert("telefone" in req, "Erro: telefone não informado!")
-    assert("email" in req, "Erro: email não informado!")
-    assert("cnpj" in req, "Erro: cnpj não informado!")
-    assert("horarios" in req, "Erro: horarios não informados!")
-    assert("link_imagem" in req, "Erro: link da imagem não informado!")
-    assert("tags" in req, "Erro: tags não informadas!")
-    assert("redes_sociais" in req, "Erro: redes sociais não informadas!")
+    assert req, \
+     "Erro: json inválido!"
+    assert "nome" in req, \
+         "Erro: nome não informado!"
+    assert "endereco" in req, \
+         "Erro: endereco não informado!"
+    assert "telefone" in req, \
+         "Erro: telefone não informado!"
+    assert "email" in req, \
+         "Erro: email não informado!"
+    assert "cnpj" in req,\
+         "Erro: cnpj não informado!"
+    assert "horarios" in req, \
+         "Erro: horarios não informados!"
+    assert "link_imagem" in req, \
+         "Erro: link da imagem não informado!"
+    assert "tags" in req, \
+         "Erro: tags não informadas!"
+    assert "redes_sociais" in req, \
+         "Erro: redes sociais não informadas!"
 
     nome = req.get("nome")
     endereco = req.get("endereco")
