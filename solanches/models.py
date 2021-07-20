@@ -36,6 +36,10 @@ class Produto:
         produtos = db.produto.find()
         return list(produtos)
 
+    def to_dict(self):
+        produto = vars(self).copy()
+        return produto
+
 
 class Comercio:
 
@@ -59,8 +63,7 @@ class Comercio:
     def save(self):
         self.created_at = time.time()
         self._id = Comercio.id(self.nome)
-        id = db.comercio.insert_one(vars(self))
-        return id
+        db.comercio.insert_one(vars(self))
     
     @staticmethod
     def get_by_id(id):
@@ -72,3 +75,7 @@ class Comercio:
     def get_all():
         comercios = db.comercio.find()
         return list(comercios)
+
+    def to_dict(self):
+        comercio = vars(self).copy()
+        return comercio
