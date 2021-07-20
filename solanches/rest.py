@@ -83,3 +83,36 @@ def get_comercio(comercio_id):
         raise
 
     return jsonify(comercio), 200
+
+@app.route("/comercio", methods=['POST'])
+def cadastra_comercio():
+    req = request.get_json()
+    
+    
+    assert(req, "Erro: json inválido!")
+    assert("nome" in req, "Erro: nome não informado!")
+    assert("endereco" in req, "Erro: endereco não informado!")
+    assert("telefone" in req, "Erro: telefone não informado!")
+    assert("email" in req, "Erro: email não informado!")
+    assert("cnpj" in req, "Erro: cnpj não informado!")
+    assert("horarios" in req, "Erro: horarios não informados!")
+    assert("link_imagem" in req, "Erro: link da imagem não informado!")
+    assert("tags" in req, "Erro: tags não informadas!")
+    assert("redes_sociais" in req, "Erro: redes sociais não informadas!")
+
+    nome = req.get("nome")
+    endereco = req.get("endereco")
+    telefone = req.get("telefone")
+    email = req.get("email")
+    cnpj = req.get("cnpj")
+    horarios = req.get("horarios")
+    link_imagem = req.get("link_imagem")
+    tags = req.get("tags")
+    redes_sociais = req.get("redes_sociais")
+
+    try:
+        comercio_id = controller.cadastra_comercio(nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais)
+    except:
+        raise
+
+    return jsonify(comercio_id), 201
