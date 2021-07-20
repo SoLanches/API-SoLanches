@@ -27,20 +27,20 @@ def cadastra_produto():
     req = request.get_json()
     
     assert req, "Erro: json inválido!"
-    assert "titulo" in req, "Erro: titulo não informado!"
+    assert "nome" in req, "Erro: nome não informado!"
     assert "descricao" in req, "Erro: descricao não informada!"
     assert "imagem" in req, "Erro: imagem não informada!"
     assert "preco" in req, "Erro: preco não informado!"
     assert "categoria" in req, "Erro: categoria não informada!"
 
-    titulo = req.get("titulo")
+    nome = req.get("nome")
     descricao = req.get("descricao")
     imagem = req.get("imagem")
     preco = req.get("preco")
     categoria = req.get("categoria")
 
     try:
-        produto_id = controller.cadastra_produto(titulo, descricao, imagem, preco, categoria)
+        produto_id = controller.cadastra_produto(nome, descricao, imagem, preco, categoria)
     except:
         raise
 

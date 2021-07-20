@@ -1,17 +1,17 @@
 from . models import Produto, Comercio
 
 
-def cadastra_produto(titulo, descricao, imagem, preco, categoria):
-    assert titulo and type(titulo) is str, "Erro: titulo inválido!"
+def cadastra_produto(nome, descricao, imagem, preco, categoria):
+    assert nome and type(nome) is str, "Erro: nome inválido!"
     assert descricao and type(descricao) is str, "Erro: descricao inválida!"
-    #assert(imagem and type(imagem) is str, "Erro: imagem inválida!")
+    assert imagem and type(imagem) is str, "Erro: imagem inválida!"
     assert preco and type(preco) is float, "Erro: preco inválido!"
     assert categoria and type(categoria) is str, "Erro: categoria inválida!"
 
-    novo_produto = Produto(titulo, descricao, preco, categoria)
-    produto_id = novo_produto.save()
+    novo_produto = Produto(nome, descricao, preco, categoria, imagem)
+    novo_produto.save()
 
-    return produto_id
+    return novo_produto.to_dict()
 
 
 def get_produto(produto_id):
@@ -51,9 +51,9 @@ def cadastra_comercio(nome, endereco, telefone, email, cnpj, horarios, link_imag
     #assert(horarios and type(email) is str, "Erro: horarios inválidos!")
     assert link_imagem and type(link_imagem) is str, "Erro: link de imagem inválido!"
     #assert(tags and type(tags) is str, "Erro: tags inválidas!")
-    assert redes_sociais and type(redes_sociais) is str, "Erro: redes sociais inválidas!"
+    # assert redes_sociais and type(redes_sociais) is str, "Erro: redes sociais inválidas!"
 
     novo_comercio = Comercio(nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais)
-    comercio_id = novo_comercio.save()
+    novo_comercio.save()
 
-    return comercio_id
+    return novo_comercio.to_dict()
