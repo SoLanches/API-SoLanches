@@ -30,3 +30,11 @@ def get_produtos():
     
 def get_comercios():
     return Comercio.get_all()
+
+def get_comercio(comercio_id):
+    assert(comercio_id and type(comercio_id) is str, f'Erro: comercio com id {comercio_id} inválido!')
+
+    comercio = Comercio.get_by_id(comercio_id)
+    assert(comercio, f'Erro: comercio com id {comercio_id} não cadastrado!')
+
+    return comercio

@@ -74,3 +74,12 @@ def get_produtos():
         raise
 
     return jsonify(comercios), 200 
+
+@app.route("/comercio/<comercio_id>", methods=['GET'])
+def get_comercio(comercio_id):
+    try:
+        comercio = controller.get_comercio(comercio_id)
+    except:
+        raise
+
+    return jsonify(comercio), 200
