@@ -118,3 +118,13 @@ def cadastra_comercio():
         raise
 
     return jsonify(comercio_id), 201
+
+
+@app.route("/comercio/<comercio_nome>", methods=['GET'])
+def get_comercio_by_name(comercio_nome):
+    try:
+        comercio = controller.get_comercio_by_name(comercio_nome)
+    except:
+        raise
+
+    return jsonify(comercio), 200

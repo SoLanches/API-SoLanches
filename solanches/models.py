@@ -79,3 +79,9 @@ class Comercio:
     def to_dict(self):
         comercio = vars(self).copy()
         return comercio
+    
+    @staticmethod
+    def get_by_name(name):
+        query = {"_name": name}
+        comercio = db.comercio.find_one(query)
+        return comercio
