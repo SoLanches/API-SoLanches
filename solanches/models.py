@@ -82,6 +82,6 @@ class Comercio:
     
     @staticmethod
     def get_by_name(name):
-        query = {"_name": name}
-        comercio = db.comercio.find_one(query)
+        query = {"name": name}
+        comercio = db.comercio.find(query).limit(1)
         return comercio
