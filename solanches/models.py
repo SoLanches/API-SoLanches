@@ -88,12 +88,6 @@ class Cardapio:
         self.produtos = produtos
         self.destaques = destaques
 
-    @staticmethod
-    def id(comercio_id):
-        id_fields = {"nome": comercio_id}
-        serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
-        return hashlib.sha1(serialized.encode('utf-8')).hexdigest() 
-
     def save(self):
         self.created_at = time.time()
         self._id = self.comercio_id
