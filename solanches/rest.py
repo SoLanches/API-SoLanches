@@ -128,3 +128,4 @@ def get_comercio_by_name(comercio_nome):
         raise
 
     return jsonify(comercio), 200
+    
