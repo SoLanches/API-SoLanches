@@ -79,3 +79,37 @@ class Comercio:
     def to_dict(self):
         comercio = vars(self).copy()
         return comercio
+
+
+class Cardapio:
+
+    def __init__(self, comercio_id, produtos, destaques):
+        self.comercio_id = comercio_id
+        self.produtos = produtos
+        self.destaques = destaques
+
+    @staticmethod
+    def id(comercio_id):
+        id_fields = {"nome": comercio_id}
+        serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
+        return hashlib.sha1(serialized.encode('utf-8')).hexdigest() 
+
+    def save(self):
+        self.created_at = time.time()
+        self._id = self.comercio_id
+        db.cardapio.insert_one(vars(self))
+    
+    @staticmethod
+    def get_by_id(id):
+        query = {"_id": id}
+        cardapio = db.cardapio.find_one(query)
+        return cardapio
+    
+    @staticmethod
+    def get_all():
+        cardapios = db.cardapio.find()
+        return list(cardapios)
+
+    def to_dict(self):
+        cardapio = vars(self).copy()
+        return cardapio
