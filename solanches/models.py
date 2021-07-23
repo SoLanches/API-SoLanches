@@ -83,15 +83,26 @@ class Comercio:
 
 class Cardapio:
 
-    def __init__(self, comercio_id, produtos, destaques):
-        self.comercio_id = comercio_id
+    def __init__(self, comercio_id, produtos=[], destaques=[]):
+        self._id = comercio_id
         self.produtos = produtos
         self.destaques = destaques
 
     def save(self):
         self.created_at = time.time()
-        self._id = self.comercio_id
         db.cardapio.insert_one(vars(self))
+
+    def add_produtos(self, produtos):
+        query = {"_id": self._id}
+        self.produtos += produtos
+        new_values = {"$set": {"produtos": self.produtos}}
+        db.cardapio.update_one(query, new_values)
+
+    def add_destaques(self, destaques):
+        query = {"_id": self._id}
+        self.destaques += destaques
+        new_values = {"$set": {"destaques": self.destaques}}
+        db.cardapio.update_one(query, new_values)  
     
     @staticmethod
     def get_by_id(id):
