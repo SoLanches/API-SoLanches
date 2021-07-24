@@ -97,7 +97,7 @@ class Cardapio:
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
         new_produtos = cardapio.get("produtos")
-        new_produtos += produtos
+        new_produtos += produtos if type(produtos) is list else [produtos]
         new_values = {"$set": {"produtos": new_produtos}}
         db.cardapio.update_one(query, new_values)
 
@@ -106,7 +106,7 @@ class Cardapio:
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
         new_destaques = cardapio.get("destaques")
-        new_destaques += destaques
+        new_destaques += destaques if type(destaques) is list else [destaques]
         new_values = {"$set": {"destaques": new_destaques}}
         db.cardapio.update_one(query, new_values)  
     
