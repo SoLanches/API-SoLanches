@@ -92,16 +92,22 @@ class Cardapio:
         self.created_at = time.time()
         db.cardapio.insert_one(vars(self))
 
-    def add_produtos(self, produtos):
-        query = {"_id": self._id}
-        self.produtos += produtos
-        new_values = {"$set": {"produtos": self.produtos}}
+    @staticmethod
+    def add_produtos(cardapio_id, produtos):
+        query = {"_id": cardapio_id}
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        new_produtos = cardapio.get("produtos")
+        new_produtos += produtos
+        new_values = {"$set": {"produtos": new_produtos}}
         db.cardapio.update_one(query, new_values)
 
-    def add_destaques(self, destaques):
-        query = {"_id": self._id}
-        self.destaques += destaques
-        new_values = {"$set": {"destaques": self.destaques}}
+    @staticmethod
+    def add_destaques(cardapio_id, destaques):
+        query = {"_id": cardapio_id}
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        new_destaques = cardapio.get("destaques")
+        new_destaques += destaques
+        new_values = {"$set": {"destaques": new_destaques}}
         db.cardapio.update_one(query, new_values)  
     
     @staticmethod
