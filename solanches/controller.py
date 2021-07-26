@@ -57,3 +57,12 @@ def cadastra_comercio(nome, endereco, telefone, email, cnpj, horarios, link_imag
     novo_comercio.save()
 
     return novo_comercio.to_dict()
+
+
+def get_comercio_by_name(comercio_nome):
+    assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio inválido!'
+    
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+
+    return comercio 

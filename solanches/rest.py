@@ -76,8 +76,10 @@ def get_comercios():
     return jsonify(comercios), 200 
 
 
-@app.route("/comercio/<comercio_id>", methods=['GET'])
-def get_comercio(comercio_id):
+@app.route("/comercio", methods=['GET'])
+def get_comercio():
+    comercio_id = request.args.get('id')
+    assert comercio_id, "Erro: id do comercio não informado!"
     try:
         comercio = controller.get_comercio(comercio_id)
     except:
@@ -118,3 +120,14 @@ def cadastra_comercio():
         raise
 
     return jsonify(comercio_id), 201
+
+
+@app.route("/comercio/<comercio_nome>", methods=['GET'])
+def get_comercio_by_name(comercio_nome):
+    try:
+        comercio = controller.get_comercio_by_name(comercio_nome)
+    except:
+        raise
+
+    return jsonify(comercio), 200
+    

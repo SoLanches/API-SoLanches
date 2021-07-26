@@ -4,6 +4,7 @@ import json
 
 from . connect2db import db
 
+
 class Produto:
 
     def __init__(self, nome, descricao, preco, categoria, link_imagem=None):
@@ -79,6 +80,12 @@ class Comercio:
     def to_dict(self):
         comercio = vars(self).copy()
         return comercio
+     
+    @staticmethod
+    def get_by_name(name):
+        query = {"nome": name}
+        comercio = db.comercio.find_one(query)
+        return comercio
 
 
 class Cardapio:
@@ -124,3 +131,4 @@ class Cardapio:
     def to_dict(self):
         cardapio = vars(self).copy()
         return cardapio
+  
