@@ -1,4 +1,4 @@
-from . models import Produto, Comercio
+from . models import Produto, Comercio, Cardapio
 
 
 def cadastra_produto(nome, descricao, imagem, preco, categoria):
@@ -55,6 +55,9 @@ def cadastra_comercio(nome, endereco, telefone, email, cnpj, horarios, link_imag
 
     novo_comercio = Comercio(nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais)
     novo_comercio.save()
+
+    cardapio = Cardapio(Comercio.id(nome), [], [])
+    cardapio.save()
 
     return novo_comercio.to_dict()
 
