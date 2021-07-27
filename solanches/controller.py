@@ -69,3 +69,12 @@ def get_comercio_by_name(comercio_nome):
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
 
     return comercio 
+
+
+def get_cardapio(comercio_nome):
+    assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio inválido!'
+
+    cardapio = Cardapio.get_by_id(Comercio.id(comercio_nome))
+    assert cardapio, f'Erro: cardapio não encontrado!'
+
+    return cardapio
