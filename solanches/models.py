@@ -61,7 +61,6 @@ class Comercio:
         serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
         return hashlib.sha1(serialized.encode('utf-8')).hexdigest() 
 
-
     def save(self):
         self.created_at = time.time()
         self._id = Comercio.id(self.nome)
@@ -69,7 +68,6 @@ class Comercio:
         self.cardapio = cardapio.save()
         db.comercio.insert_one(vars(self))
     
-
     @staticmethod
     def get_by_id(id):
         query = {"_id": id}
@@ -96,6 +94,7 @@ class Comercio:
         comercio = Comercio.get_by_name(comercio_nome)
         cardapio = Cardapio.get_by_id(comercio["cardapio"])
         return cardapio
+
 
 class Cardapio:
 
@@ -141,4 +140,3 @@ class Cardapio:
     def to_dict(self):
         cardapio = vars(self).copy()
         return cardapio
-  
