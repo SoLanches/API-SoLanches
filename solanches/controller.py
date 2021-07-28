@@ -28,7 +28,7 @@ def get_produtos():
 
     return produtos
  
-    
+
 def get_comercios():
     return Comercio.get_all()
 
@@ -56,9 +56,6 @@ def cadastra_comercio(nome, endereco, telefone, email, cnpj, horarios, link_imag
     novo_comercio = Comercio(nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais)
     novo_comercio.save()
 
-    cardapio = Cardapio(Comercio.id(nome), [], [])
-    cardapio.save()
-
     return novo_comercio.to_dict()
 
 
@@ -68,13 +65,13 @@ def get_comercio_by_name(comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
 
-    return comercio 
+    return comercio
 
 
 def get_cardapio(comercio_nome):
     assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio inválido!'
 
-    cardapio = Cardapio.get_by_id(Comercio.id(comercio_nome))
+    cardapio = Comercio.get_cardapio(comercio_nome)
     assert cardapio, f'Erro: cardapio não encontrado!'
 
     return cardapio
