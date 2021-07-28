@@ -20,7 +20,7 @@ class Produto:
     def save(self):
         self.created_at = time.time()
         self._id = Produto.id(self.nome, self.created_at)
-        db.produto.insert_one(vars(self))
+        db.produto.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
         return self._id
       
     @staticmethod
@@ -54,7 +54,7 @@ class Comercio:
     def save(self):
         self.created_at = time.time()
         self._id = Comercio.id(self.nome)
-        db.comercio.insert_one(vars(self))
+        db.comercio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
         return self._id
     
     @staticmethod
@@ -88,7 +88,7 @@ class Cardapio:
 
     def save(self):
         self.created_at = time.time()
-        db.cardapio.insert_one(vars(self))
+        db.cardapio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
 
     @staticmethod
     def add_produtos(cardapio_id, produtos):
