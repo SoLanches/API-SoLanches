@@ -7,12 +7,9 @@ from . connect2db import db
 
 class Produto:
 
-    def __init__(self, nome, descricao, preco, categoria, link_imagem=None):
+    def __init__(self, nome, attributes):
         self.nome = nome
-        self.descricao = descricao
-        self.preco = preco
-        self.categoria = categoria
-        self.link_imagem = link_imagem
+        self.attributes = attributes
     
     @staticmethod
     def id(nome, timestamp):
@@ -23,8 +20,8 @@ class Produto:
     def save(self):
         self.created_at = time.time()
         self._id = Produto.id(self.nome, self.created_at)
-        id = db.produto.insert_one(vars(self))
-        return id
+        db.produto.insert_one(vars(self))
+        return self._id
       
     @staticmethod
     def get_by_id(id):
@@ -44,16 +41,9 @@ class Produto:
 
 class Comercio:
 
-    def __init__(self, nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais):
-        self.cnpj = cnpj
+    def __init__(self, nome, attributes):
         self.nome = nome
-        self.endereco = endereco
-        self.telefone = telefone
-        self.email = email
-        self.horarios = horarios
-        self.link_imagem = link_imagem
-        self.tags = tags
-        self.redes_sociais = redes_sociais
+        self.attributes = attributes
 
     @staticmethod
     def id(nome):
@@ -65,6 +55,7 @@ class Comercio:
         self.created_at = time.time()
         self._id = Comercio.id(self.nome)
         db.comercio.insert_one(vars(self))
+        return self._id
     
     @staticmethod
     def get_by_id(id):
