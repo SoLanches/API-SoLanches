@@ -130,4 +130,13 @@ def get_comercio_by_name(comercio_nome):
         raise
 
     return jsonify(comercio), 200
-    
+
+
+@app.route("/comercio/<comercio_nome>/cardapio", methods=['GET'])
+def get_cadapio(comercio_nome):
+    try:
+        cardapio = controller.get_cardapio(comercio_nome)
+    except:
+        raise
+
+    return jsonify(cardapio), 200

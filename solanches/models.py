@@ -64,6 +64,8 @@ class Comercio:
     def save(self):
         self.created_at = time.time()
         self._id = Comercio.id(self.nome)
+        cardapio = Cardapio(self._id)
+        self.cardapio = cardapio.save()
         db.comercio.insert_one(vars(self))
     
     @staticmethod
@@ -87,17 +89,24 @@ class Comercio:
         comercio = db.comercio.find_one(query)
         return comercio
 
+    @staticmethod
+    def get_cardapio(comercio_nome):
+        comercio = Comercio.get_by_name(comercio_nome)
+        cardapio = Cardapio.get_by_id(comercio["cardapio"])
+        return cardapio
+
 
 class Cardapio:
 
-    def __init__(self, comercio_id, produtos=[], destaques=[]):
-        self._id = comercio_id
-        self.produtos = produtos
-        self.destaques = destaques
+    def __init__(self, cardapio_id):
+        self._id = cardapio_id
+        self.produtos = []
+        self.destaques = []
 
     def save(self):
         self.created_at = time.time()
-        db.cardapio.insert_one(vars(self))
+        cardapio = db.cardapio.insert_one(vars(self))
+        return cardapio.inserted_id
 
     @staticmethod
     def add_produtos(cardapio_id, produtos):
@@ -131,4 +140,3 @@ class Cardapio:
     def to_dict(self):
         cardapio = vars(self).copy()
         return cardapio
-  
