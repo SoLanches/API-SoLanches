@@ -56,7 +56,7 @@ class Comercio:
         self._id = Comercio.id(self.nome)
         cardapio = Cardapio(self._id)
         self.cardapio = cardapio.save()
-        db.comercio.insert_one(vars(self))
+        db.comercio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
     
     @staticmethod
     def get_by_id(id):
@@ -95,7 +95,7 @@ class Cardapio:
 
     def save(self):
         self.created_at = time.time()
-        cardapio = db.cardapio.insert_one(vars(self))
+        cardapio = db.cardapio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
         return cardapio.inserted_id
 
     @staticmethod
