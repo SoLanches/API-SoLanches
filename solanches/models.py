@@ -95,8 +95,8 @@ class Cardapio:
 
     def save(self):
         self.created_at = time.time()
-        cardapio = db.cardapio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
-        return cardapio.inserted_id
+        db.cardapio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
+        return self._id
 
     @staticmethod
     def add_produtos(cardapio_id, produtos):
