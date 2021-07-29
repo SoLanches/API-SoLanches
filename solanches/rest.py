@@ -28,19 +28,13 @@ def cadastra_produto():
     
     assert req, "Erro: json inválido!"
     assert "nome" in req, "Erro: nome não informado!"
-    assert "descricao" in req, "Erro: descricao não informada!"
-    assert "imagem" in req, "Erro: imagem não informada!"
-    assert "preco" in req, "Erro: preco não informado!"
-    assert "categoria" in req, "Erro: categoria não informada!"
+    assert "attributes" in req, "Erro: atributos não informado"
 
     nome = req.get("nome")
-    descricao = req.get("descricao")
-    imagem = req.get("imagem")
-    preco = req.get("preco")
-    categoria = req.get("categoria")
+    attributes = req.get("attributes")
 
     try:
-        produto_id = controller.cadastra_produto(nome, descricao, imagem, preco, categoria)
+        produto_id = controller.cadastra_produto(nome, attributes)
     except:
         raise
 
@@ -95,27 +89,13 @@ def cadastra_comercio():
     
     assert req, "Erro: json inválido!"
     assert "nome" in req, "Erro: nome não informado!"
-    assert "endereco" in req, "Erro: endereco não informado!"
-    assert "telefone" in req, "Erro: telefone não informado!"
-    assert "email" in req, "Erro: email não informado!"
-    assert "cnpj" in req, "Erro: cnpj não informado!"
-    assert "horarios" in req, "Erro: horarios não informados!"
-    assert "link_imagem" in req, "Erro: link da imagem não informado!"
-    assert "tags" in req, "Erro: tags não informadas!"
-    assert "redes_sociais" in req, "Erro: redes sociais não informadas!"
+    assert "attributes" in req, "Erro: atributos não informado"
 
     nome = req.get("nome")
-    endereco = req.get("endereco")
-    telefone = req.get("telefone")
-    email = req.get("email")
-    cnpj = req.get("cnpj")
-    horarios = req.get("horarios")
-    link_imagem = req.get("link_imagem")
-    tags = req.get("tags")
-    redes_sociais = req.get("redes_sociais")
+    attributes = req.get("attributes")
 
     try:
-        comercio_id = controller.cadastra_comercio(nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais)
+        comercio_id = controller.cadastra_comercio(nome, attributes)
     except:
         raise
 
