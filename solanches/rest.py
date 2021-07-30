@@ -37,7 +37,7 @@ def cadastra_produto():
     try:
         produto_id = controller.cadastra_produto(nome, attributes)
     except:
-        raise
+        abort(404)
 
     return jsonify(produto_id), 201
 
@@ -98,7 +98,7 @@ def cadastra_comercio():
     try:
         comercio_id = controller.cadastra_comercio(nome, attributes)
     except:
-        raise
+        abort(400)
 
     return jsonify(comercio_id), 201
 
@@ -128,3 +128,10 @@ def page_not_found(e):
     "timestamp": time.time()}
 
     return jsonify(msg_erro), 404
+
+@app.errorhandler(400)
+def page_not_found(e):
+    msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
+    "timestamp": time.time()}
+
+    return jsonify(msg_erro), 400
