@@ -3,6 +3,7 @@ import time
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask import abort
 from . import controller
 
 app = Flask(__name__)
@@ -46,7 +47,7 @@ def get_produto(produto_id):
     try:
         produto = controller.get_produto(produto_id)
     except:
-        raise
+        abort(404)
 
     return jsonify(produto), 200
 
@@ -77,7 +78,7 @@ def get_comercio():
     try:
         comercio = controller.get_comercio(comercio_id)
     except:
-        raise
+        abort(404)
 
     return jsonify(comercio), 200
 
@@ -107,7 +108,7 @@ def get_comercio_by_name(comercio_nome):
     try:
         comercio = controller.get_comercio_by_name(comercio_nome)
     except:
-        raise
+        abort(404)
 
     return jsonify(comercio), 200
 
@@ -117,6 +118,13 @@ def get_cadapio(comercio_nome):
     try:
         cardapio = controller.get_cardapio(comercio_nome)
     except:
-        raise
+        abort(404)
 
     return jsonify(cardapio), 200
+
+@app.errorhandler(404)
+def page_not_found(e):
+    msg_erro = {"message": "page not found", "code": 404,
+    "timestamp": time.time()}
+
+    return jsonify(msg_erro), 404
