@@ -124,7 +124,7 @@ def get_cadapio(comercio_nome):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    msg_erro = {"message": "page not found", "code": 404,
+    msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
     "timestamp": time.time()}
 
     return jsonify(msg_erro), 404
