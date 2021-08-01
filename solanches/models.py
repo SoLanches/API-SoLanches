@@ -20,10 +20,13 @@ class Produto:
         serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
         return hashlib.sha1(serialized.encode('utf-8')).hexdigest()  
 
-    def save(self):
+    def save(self, nome_comercio):
         self.created_at = time.time()
         self._id = Produto.id(self.nome, self.created_at)
-        id = db.produto.insert_one(vars(self))
+        comercio = Comercio.get_cardapio(nome_comercio)
+        comercio_id = comercio.get("_id")
+        Cardapio.add_produtos(comercio_id, self._id)
+        db.comercio.insert_one(vars(self))
         return id
       
     @staticmethod

@@ -1,15 +1,16 @@
 from . models import Produto, Comercio, Cardapio
 
 
-def cadastra_produto(nome, descricao, imagem, preco, categoria):
+def cadastra_produto(nome, descricao, imagem, preco, categoria, nome_comercio):
     assert nome and type(nome) is str, "Erro: nome inválido!"
     assert descricao and type(descricao) is str, "Erro: descricao inválida!"
     assert imagem and type(imagem) is str, "Erro: imagem inválida!"
     assert preco and type(preco) is float, "Erro: preco inválido!"
     assert categoria and type(categoria) is str, "Erro: categoria inválida!"
+    assert nome_comercio and type(nome_comercio) is str, "Erro: nome de comercio invalido"
 
     novo_produto = Produto(nome, descricao, preco, categoria, imagem)
-    novo_produto.save()
+    novo_produto.save(nome_comercio)
 
     return novo_produto.to_dict()
 
