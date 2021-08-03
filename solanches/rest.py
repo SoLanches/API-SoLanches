@@ -23,9 +23,6 @@ def status():
     }
     return status, 200
 
-
-<<<<<<< HEAD
-<<<<<<< HEAD
 @app.route("/produto", methods=['POST'])
 def cadastra_produto():
     req = request.get_json()
@@ -43,11 +40,6 @@ def cadastra_produto():
 
     return jsonify(produto_id), 201
 
-
-=======
->>>>>>> cadastro de produto no cardapio do comercio
-=======
->>>>>>> bbb6ad61aee9ae0f7cdaa3cc9304830fad0bcdc6
 @app.route("/produto/<produto_id>", methods=['GET'])
 def get_produto(produto_id):
     try:
