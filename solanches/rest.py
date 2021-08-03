@@ -1,4 +1,5 @@
 import time
+import logging
 
 from flask import Flask
 from flask import jsonify
@@ -37,7 +38,7 @@ def cadastra_produto():
     try:
         produto_id = controller.cadastra_produto(nome, attributes)
     except:
-        abort(404)
+        raise
 
     return jsonify(produto_id), 201
 
@@ -47,7 +48,7 @@ def get_produto(produto_id):
     try:
         produto = controller.get_produto(produto_id)
     except:
-        abort(404)
+        raise
 
     return jsonify(produto), 200
 
@@ -78,7 +79,7 @@ def get_comercio():
     try:
         comercio = controller.get_comercio(comercio_id)
     except:
-        abort(404)
+        raise
 
     return jsonify(comercio), 200
 
@@ -98,7 +99,7 @@ def cadastra_comercio():
     try:
         comercio_id = controller.cadastra_comercio(nome, attributes)
     except:
-        abort(400)
+        raise
 
     return jsonify(comercio_id), 201
 
@@ -108,7 +109,7 @@ def get_comercio_by_name(comercio_nome):
     try:
         comercio = controller.get_comercio_by_name(comercio_nome)
     except:
-        abort(404)
+        raise
 
     return jsonify(comercio), 200
 
@@ -118,7 +119,7 @@ def get_cadapio(comercio_nome):
     try:
         cardapio = controller.get_cardapio(comercio_nome)
     except:
-        abort(404)
+        raise
 
     return jsonify(cardapio), 200
 

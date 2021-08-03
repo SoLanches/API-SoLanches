@@ -3,7 +3,7 @@ from . models import Produto, Comercio, Cardapio
 
 def cadastra_produto(nome, attributes):
     assert nome and type(nome) is str, "Erro: nome inválido!"
-    assert attributes and type(attributes) is dict, "Erro: atriutos inválidos!"
+    assert attributes and type(attributes) is dict, "Erro: atributos inválidos!"
 
     novo_produto = Produto(nome, attributes)
     novo_produto.save()
@@ -41,7 +41,7 @@ def get_comercio(comercio_id):
 
 def cadastra_comercio(nome, attributes):
     assert nome and type(nome) is str, "Erro: nome inválido!"
-    assert attributes and type(attributes) is dict, "Erro: atriutos inválidos!"
+    assert attributes and type(attributes) is dict, "Erro: atributos inválidos!"
     assert "telefone" in attributes, "Erro: Telefone não informado"
     
     novo_comercio = Comercio(nome, attributes)
