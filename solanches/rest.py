@@ -130,6 +130,7 @@ def page_not_found(e):
 
     return jsonify(msg_erro), 404
 
+
 @app.errorhandler(400)
 def page_not_found(e):
     msg_erro = {"name": e.nome, "description": e.description, "code": e.code,

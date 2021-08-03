@@ -7,7 +7,7 @@ from . connect2db import db
 
 class Produto:
 
-    def __init__(self, nome, attributes):
+    def __init__(self, nome, attributes={}):
         self.nome = nome
         self.attributes = attributes
     
