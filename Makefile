@@ -8,7 +8,7 @@ INSTALLED=$(VENV)/installed
 MODULE=solanches
 
 help:
-	@echo "uso: make [venv | install | run ]"
+	@echo "uso: make [ venv | run ]"
 
 venv: $(VENV)/bin/activate
 $(VENV)/bin/activate: requirements.txt
