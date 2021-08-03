@@ -166,4 +166,3 @@ def cadastra_produto(comercio_nome):
         raise
 
     return jsonify(produto_id), 201
->>>>>>> bbb6ad61aee9ae0f7cdaa3cc9304830fad0bcdc6
