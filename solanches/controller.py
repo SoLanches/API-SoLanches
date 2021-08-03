@@ -1,14 +1,12 @@
 from . models import Produto, Comercio, Cardapio
 
 
-def cadastra_produto(nome, descricao, imagem, preco, categoria):
+def cadastra_produto(nome, attributes={}):
     assert nome and type(nome) is str, "Erro: nome inválido!"
-    assert descricao and type(descricao) is str, "Erro: descricao inválida!"
-    assert imagem and type(imagem) is str, "Erro: imagem inválida!"
-    assert preco and type(preco) is float, "Erro: preco inválido!"
-    assert categoria and type(categoria) is str, "Erro: categoria inválida!"
+    if attributes:
+        assert type(attributes) is dict, "Erro: campo attributes inválidos!"
 
-    novo_produto = Produto(nome, descricao, preco, categoria, imagem)
+    novo_produto = Produto(nome, attributes)
     novo_produto.save()
 
     return novo_produto.to_dict()
@@ -42,18 +40,12 @@ def get_comercio(comercio_id):
     return comercio
 
 
-def cadastra_comercio(nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais):
+def cadastra_comercio(nome, attributes):
     assert nome and type(nome) is str, "Erro: nome inválido!"
-    assert endereco and type(endereco) is str, "Erro: endereco inválido!"
-    assert telefone and type(telefone) is str, "Erro: telefone inválido!"
-    assert email and type(email) is str, "Erro: email inválido!"
-    assert cnpj and type(cnpj) is str, "Erro: cnpj inválido!"
-    #assert(horarios and type(email) is str, "Erro: horarios inválidos!")
-    assert link_imagem and type(link_imagem) is str, "Erro: link de imagem inválido!"
-    #assert(tags and type(tags) is str, "Erro: tags inválidas!")
-    # assert redes_sociais and type(redes_sociais) is str, "Erro: redes sociais inválidas!"
-
-    novo_comercio = Comercio(nome, endereco, telefone, email, cnpj, horarios, link_imagem, tags, redes_sociais)
+    assert attributes and type(attributes) is dict, "Erro: campo attributes inválidos!"
+    assert "telefone" in attributes, "Erro: Telefone não informado"
+    
+    novo_comercio = Comercio(nome, attributes)
     novo_comercio.save()
 
     return novo_comercio.to_dict()
