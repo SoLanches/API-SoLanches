@@ -29,11 +29,10 @@ def cadastra_produto():
     req = request.get_json()
     
     assert req, "Erro: json inválido!"
-    assert "nome" in req, "Erro: nome não informado!"
-    assert "attributes" in req, "Erro: atributos não informado"
-
     nome = req.get("nome")
-    attributes = req.get("attributes")
+    assert nome, "Erro: nome não informado!"
+
+    attributes = req.get("attributes") if "attributes" in req else {}
 
     try:
         produto_id = controller.cadastra_produto(nome, attributes)

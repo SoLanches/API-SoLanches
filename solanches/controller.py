@@ -1,7 +1,7 @@
 from . models import Produto, Comercio, Cardapio
 
 
-def cadastra_produto(nome, attributes=None):
+def cadastra_produto(nome, attributes={}):
     assert nome and type(nome) is str, "Erro: nome inválido!"
     if attributes:
         assert type(attributes) is dict, "Erro: campo attributes inválidos!"
