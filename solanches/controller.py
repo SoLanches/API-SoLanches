@@ -1,15 +1,15 @@
 from . models import Produto, Comercio, Cardapio
 
 
-def cadastra_produto(nome, attributes={}):
+def cadastra_produto(comercio_nome, nome, attributes={}):
     assert nome and type(nome) is str, "Erro: nome inválido!"
     if attributes:
         assert type(attributes) is dict, "Erro: campo attributes inválidos!"
 
     novo_produto = Produto(nome, attributes)
-    novo_produto.save()
+    produto_id = Comercio.add_produto(novo_produto, comercio_nome)
 
-    return novo_produto.to_dict()
+    return produto_id
 
 
 def get_produto(produto_id):
