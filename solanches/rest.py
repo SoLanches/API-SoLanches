@@ -122,6 +122,7 @@ def get_cadapio(comercio_nome):
 
     return jsonify(cardapio), 200
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
