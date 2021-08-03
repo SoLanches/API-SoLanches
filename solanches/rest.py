@@ -25,6 +25,7 @@ def status():
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 @app.route("/produto", methods=['POST'])
 def cadastra_produto():
     req = request.get_json()
@@ -45,6 +46,8 @@ def cadastra_produto():
 
 =======
 >>>>>>> cadastro de produto no cardapio do comercio
+=======
+>>>>>>> bbb6ad61aee9ae0f7cdaa3cc9304830fad0bcdc6
 @app.route("/produto/<produto_id>", methods=['GET'])
 def get_produto(produto_id):
     try:
@@ -125,7 +128,6 @@ def get_cadapio(comercio_nome):
 
     return jsonify(cardapio), 200
 
-
 @app.errorhandler(404)
 def page_not_found(e):
     msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
@@ -140,3 +142,28 @@ def page_not_found(e):
     "timestamp": time.time()}
 
     return jsonify(msg_erro), 400
+
+@app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
+def cadastra_produto(comercio_nome):
+    req = request.get_json()
+    
+    assert req, "Erro: json inválido!"
+    assert "nome" in req, "Erro: nome não informado!"
+    assert "descricao" in req, "Erro: descricao não informada!"
+    assert "imagem" in req, "Erro: imagem não informada!"
+    assert "preco" in req, "Erro: preco não informado!"
+    assert "categoria" in req, "Erro: categoria não informada!"
+
+    nome = req.get("nome")
+    descricao = req.get("descricao")
+    imagem = req.get("imagem")
+    preco = req.get("preco")
+    categoria = req.get("categoria")
+
+    try:
+        produto_id = controller.cadastra_produto(nome, descricao, imagem, preco, categoria, comercio_nome)
+    except:
+        raise
+
+    return jsonify(produto_id), 201
+>>>>>>> bbb6ad61aee9ae0f7cdaa3cc9304830fad0bcdc6
