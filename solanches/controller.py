@@ -10,7 +10,7 @@ def cadastra_produto(nome, descricao, imagem, preco, categoria, nome_comercio):
     assert nome_comercio and type(nome_comercio) is str, "Erro: nome de comercio invalido"
 
     novo_produto = Produto(nome, descricao, preco, categoria, imagem)
-    novo_produto.save(nome_comercio)
+    Comercio.add_produto(novo_produto, nome_comercio)
 
     return novo_produto.to_dict()
 

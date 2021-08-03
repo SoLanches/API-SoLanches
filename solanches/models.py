@@ -13,21 +13,18 @@ class Produto:
         self.preco = preco
         self.categoria = categoria
         self.link_imagem = link_imagem
-    
+
     @staticmethod
     def id(nome, timestamp):
         id_fields = {"nome": nome, "timestamp": timestamp}
         serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
         return hashlib.sha1(serialized.encode('utf-8')).hexdigest()  
 
-    def save(self, nome_comercio):
+    def save(self):
         self.created_at = time.time()
         self._id = Produto.id(self.nome, self.created_at)
-        comercio = Comercio.get_cardapio(nome_comercio)
-        comercio_id = comercio.get("_id")
-        Cardapio.add_produtos(comercio_id, self._id)
         db.comercio.insert_one(vars(self))
-        return id
+        return self._id
       
     @staticmethod
     def get_by_id(id):
@@ -85,7 +82,15 @@ class Comercio:
     def to_dict(self):
         comercio = vars(self).copy()
         return comercio
-     
+
+    @staticmethod
+    def add_produto(produto, nome_comercio):
+        produto_id = produto.save()
+        comercio = Comercio.get_cardapio(nome_comercio)
+        comercio_id = comercio.get("_id")
+        Cardapio.add_produtos(comercio_id, produto_id)
+        return produto_id
+        
     @staticmethod
     def get_by_name(name):
         query = {"nome": name}
