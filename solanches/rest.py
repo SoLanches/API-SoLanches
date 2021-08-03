@@ -4,6 +4,7 @@ import logging
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask import make_response
 from flask import abort
 from . import controller
 
@@ -11,6 +12,16 @@ app = Flask(__name__)
 
 
 started_at = time.time()
+
+
+def _assert(condition, status_code, message):
+    if condition: return
+    data = {
+        "message": message,
+        "status_code": status_code
+    }
+    response = make_response(jsonify(data), status_code)
+    abort(response)
 
 
 @app.route("/status", methods=["GET"])
@@ -28,16 +39,16 @@ def status():
 def cadastra_produto():
     req = request.get_json()
     
-    assert req, "Erro: json inválido!"
+    _assert(req, 400, "Erro: json inválido!")
     nome = req.get("nome")
-    assert nome, "Erro: nome não informado!"
+    _assert(nome, 400, "Erro: nome não informado!")
 
     attributes = req.get("attributes") if "attributes" in req else {}
 
     try:
         produto_id = controller.cadastra_produto(nome, attributes)
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(produto_id), 201
 
@@ -46,8 +57,8 @@ def cadastra_produto():
 def get_produto(produto_id):
     try:
         produto = controller.get_produto(produto_id)
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(produto), 200
 
@@ -55,8 +66,8 @@ def get_produto(produto_id):
 def get_produtos():
     try:
         produtos = controller.get_produtos()
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(produtos), 200 
 
@@ -65,8 +76,8 @@ def get_produtos():
 def get_comercios():
     try:
         comercios = controller.get_comercios()
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(comercios), 200 
 
@@ -74,11 +85,11 @@ def get_comercios():
 @app.route("/comercio", methods=['GET'])
 def get_comercio():
     comercio_id = request.args.get('id')
-    assert comercio_id, "Erro: id do comercio não informado!"
+    _assert(comercio_id, 400, "Erro: id do comercio não informado!")
     try:
         comercio = controller.get_comercio(comercio_id)
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(comercio), 200
 
@@ -87,18 +98,17 @@ def get_comercio():
 def cadastra_comercio():
     req = request.get_json()
     
-    
-    assert req, "Erro: json inválido!"
-    assert "nome" in req, "Erro: nome não informado!"
-    assert "attributes" in req, "Erro: atributos não informado"
+    _assert(req, 400, "Erro: json inválido!")
+    _assert("nome" in req, 400, "Erro: nome não informado!")
+    _assert("attributes" in req, 400, "Erro: atributos não informado")
 
     nome = req.get("nome")
     attributes = req.get("attributes")
 
     try:
         comercio_id = controller.cadastra_comercio(nome, attributes)
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(comercio_id), 201
 
@@ -107,8 +117,8 @@ def cadastra_comercio():
 def get_comercio_by_name(comercio_nome):
     try:
         comercio = controller.get_comercio_by_name(comercio_nome)
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(comercio), 200
 
@@ -117,23 +127,17 @@ def get_comercio_by_name(comercio_nome):
 def get_cadapio(comercio_nome):
     try:
         cardapio = controller.get_cardapio(comercio_nome)
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(cardapio), 200
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
-    "timestamp": time.time()}
-
-    return jsonify(msg_erro), 404
-
-
-@app.errorhandler(400)
-def page_not_found(e):
-    msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
-    "timestamp": time.time()}
-
-    return jsonify(msg_erro), 400
+@app.errorhandler(Exception)
+def _error(error):
+    data = {}
+    data["error"]  = error.__class__.__name__
+    data["message"] = str(error)
+    client_errors = ["BadRequest"]
+    data["status_code"] = 400 if data["error"] in client_errors else 500
+    return data, data["status_code"]
