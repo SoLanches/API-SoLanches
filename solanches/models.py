@@ -85,6 +85,10 @@ class Comercio:
         cardapio = Cardapio.get_by_id(comercio["cardapio"])
         return cardapio
 
+    @staticmethod
+    def add_destaques(comercio_nome, destaques):
+        comercio = Comercio.get_by_name(comercio_nome)
+        Cardapio.add_destaques(comercio["cardapio"], destaques)
 
 class Cardapio:
 

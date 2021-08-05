@@ -67,3 +67,13 @@ def get_cardapio(comercio_nome):
     assert cardapio, f'Erro: cardapio não encontrado!'
 
     return cardapio
+
+
+def adiciona_destaques(destaques, comercio_nome):
+    assert destaques, f'Erro: destaques vazio!'
+
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+
+    Comercio.add_destaques(comercio_nome, destaques)
+    

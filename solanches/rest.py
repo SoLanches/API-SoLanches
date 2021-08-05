@@ -123,6 +123,23 @@ def get_cadapio(comercio_nome):
     return jsonify(cardapio), 200
 
 
+@app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
+def adiciona_destaques(comercio_nome):
+    req = request.get_json()
+    assert req, "Erro: json inválido!"
+    assert "destaques" in req, "Erro: destaques não informados!"
+    
+    destaques = req.get("destaques")
+
+    try:
+        controller.adiciona_destaques(destaques, comercio_nome)
+        msg = {"message": f"destaques adicionados"}
+    except:
+        raise
+
+    return jsonify(msg), 201
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
