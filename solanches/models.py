@@ -22,7 +22,11 @@ class Produto:
         self._id = Produto.id(self.nome, self.created_at)
         db.produto.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
         return self._id
-      
+
+    @staticmethod
+    def update(produto_id, attributes):
+        db.produto.update_one({"_id": produto_id}, {"$set": {"attributes": attributes}})
+
     @staticmethod
     def get_by_id(id):
         query = {"_id": id}
@@ -56,7 +60,7 @@ class Comercio:
         self._id = Comercio.id(self.nome)
         cardapio = Cardapio(self._id)
         self.cardapio = cardapio.save()
-        db.comercio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
+        db.comercio.insert_one(vars(self))
     
     @staticmethod
     def get_by_id(id):
@@ -68,6 +72,10 @@ class Comercio:
     def get_all():
         comercios = db.comercio.find()
         return list(comercios)
+
+    @staticmethod
+    def update(comercio_id, attributes):
+        db.comercio.update_one({"_id": comercio_id}, {"$set": {"attributes": attributes}})
 
     def to_dict(self):
         comercio = vars(self).copy()

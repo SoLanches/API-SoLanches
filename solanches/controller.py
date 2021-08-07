@@ -1,5 +1,6 @@
+import logging
 from . models import Produto, Comercio, Cardapio
-
+from . import connect2db
 
 def cadastra_produto(nome, attributes={}):
     assert nome and type(nome) is str, "Erro: nome inválido!"
@@ -45,10 +46,15 @@ def cadastra_comercio(nome, attributes):
     assert attributes and type(attributes) is dict, "Erro: campo attributes inválidos!"
     assert "telefone" in attributes, "Erro: Telefone não informado"
     
-    novo_comercio = Comercio(nome, attributes)
-    novo_comercio.save()
-
-    return novo_comercio.to_dict()
+    try:
+        novo_comercio = Comercio(nome, attributes)
+        novo_comercio.save()
+        return novo_comercio.to_dict()
+    except connect2db.pymongo.errors.DuplicateKeyError:
+        erro = {"error":  "Comércio já cadastrado no banco de dados", "code": 400}
+        logging.error(erro)
+        return erro
+    
 
 
 def get_comercio_by_name(comercio_nome):
