@@ -1,6 +1,8 @@
 import logging
+
 from . models import Produto, Comercio, Cardapio
 from . import connect2db
+
 
 def cadastra_produto(nome, attributes={}):
     assert nome and type(nome) is str, "Erro: nome inválido!"
@@ -49,12 +51,12 @@ def cadastra_comercio(nome, attributes):
     try:
         novo_comercio = Comercio(nome, attributes)
         novo_comercio.save()
-        return novo_comercio.to_dict()
+        result = novo_comercio.to_dict()
     except connect2db.pymongo.errors.DuplicateKeyError:
-        erro = {"error":  "Comércio já cadastrado no banco de dados", "code": 400}
+        erro = {"error":  "Comércio já cadastrado no banco de dados", "code": 409}
         logging.error(erro)
-        return erro
-    
+        result = erro
+    return result
 
 
 def get_comercio_by_name(comercio_nome):
