@@ -91,6 +91,13 @@ class Comercio:
         cardapio_id = comercio.get("cardapio")
         produtos = Cardapio.get_produtos(cardapio_id)
         return produtos
+    
+    @staticmethod
+    def get_destaques(comercio_nome):
+        comercio = Comercio.get_by_name(comercio_nome)
+        cardapio_id = comercio.get("cardapio")
+        destaques = Cardapio.get_destaques(cardapio_id)
+        return destaques
 
     @staticmethod
     def add_destaques(comercio_nome, destaques):
@@ -143,6 +150,11 @@ class Cardapio:
     def get_produtos(cardapio_id):
         cardapio = Cardapio.get_by_id(cardapio_id)
         return cardapio.get("produtos")
+    
+    @staticmethod
+    def get_destaques(cardapio_id):
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        return cardapio.get("destaques")
 
     def to_dict(self):
         cardapio = vars(self).copy()
