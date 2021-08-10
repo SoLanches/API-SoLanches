@@ -75,5 +75,8 @@ def adiciona_destaques(destaques, comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
 
+    produtos_comercio = Comercio.get_produtos(comercio_nome)
+    assert all(produto in produtos_comercio for produto in destaques), f'Erro: produto precisa fazer parte do cardápio do comércio'
+
     Comercio.add_destaques(comercio_nome, destaques)
     

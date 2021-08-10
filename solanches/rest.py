@@ -62,6 +62,7 @@ def get_produto(produto_id):
 
     return jsonify(produto), 200
 
+
 @app.route("/produtos", methods=['GET'])
 def get_produtos():
     try:
@@ -148,22 +149,6 @@ def adiciona_destaques(comercio_nome):
         raise
 
     return jsonify(msg), 201
-
-
-@app.errorhandler(404)
-def page_not_found(e):
-    msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
-    "timestamp": time.time()}
-
-    return jsonify(msg_erro), 404
-
-
-@app.errorhandler(400)
-def page_not_found(e):
-    msg_erro = {"name": e.nome, "description": e.description, "code": e.code,
-    "timestamp": time.time()}
-
-    return jsonify(msg_erro), 400
 
 
 @app.errorhandler(Exception)
