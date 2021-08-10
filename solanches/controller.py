@@ -4,15 +4,18 @@ from . models import Produto, Comercio, Cardapio
 from . import connect2db
 
 
-def cadastra_produto(nome, attributes={}):
-    assert nome and type(nome) is str, "Erro: nome inválido!"
+def cadastra_produto(comercio_nome, nome_produto, attributes={}):
+    assert nome_produto and type(nome_produto) is str, "Erro: nome inválido!"
     if attributes:
         assert type(attributes) is dict, "Erro: campo attributes inválidos!"
 
-    novo_produto = Produto(nome, attributes)
-    novo_produto.save()
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f"Erro: comércio com nome {comercio_nome} não cadastrado"
 
-    return novo_produto.to_dict()
+    novo_produto = Produto(nome_produto, attributes)
+    produto_id = Comercio.add_produto(novo_produto, comercio_nome)
+
+    return produto_id
 
 
 def get_produto(produto_id):

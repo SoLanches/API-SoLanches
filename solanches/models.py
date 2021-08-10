@@ -20,7 +20,7 @@ class Produto:
     def save(self):
         self.created_at = time.time()
         self._id = Produto.id(self.nome, self.created_at)
-        db.produto.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
+        db.comercio.insert_one(vars(self))
         return self._id
 
     @staticmethod
@@ -80,7 +80,15 @@ class Comercio:
     def to_dict(self):
         comercio = vars(self).copy()
         return comercio
-     
+
+    @staticmethod
+    def add_produto(produto, nome_comercio):
+        produto_id = produto.save()
+        comercio = Comercio.get_cardapio(nome_comercio)
+        comercio_id = comercio.get("_id")
+        Cardapio.add_produtos(comercio_id, produto_id)
+        return produto_id
+        
     @staticmethod
     def get_by_name(name):
         query = {"nome": name}

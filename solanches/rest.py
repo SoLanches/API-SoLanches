@@ -35,22 +35,23 @@ def status():
     return status, 200
 
 
-@app.route("/produto", methods=['POST'])
-def cadastra_produto():
+@app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
+def cadastra_produto(comercio_nome):
     req = request.get_json()
     
     _assert(req, 400, "Erro: json inválido!")
-    nome = req.get("nome")
-    _assert(nome, 400, "Erro: nome não informado!")
+    nome_produto = req.get("nome")
+    _assert(nome_produto, 400, "Erro: nome não informado!")
 
     attributes = req.get("attributes") if "attributes" in req else {}
 
     try:
-        produto_id = controller.cadastra_produto(nome, attributes)
+        produto_id = controller.cadastra_produto(comercio_nome, nome_produto, attributes)
+        msg = {"message": f"Produto com o id {produto_id} adicionado"}
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(produto_id), 201
+    return jsonify(msg), 201
 
 
 @app.route("/produto/<produto_id>", methods=['GET'])
@@ -61,6 +62,7 @@ def get_produto(produto_id):
         _assert(False, 400, str(error))
 
     return jsonify(produto), 200
+
 
 @app.route("/produtos", methods=['GET'])
 def get_produtos():
