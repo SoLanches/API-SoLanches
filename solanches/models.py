@@ -154,7 +154,7 @@ class Produto:
     def save(self):
         self.created_at = time.time()
         self._id = Produto.id(self.nome, self.created_at)
-        db.comercio.insert_one(vars(self))
+        db.produto.insert_one(vars(self))
         return self._id
 
     @staticmethod
