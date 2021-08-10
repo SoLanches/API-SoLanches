@@ -35,43 +35,23 @@ def status():
     return status, 200
 
 
-@app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
-def cadastra_produto(comercio_nome):
+@app.route("/comercio", methods=['POST'])
+def cadastra_comercio():
     req = request.get_json()
     
     _assert(req, 400, "Erro: json inválido!")
-    nome_produto = req.get("nome")
-    _assert(nome_produto, 400, "Erro: nome não informado!")
+    _assert("nome" in req, 400, "Erro: nome não informado!")
+    _assert("attributes" in req, 400, "Erro: atributos não informado")
 
-    attributes = req.get("attributes") if "attributes" in req else {}
+    nome = req.get("nome")
+    attributes = req.get("attributes")
 
     try:
-        produto_id = controller.cadastra_produto(comercio_nome, nome_produto, attributes)
-        msg = {"message": f"Produto com o id {produto_id} adicionado"}
+        comercio_id = controller.cadastra_comercio(nome, attributes)
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(msg), 201
-
-
-@app.route("/produto/<produto_id>", methods=['GET'])
-def get_produto(produto_id):
-    try:
-        produto = controller.get_produto(produto_id)
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(produto), 200
-
-
-@app.route("/produtos", methods=['GET'])
-def get_produtos():
-    try:
-        produtos = controller.get_produtos()
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(produtos), 200 
+    return jsonify(comercio_id), 201
 
 
 @app.route("/comercios", methods=['GET'])
@@ -96,25 +76,6 @@ def get_comercio():
     return jsonify(comercio), 200
 
 
-@app.route("/comercio", methods=['POST'])
-def cadastra_comercio():
-    req = request.get_json()
-    
-    _assert(req, 400, "Erro: json inválido!")
-    _assert("nome" in req, 400, "Erro: nome não informado!")
-    _assert("attributes" in req, 400, "Erro: atributos não informado")
-
-    nome = req.get("nome")
-    attributes = req.get("attributes")
-
-    try:
-        comercio_id = controller.cadastra_comercio(nome, attributes)
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(comercio_id), 201
-
-
 @app.route("/comercio/<comercio_nome>", methods=['GET'])
 def get_comercio_by_name(comercio_nome):
     try:
@@ -131,8 +92,26 @@ def get_cadapio(comercio_nome):
         cardapio = controller.get_cardapio(comercio_nome)
     except Exception as error:
         _assert(False, 400, str(error))
-
     return jsonify(cardapio), 200
+
+
+@app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
+def cadastra_produto(comercio_nome):
+    req = request.get_json()
+    
+    _assert(req, 400, "Erro: json inválido!")
+    nome_produto = req.get("nome")
+    _assert(nome_produto, 400, "Erro: nome não informado!")
+
+    attributes = req.get("attributes") if "attributes" in req else {}
+
+    try:
+        produto_id = controller.cadastra_produto(comercio_nome, nome_produto, attributes)
+        msg = {"message": f"Produto com o id {produto_id} adicionado"}
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(msg), 201
 
  
 @app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
@@ -146,10 +125,32 @@ def adiciona_destaques(comercio_nome):
     try:
         controller.adiciona_destaques(destaques, comercio_nome)
         msg = {"message": f"destaques adicionados"}
-    except:
-        raise
+    except Exception as error:
+        _assert(False, 400, str(error))
 
     return jsonify(msg), 201
+
+
+#TODO: sumirá
+@app.route("/produto/<produto_id>", methods=['GET'])
+def get_produto(produto_id):
+    try:
+        produto = controller.get_produto(produto_id)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produto), 200
+
+
+#TODO: sumirá
+@app.route("/produtos", methods=['GET'])
+def get_produtos():
+    try:
+        produtos = controller.get_produtos()
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produtos), 200 
 
 
 @app.errorhandler(Exception)
