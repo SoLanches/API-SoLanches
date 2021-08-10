@@ -98,8 +98,27 @@ class Comercio:
     @staticmethod
     def get_cardapio(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
-        cardapio = Cardapio.get_by_id(comercio["cardapio"])
+        cardapio = Cardapio.get_by_id(comercio.get("cardapio"))
         return cardapio
+
+    @staticmethod
+    def get_produtos(comercio_nome):
+        comercio = Comercio.get_by_name(comercio_nome)
+        cardapio_id = comercio.get("cardapio")
+        produtos = Cardapio.get_produtos(cardapio_id)
+        return produtos
+    
+    @staticmethod
+    def get_destaques(comercio_nome):
+        comercio = Comercio.get_by_name(comercio_nome)
+        cardapio_id = comercio.get("cardapio")
+        destaques = Cardapio.get_destaques(cardapio_id)
+        return destaques
+
+    @staticmethod
+    def add_destaques(comercio_nome, destaques):
+        comercio = Comercio.get_by_name(comercio_nome)
+        Cardapio.add_destaques(comercio.get("cardapio"), destaques)
 
 
 class Cardapio:
@@ -142,6 +161,16 @@ class Cardapio:
     def get_all():
         cardapios = db.cardapio.find()
         return list(cardapios)
+
+    @staticmethod
+    def get_produtos(cardapio_id):
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        return cardapio.get("produtos")
+    
+    @staticmethod
+    def get_destaques(cardapio_id):
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        return cardapio.get("destaques")
 
     def to_dict(self):
         cardapio = vars(self).copy()

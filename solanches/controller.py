@@ -78,3 +78,17 @@ def get_cardapio(comercio_nome):
     assert cardapio, f'Erro: cardapio não encontrado!'
 
     return cardapio
+
+
+def adiciona_destaques(destaques, comercio_nome):
+    assert destaques, f'Erro: destaques vazio!'
+
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+
+    produtos_comercio = Comercio.get_produtos(comercio_nome)
+    assert all(produto in produtos_comercio for produto in destaques), f'Erro: produto precisa fazer parte do cardápio do comércio'
+    destaques_comercio = Comercio.get_destaques(comercio_nome)
+    filtered_destaques = [destaque for destaque in destaques if destaque not in destaques_comercio]
+
+    Comercio.add_destaques(comercio_nome, filtered_destaques)
