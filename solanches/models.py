@@ -65,6 +65,13 @@ class Comercio:
         cardapio_id = comercio.get("cardapio")
         produtos = Cardapio.get_produtos(cardapio_id)
         return produtos
+
+    @staticmethod
+    def delete_produto(comercio_nome, produto_id):
+        comercio = Comercio.get_by_name(comercio_nome)
+        cardapio_id = comercio.get("cardapio")
+        Cardapio.remove_produto(cardapio_id, produto_id)
+        Produto.remove(produto_id)
     
     @staticmethod
     def get_destaques(comercio_nome):
@@ -125,6 +132,17 @@ class Cardapio:
         db.cardapio.update_one(query, new_values)  
 
     @staticmethod
+    def remove_produto(cardapio_id, produto_id):
+        query = {"_id": cardapio_id}
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        new_destaques = cardapio.get("destaques")
+        new_destaques.remove(produto_id) if produto_id in new_destaques else new_destaques
+        new_produtos = cardapio.get("produtos")
+        new_produtos.remove(produto_id)
+        new_values = {"$set": {"destaques": new_destaques, "produtos": new_produtos}}
+        db.cardapio.update_one(query, new_values)
+        
+    @staticmethod
     def get_produtos(cardapio_id):
         cardapio = Cardapio.get_by_id(cardapio_id)
         return cardapio.get("produtos")
@@ -154,7 +172,7 @@ class Produto:
     def save(self):
         self.created_at = time.time()
         self._id = Produto.id(self.nome, self.created_at)
-        db.comercio.insert_one(vars(self))
+        db.produto.insert_one(vars(self))
         return self._id
 
     @staticmethod
@@ -172,6 +190,10 @@ class Produto:
         produtos = db.produto.find()
         return list(produtos)
 
+    @staticmethod
+    def remove(produto_id):
+        db.produto.remove({"_id": produto_id})
+        
     def to_dict(self):
         produto = vars(self).copy()
         return produto

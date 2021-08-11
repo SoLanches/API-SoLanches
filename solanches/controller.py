@@ -82,3 +82,13 @@ def get_produto(produto_id):
 def get_produtos():
     produtos = Produto.get_all()
     return produtos
+
+
+def remove_produto(comercio_nome, produto_id):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    produtos_comercio = Comercio.get_produtos(comercio_nome)
+    assert produto_id in produtos_comercio, f'Erro: produto precisa fazer parte do cardápio do comércio'
+    
+    Comercio.delete_produto(comercio_nome, produto_id)
+    return produto_id
