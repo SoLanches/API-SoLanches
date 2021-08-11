@@ -133,10 +133,9 @@ def adiciona_destaques(comercio_nome):
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
 def remove_produto(comercio_nome, produto_id):
-
     try:
-        id_produto = controller.remove_produto(comercio_nome, produto_id)
-        msg = {"message": f"Produto com o id {id_produto} removido!"}
+        controller.remove_produto(comercio_nome, produto_id)
+        msg = {"message": f"Produto com o id {produto_id} removido!"}
     except Exception as error:
         _assert(False, 400, str(error))
 
