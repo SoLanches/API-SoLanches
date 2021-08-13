@@ -48,7 +48,10 @@ class Comercio:
     @staticmethod
     def get_cardapio(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
-        cardapio = Cardapio.get_by_id(comercio.get("cardapio"))
+        if(comercio):
+            cardapio = Cardapio.get_by_id(comercio.get("cardapio"))
+        else:
+            cardapio = []
         return cardapio
 
     @staticmethod
@@ -78,6 +81,14 @@ class Comercio:
         comercio = Comercio.get_by_name(comercio_nome)
         Cardapio.add_destaques(comercio.get("cardapio"), destaques)
 
+    @staticmethod
+    def remove_comercio(comercio_nome):
+        query = {"nome": comercio_nome}
+        comercio_deletado = db.comercio.delete_one(query)
+        cardapio_id = Comercio.id(comercio_nome)
+        Cardapio.remove_cardapio(cardapio_id)
+        return comercio_deletado.deleted_count
+        
     def to_dict(self):
         comercio = vars(self).copy()
         return comercio
@@ -116,6 +127,15 @@ class Cardapio:
         db.cardapio.update_one(query, new_values)
 
     @staticmethod
+    def remove_cardapio(cardapio_id):
+      produtos = Cardapio.get_produtos(cardapio_id)
+      query = {"_id": cardapio_id}
+      db.cardapio.remove(query) 
+      query = {"_id": { "$in": produtos}}
+      db.produto.remove(query)
+
+
+    @staticmethod
     def add_destaques(cardapio_id, destaques):
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
@@ -127,7 +147,9 @@ class Cardapio:
     @staticmethod
     def get_produtos(cardapio_id):
         cardapio = Cardapio.get_by_id(cardapio_id)
-        return cardapio.get("produtos")
+        if(cardapio):
+            return cardapio.get("produtos")
+        return []
     
     @staticmethod
     def get_destaques(cardapio_id):
