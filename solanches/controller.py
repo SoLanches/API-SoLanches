@@ -94,8 +94,10 @@ def atualiza_comercio(req, comercio_nome):
     atributos_dict = json.loads(atributos)
 
     for atr in atributos:
-        if(atr == req_dict.keys()[0]):
-            atributos_dict[atr] = req_dict.values()[0]
+        cont = 0
+        if(atr == req_dict.keys()):
+            atributos_dict[cont] = req_dict.values()[0]
+        cont+=1
 
     atributos = json.dumps(atributos_dict)
 
