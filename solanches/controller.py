@@ -1,4 +1,5 @@
 import logging
+import json
 
 from . models import Produto, Comercio, Cardapio
 from . import connect2db
@@ -82,3 +83,21 @@ def get_produto(produto_id):
 def get_produtos():
     produtos = Produto.get_all()
     return produtos
+
+
+def atualiza_comercio(req, comercio_nome):
+
+    atributos = Comercio.get_atributos(comercio_nome)
+    assert atributos, f'Erro: atributos do comercio com nome {comercio_nome} nao cadastrados!'
+    
+    req_dict = json.loads(req)
+    atributos_dict = json.loads(atributos)
+
+    for atr in atributos:
+        if(atr == req_dict.keys()[0]):
+            atributos_dict[atr] = req_dict.values()[0]
+
+    atributos = json.dumps(atributos_dict)
+
+    Comercio.update_by_nome(comercio_nome, atributos)
+    return atributos
