@@ -74,9 +74,11 @@ def remove_produto(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     produtos_comercio = Comercio.get_produtos(comercio_nome)
-    assert produto_id in produtos_comercio, f'Erro: produto precisa fazer parte do cardápio do comércio'
-    
-    Comercio.delete_produto(comercio_nome, produto_id)
+    assert produto_id in produtos_comercio, f'Erro: produto não faz parte do cardápio do comércio'
+
+    Comercio.remove_produto(comercio_nome, produto_id)
+    cardapio = get_cardapio(comercio_nome)
+    return cardapio
 
 
 #TODO: sumirá
