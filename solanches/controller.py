@@ -86,20 +86,12 @@ def get_produtos():
 
 
 def atualiza_comercio(req, comercio_nome):
-
     atributos = Comercio.get_atributos(comercio_nome)
     assert atributos, f'Erro: atributos do comercio com nome {comercio_nome} nao cadastrados!'
-    
-    req_dict = json.loads(req)
-    atributos_dict = json.loads(atributos)
 
-    key = req_dict.keys()[0]
-
-    for atr in atributos:
-        if(atr == key):
-            atributos_dict[key] = req_dict.values()[0]
-
-    atributos = json.dumps(atributos_dict)
+    for k, v in req.items():
+        if(k in atributos):
+            atributos[k] = v
 
     Comercio.update_by_nome(comercio_nome, atributos)
     return atributos
