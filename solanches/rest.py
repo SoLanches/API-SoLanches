@@ -166,17 +166,14 @@ def _error(error):
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 def update_comercio(comercio_nome):
 
-    req = request.get_json()  
-    assert req, "Erro: json inválido!"
+    attributes = request.get_json()  
+    assert attributes, "Erro: json inválido!"
 
     try:
-        controller.atualiza_comercio(req, comercio_nome)
+        controller.atualiza_comercio(attributes, comercio_nome)
         msg = {"message": f"comercio atualizado"}
     except Exception as error:
         _assert(False, 400, str(error))
 
     return jsonify(msg), 201
-   
-    
-
-
+       

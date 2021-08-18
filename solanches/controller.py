@@ -85,13 +85,17 @@ def get_produtos():
     return produtos
 
 
-def atualiza_comercio(req, comercio_nome):
-    atributos = Comercio.get_atributos(comercio_nome)
-    assert atributos, f'Erro: atributos do comercio com nome {comercio_nome} nao cadastrados!'
+def atualiza_comercio(attributes, comercio_nome):
 
-    for k, v in req.items():
+    comercio = Comercio.get_by_name(comercio_nome)
+    atributos = comercio.get("attributes")
+
+    for k, v in attributes.items():
         if(k in atributos):
             atributos[k] = v
 
-    Comercio.update_by_nome(comercio_nome, atributos)
-    return atributos
+    comercio_id = comercio.get("_id")
+    Comercio.update_by_nome(comercio_id, atributos)
+    comercio = Comercio.get_by_name(comercio_nome)
+
+    return comercio

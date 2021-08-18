@@ -78,16 +78,6 @@ class Comercio:
         comercio = Comercio.get_by_name(comercio_nome)
         Cardapio.add_destaques(comercio.get("cardapio"), destaques)
 
-    @staticmethod
-    def get_atributos(comercio_nome):
-        comercio = Comercio.get_by_name(comercio_nome)
-        atributos = comercio.get("attributes")
-        return atributos
-
-    @staticmethod
-    def update_by_nome(comercio_nome, attributes):
-        db.comercio.update_one({"nome": comercio_nome}, {"$set": {"attributes": attributes}})
-
     def to_dict(self):
         comercio = vars(self).copy()
         return comercio
