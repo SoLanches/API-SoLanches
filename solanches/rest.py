@@ -135,11 +135,10 @@ def adiciona_destaques(comercio_nome):
 def remove_produto(comercio_nome, produto_id):
     try:
         cardapio = controller.remove_produto(comercio_nome, produto_id)
-        msg = {"message": f"Produto com o id {produto_id} removido!"}
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(msg, cardapio), 200
+    return jsonify(cardapio), 200
 
 
 #TODO: sumirá
