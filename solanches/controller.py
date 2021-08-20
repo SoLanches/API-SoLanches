@@ -64,8 +64,8 @@ def edita_produto(produto_id, comercio_nome, attributes):
     assert comercio, f"Erro: comércio com nome {comercio_nome} não cadastrado"
 
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
-    produto = Produto.get_by_id(produto_id)
-    assert produto and produto_id in Comercio.get_produtos(comercio_nome), "Erro: produto com id não cadastrado!"
+    assert produto_id in Comercio.get_produtos(comercio_nome), "Erro: produto com id não cadastrado!"
+    assert attributes and type(attributes) is dict, "Erro: attributes inválidos!"
 
     Produto.update(produto_id, attributes)
 
