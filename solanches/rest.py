@@ -127,7 +127,7 @@ def edita_produto(comercio_nome, produto_id):
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(produto)
+    return jsonify(produto), 200
         
  
 @app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
