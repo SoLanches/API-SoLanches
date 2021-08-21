@@ -1,6 +1,5 @@
-import pymongo
 from pymongo import MongoClient
 
-client = MongoClient("localhost", port=27017)
+MONGO_CLIENT = MongoClient("localhost", port=27017)
 
-db = client.SolanchesDB
+DB = MONGO_CLIENT.SolanchesDB

@@ -2,7 +2,7 @@ import hashlib
 import time
 import json
 
-from . connect2db import db
+from . connect2db import DB
 
 
 class Comercio:
@@ -22,27 +22,27 @@ class Comercio:
         self._id = Comercio.id(self.nome)
         cardapio = Cardapio(self._id)
         self.cardapio = cardapio.save()
-        db.comercio.insert_one(vars(self))
+        DB.comercio.insert_one(vars(self))
 
     @staticmethod
     def get_by_id(id):
         query = {"_id": id}
-        comercio = db.comercio.find_one(query)
+        comercio = DB.comercio.find_one(query)
         return comercio
 
     @staticmethod
     def get_all():
-        comercios = db.comercio.find()
+        comercios = DB.comercio.find()
         return list(comercios)
 
     @staticmethod
     def update(comercio_id, attributes):
-        db.comercio.update_one({"_id": comercio_id}, {"$set": {"attributes": attributes}})
+        DB.comercio.update_one({"_id": comercio_id}, {"$set": {"attributes": attributes}})
         
     @staticmethod
     def get_by_name(name):
         query = {"nome": name}
-        comercio = db.comercio.find_one(query)
+        comercio = DB.comercio.find_one(query)
         return comercio
 
     @staticmethod
@@ -92,18 +92,18 @@ class Cardapio:
 
     def save(self):
         self.created_at = time.time()
-        db.cardapio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
+        DB.cardapio.update_one({"_id": self._id}, {"$set": vars(self)}, upsert=True)
         return self._id
 
     @staticmethod
     def get_by_id(id):
         query = {"_id": id}
-        cardapio = db.cardapio.find_one(query)
+        cardapio = DB.cardapio.find_one(query)
         return cardapio
     
     @staticmethod
     def get_all():
-        cardapios = db.cardapio.find()
+        cardapios = DB.cardapio.find()
         return list(cardapios)
 
     @staticmethod
@@ -113,7 +113,7 @@ class Cardapio:
         new_produtos = cardapio.get("produtos")
         new_produtos += produtos if type(produtos) is list else [produtos]
         new_values = {"$set": {"produtos": new_produtos}}
-        db.cardapio.update_one(query, new_values)
+        DB.cardapio.update_one(query, new_values)
 
     @staticmethod
     def add_destaques(cardapio_id, destaques):
@@ -122,7 +122,7 @@ class Cardapio:
         new_destaques = cardapio.get("destaques")
         new_destaques += destaques if type(destaques) is list else [destaques]
         new_values = {"$set": {"destaques": new_destaques}}
-        db.cardapio.update_one(query, new_values)  
+        DB.cardapio.update_one(query, new_values)  
 
     @staticmethod
     def get_produtos(cardapio_id):
@@ -154,22 +154,22 @@ class Produto:
     def save(self):
         self.created_at = time.time()
         self._id = Produto.id(self.nome, self.created_at)
-        db.produto.insert_one(vars(self))
+        DB.produto.insert_one(vars(self))
         return self._id
 
     @staticmethod
     def update(produto_id, attributes):
-        db.produto.update_one({"_id": produto_id}, {"$set": {"attributes": attributes}})
+        DB.produto.update_one({"_id": produto_id}, {"$set": {"attributes": attributes}})
 
     @staticmethod
     def get_by_id(id):
         query = {"_id": id}
-        produto = db.produto.find_one(query)
+        produto = DB.produto.find_one(query)
         return produto
 
     @staticmethod
     def get_all():
-        produtos = db.produto.find()
+        produtos = DB.produto.find()
         return list(produtos)
 
     def to_dict(self):
