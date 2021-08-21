@@ -1,9 +1,10 @@
-.PHONY: help venv install run
+.PHONY: help venv run test
 .DEFAULT: help
 
 VENV=venv
 PYTHON=$(VENV)/bin/python3
 PIP=$(PYTHON) -m pip
+TESTS-REQS-INSTALLED=$(VENV)/tests-requirements-updated
 INSTALLED=$(VENV)/installed
 MODULE=solanches
 
@@ -19,3 +20,11 @@ $(VENV)/bin/activate: requirements.txt
 
 run: venv
 	$(PYTHON) -m $(MODULE)
+
+test: venv $(TESTS-REQS-INSTALLED)
+	$(PYTHON) -m pytest
+
+$(TESTS-REQS-INSTALLED): tests-requirements.txt
+	$(PIP) install --upgrade pip
+	$(PIP) install --requirement tests-requirements.txt
+	touch $(TESTS-REQS-INSTALLED)
