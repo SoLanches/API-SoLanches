@@ -9,106 +9,41 @@
 
 Links para cada parte do projeto:
 
-* [Adicionar o link aqui da documentação da API Backend](https://github.com/SoLanches/API-SoLanches)
+* [Backend](api.md)
 * [Frontend](https://github.com/SoLanches/Frontend-SoLanches)
 
+## Como rodar a aplicação manualmente
 
-
-## Getting started and setting up database
-
-### Backend (API)
-
-Siga os passos abaixo para realizar o download do nosso projeto:
-
+Crie o ambiente virtual
 ```
-$ git clone https://github.com/SoLanches/API-SoLanches.git
-
-$ cd API-SoLanches
+$ python3 -m venv venv
 ```
 
-Instale as dependências:
+Ative o ambiente virtual
+```
+$ source venv/bin/activate
+```
 
+Instale as dependências 
 ```
 $ pip install -r requirements.txt
 ```
 
-### Database
-
-O projeto usa a base de dados MongoDB. Instale-o [aqui](https://www.mongodb.com). Para fazer a integração da base de dados com a aplicação usamos o [PyMongo](https://pymongo.readthedocs.io/en/stable/).
-
-Para instalar o PyMongo digite no terminal:
-
-```
-$ sudo pip install pymongo
-```
-Pronto. Isso é tudo!
-
-
-### Rodando a aplicação
-
-Depois dos passos feito acima, rode a aplicação com o seguinte comando:
-
+Rode a aplicação
 ``` 
 $ python3 -m flask run
 ```
 
+## Como rodar a aplicação automaticamente
 
-## How to install 
-
-Crie um diretório para o projeto:
-
- ```
-$ mkdir meu_programa_flask
- ```
-
-Em seguida, entre no diretório criado:
-
+Utilize o seguinte comando
 ```
-$ cd meu_programa_flask
+$ python3 -m run
 ```
 
-Crie um ambiente virtual para instalar as ferramentas do projeto: 
-
+## Como rodar os teste
 ```
-$ python3 -m venv .venv
-```
-
-Abra o projeto _meu_programa_flask_ no VS Code inserindo o comando: 
-
-```
-$ code .
-```
-
-Ative o ambiente virtual criado na terceira etapa usando o terminal do Bash no VS Code:
-
- ```
-$ source .venv/bin/activate
-```
-
-Se isso funcionou, você deve ver (.venv) antes do prompt de comando.
-
-Instale o Flask no ambiente virtual inserindo:
-
-```
-$ python3 -m pip install flask 
-``` 
-
-Verifique se ele está instalado inserindo: 
-
-```
-$ python3 -m flask --version
-```
-
-Crie um arquivo para o código Python: 
-
-```
-$ touch app.py
-```
-
-Execute o arquivo no terminal do VS Code com o seguinte comando:
-
-```
-$ python3 -m flask run
+$ python3 -m pytest
 ```
 
 ## Tecnologias utilizadas
@@ -116,9 +51,7 @@ $ python3 -m flask run
 - [Python](https://python.org/) - Linguagem de programação
 - [Flask](https://flask.palletsprojects.com/en/2.0.x/) - Framework
 - [MongoDB](https://docs.mongodb.com/) - DataBase
-- [Robo 3T](https://github.com/Studio3T/robomongo) - Interface gráfica facilitadora do MongoDB
 - [PyMongo](https://pymongo.readthedocs.io/en/stable/) - Distribuição Python para trabalhar com o MongoDB
-
 
 ## Keep in Touch
 
