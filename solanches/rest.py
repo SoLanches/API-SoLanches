@@ -131,6 +131,16 @@ def adiciona_destaques(comercio_nome):
     return jsonify(msg), 201
 
 
+@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
+def remove_produto(comercio_nome, produto_id):
+    try:
+        cardapio = controller.remove_produto(comercio_nome, produto_id)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio), 200
+
+
 #TODO: sumirá
 @app.route("/produto/<produto_id>", methods=['GET'])
 def get_produto(produto_id):
