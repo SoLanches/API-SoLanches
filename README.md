@@ -7,6 +7,10 @@
 
 O SoLanches é um sistema web, criado e desenvolvido durante a disciplina de Engenharia de Software do curso de Ciência da Computação na Universidade Federal de Campina Grande, que tem como objetivo exibir todos os comércios do ramo alimentício de cidades pequenas. Neste repositório está presente a API criada para o sistema. O Frontend do sistema e mais detalhes sobre sua documentação podem ser acessados [aqui](https://github.com/SoLanches/Frontend-SoLanches).
 
+## 🗒️ Documentação da API
+
+A documentação com instruções de uso para requisições à API pode ser encontrada [aqui](api.md).
+
 ## ⚙️ Tecnologias utilizadas
 
 - [Python](https://python.org/) - Linguagem de programação
