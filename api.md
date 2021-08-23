@@ -125,7 +125,7 @@ Status: 200 OK
 ]
 ```
 
-## Retorna um comércio por id
+## Retorna comércio por id
 
 Recupera um comércio pelo id. O id é passado na URL e o retorno é um JSON com o comércio recuperado.
 
@@ -260,7 +260,7 @@ Status: 400 BAD REQUEST
 
 ## Adiciona um produto aos destaques do cardápio
 
-Para adicionar um produto aos destaques, a requisição deve enviar no body um JSON com o campo `destaques`, que é obrigatório. Além disso, este mesmo produto já deve está cadastrado no cardápio do comércio.  
+Para adicionar um produto aos destaques, a requisição deve enviar no body um JSON com o campo obrigatório `destaques`, que corresponde à uma lista de ids de produtos. Além disso, os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.
 
 ```
 POST /comercio/<comercio_nome>/destaques
