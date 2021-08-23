@@ -127,7 +127,7 @@ Status: 200 OK
 
 ## Retorna um comércio por id
 
-Recupera um comércio pelo id. O id é passado na URL, não pode ser nulo e deve ser uma string. O retorno é um JSON com o comércio recuperado.
+Recupera um comércio pelo id. O id é passado na URL e o retorno é um JSON com o comércio recuperado.
 
 ```
 GET /comercio?id=
@@ -207,7 +207,7 @@ Status: 200 OK
 
 ## Cadastra produto no cardápio de um comércio
 
-Retorna uma mensagem informando que o produto foi cadastrado. O nome do comércio passado na URL não pode ser nulo e deve ser do tipo string. O produto passado no body possui os campos nome e attributes (este é opcional). O nome do produto deve ser uma string e attributes é do tipo dict.
+Para realizar o cadastrado de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `nome`, que é obrigatório, e o campo `attributes`, que é opcional. O `nome` do produto deve ser uma string e os `attributes` um dict.
 
 ```
 POST /comercio/<comercio_nome>/produto
@@ -249,18 +249,18 @@ curl \
 Resposta
 
 ```
-Status: 404 NOT FOUND
+Status: 400 BAD REQUEST
 ```
 ```
 {
    "message": "Erro: comércio com nome abc_da_xuxa não cadastrado!",
-   "status_code" : 404
+   "status_code" : 400
 }
 ```
 
 ## Adiciona um produto aos destaques do cardápio
 
-Informa que o produto foi adicionado nos destaques. O nome do comércio passado na URL deve ser do tipo string e não pode ser nulo. O destaque passado no body é um dict com apenas um campo chamado _destaques_ que consiste de uma lista com os ID's dos produtos. Para o destaque ser cadastrado com sucesso, o produto deve está cadastrado no cardápio do comércio.
+Para adicionar um produto aos destaques, a requisição deve enviar no body um JSON com o campo `destaques`, que é obrigatório. Além disso, este mesmo produto já deve está cadastrado no cardápio do comércio.  
 
 ```
 POST /comercio/<comercio_nome>/destaques
