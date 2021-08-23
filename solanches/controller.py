@@ -95,7 +95,7 @@ def atualiza_comercio(attributes, comercio_nome):
             atributos[k] = v
 
     comercio_id = comercio.get("_id")
-    Comercio.update_by_nome(comercio_id, atributos)
+    Comercio.update(comercio_id, atributos)
     comercio = Comercio.get_by_name(comercio_nome)
 
     return comercio

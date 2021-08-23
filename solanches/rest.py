@@ -166,8 +166,10 @@ def _error(error):
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 def update_comercio(comercio_nome):
 
-    attributes = request.get_json()  
-    assert attributes, "Erro: json inválido!"
+    req = request.get_json()  
+    assert req, "Erro: json inválido!"
+
+    attributes = req.get("attributes", {})
 
     try:
         controller.atualiza_comercio(attributes, comercio_nome)
