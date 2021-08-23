@@ -1,6 +1,6 @@
 # API SoLanches 
 
-Esta API oferece funcionalidades CRUD de um sistema de comércios do ramo alimentício. 
+API do projeto SoLanches que oferece funcionalidades CRUD de um sistema de comércios do ramo alimentício. 
 
 ## Consulta status do servidor da API
 
@@ -32,7 +32,7 @@ Status: 200 OK
 
 ## Cadastra o comércio
 
-Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos nome, do tipo string, e attributes, do tipo JSON. Ambos campos são obrigatórios. 
+Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos nome, do tipo string, e attributes, do tipo dict, que possui o campo telefone como obrigatório. Ambos os campos, nome e attributes, são obrigatórios. 
 
 ```
 POST /comercio
@@ -94,7 +94,7 @@ Status: 400 BAD REQUEST
 
 ## Lista comércios 
 
-Lista todos comércios cadastrados no banco. A resposta é um JSON com todos os comércios do banco de dados.
+Retorna uma lista com todos os comércios cadastrados no sistema.
 
 ```
 GET  /comercios
@@ -125,11 +125,12 @@ Status: 200 OK
 ]
 ```
 
-## Lista comércio por id
+## Retorna um comércio por id
 
-Busca um comércio pelo id. O id é passado na URL, não pode ser nulo e deve ser uma string. O retorno é um JSON com o comércio recuperado.
+Recupera um comércio pelo id. O id é passado na URL, não pode ser nulo e deve ser uma string. O retorno é um JSON com o comércio recuperado.
+
 ```
-GET /comercio?<id>
+GET /comercio?id=
 ```
 
 Exemplo
@@ -173,9 +174,9 @@ Status: 400 BAD REQUEST
 }
 ```
 
-## Lista comércio por nome
+## Retorna comércio por nome
 
-Retorna um JSON com o comércio de nome equivalente ao que foi passado na URL. O nome do comércio passado não pode ser nulo e deve ser do tipo string.
+Recupera um comércio a partir do nome passado na URL.
 
 ```
 GET /comercio/<comercio_nome>
@@ -204,27 +205,9 @@ Status: 200 OK
 }
 ```
 
-Exemplo
+## Cadastra produto no cardápio de um comércio
 
-```
-curl http://api/comercio/abc_da_xuxa
-```
-
-Resposta
-
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-   "message": "Erro: comércio de nome abc_da_xuxa não cadastrado!",
-   "status_code" : 400
-}
-```
-
-## Cadastra produto no comércio
-
-Retorna um JSON informando que o produto foi cadastrado. O nome do comércio é passado na URL; não pode ser nulo e deve ser do tipo string. Já no body, deve ser passado o produto: um JSON com dois campos: nome e attributes, sendo este último, opcional. Nome deve ser do tipo string e attributes do tipo dict.
+Retorna uma mensagem informando que o produto foi cadastrado. O nome do comércio passado na URL não pode ser nulo e deve ser do tipo string. O produto passado no body possui os campos nome e attributes (este é opcional). O nome do produto deve ser uma string e attributes é do tipo dict.
 
 ```
 POST /comercio/<comercio_nome>/produto
@@ -266,18 +249,18 @@ curl \
 Resposta
 
 ```
-Status: 400 BAD REQUEST
+Status: 404 NOT FOUND
 ```
 ```
 {
    "message": "Erro: comércio com nome abc_da_xuxa não cadastrado!",
-   "status_code" : 400
+   "status_code" : 404
 }
 ```
 
-## Adiciona destaques (produtos) ao cardápio 
+## Adiciona um produto aos destaques do cardápio
 
-Retorna um JSON informando que o produto foi adicionado na lista de destaques. O nome do comércio é passado na URL; não pode ser nulo e deve ser do tipo string. Já no body, deve ser passado o destaque: um JSON com apenas um atributo chamado _destaques_, sendo este uma lista de strings; essas strings são os id's dos produtos. O(s) produto(s) já deve estar cadastrado no cardápio do comércio.
+Informa que o produto foi adicionado nos destaques. O nome do comércio passado na URL deve ser do tipo string e não pode ser nulo. O destaque passado no body é um dict com apenas um campo chamado _destaques_ que consiste de uma lista com os ID's dos produtos. Para o destaque ser cadastrado com sucesso, o produto deve está cadastrado no cardápio do comércio.
 
 ```
 POST /comercio/<comercio_nome>/destaques
@@ -330,7 +313,7 @@ Status: 400 BAD REQUEST
 
 ## Recupera o cardápio de um comércio
 
-Retorna um JSON com os destaques e os produtos, entre outros campos, pertencentes àquele comércio. O nome do comércio passado na URL não pode ser nulo e deve ser uma string.
+Retorna o cardápio de um comércio, com os produtos e os destaques cadastrados.
 
 ```
 GET /comercio/<comercio_nome>/cardapio
@@ -365,18 +348,18 @@ curl http://api/comercio/abc_da_xuxa/cardapio
 Resposta
 
 ```
-Status: TODO
+Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "TODO",
-   "status_code" : TODO
+   "message": "Erro: comércio com nome abc_da_xuxa não cadastrado!",
+   "status_code" : 400
 }
 ```
 
 ## Deleta produto por id
 
-Deleta produto do cardápio de comércio. O nome do comércio e o id do produto, ambos passado na URL, não podem ser nulos e devem ser uma string.
+Deleta produto do cardápio de comércio. O nome do comércio e o id do produto são passados na URL.
 
 ```
 DELETE /comercio/<comercio_nome>/produto/<id_produto>
@@ -391,11 +374,14 @@ curl http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
 Resposta
 
 ```
-Status: 201 CREATED
+Status: 200 OK
 ```
 ```
 {
-    "message": "Produto com o id c3h2foe6di3e1ee6bd3ctb4r removido!
+    "id": "3671361e6d5dc1ee674156beed67b1fd",
+    "created_at": 1628721657.488885,
+    "destaques": [],
+    "produtos": []
 }
 ```
 
@@ -416,8 +402,3 @@ Status: 400 BAD REQUEST
    "status_code" : 400 
 }
 ```
-
-
-
-
-
