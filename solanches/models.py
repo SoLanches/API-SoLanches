@@ -37,7 +37,7 @@ class Comercio:
 
     @staticmethod
     def update(comercio_id, attributes):
-        DB.comercio.update_one({"_id": comercio_id}, {"$set": {"attributes": attributes}})
+        DB.comercio.update_one({"_id": comercio_id}, {"$set": attributes})
         
     @staticmethod
     def get_by_name(name):
@@ -190,7 +190,7 @@ class Produto:
 
     @staticmethod
     def update(produto_id, attributes):
-        DB.produto.update_one({"_id": produto_id}, {"$set": {"attributes": attributes}})
+        DB.produto.update_one({"_id": produto_id}, {"$set": attributes})
 
     @staticmethod
     def get_by_id(id):

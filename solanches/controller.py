@@ -77,7 +77,9 @@ def edita_produto(produto_id, comercio_nome, attributes):
     assert produto_id in Comercio.get_produtos(comercio_nome), "Erro: produto com id não cadastrado!"
     assert attributes and type(attributes) is dict, "Erro: attributes inválidos!"
 
-    Produto.update(produto_id, attributes)
+    set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
+
+    Produto.update(produto_id, set_attributes)
 
     produto = Produto.get_by_id(produto_id)
 
@@ -122,16 +124,11 @@ def get_produtos():
 
 
 def atualiza_comercio(attributes, comercio_nome):
-
     comercio = Comercio.get_by_name(comercio_nome)
-    atributos = comercio.get("attributes")
-
-    for k, v in attributes.items():
-        if(k in atributos):
-            atributos[k] = v
+    set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
 
     comercio_id = comercio.get("_id")
-    Comercio.update(comercio_id, atributos)
+    Comercio.update(comercio_id, set_attributes)
     comercio = Comercio.get_by_name(comercio_nome)
 
     return comercio
