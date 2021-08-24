@@ -204,7 +204,7 @@ def update_comercio(comercio_nome):
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(comercio_atualizado), 201
+    return jsonify(comercio_atualizado), 200
 
 
 @app.errorhandler(Exception)
