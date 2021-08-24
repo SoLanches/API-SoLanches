@@ -193,11 +193,11 @@ def get_produtos():
 
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 def update_comercio(comercio_nome):
-
     req = request.get_json()  
-    assert req, "Erro: json inválido!"
+    _assert(req, 400, "Erro: json inválido!")
 
     attributes = req.get("attributes", {})
+    _assert(type(attributes) is dict, 400, "Erro: campo attributes deve ser do tipo dict")
 
     try:
         comercio_atualizado = controller.atualiza_comercio(attributes, comercio_nome)
