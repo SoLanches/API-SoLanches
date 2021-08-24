@@ -135,7 +135,8 @@ def adiciona_destaques(comercio_nome):
 def remove_comercio(comercio_nome):
     try:
         controller.remove_comercio(comercio_nome)
-        msg = {"message": f"comercio {comercio_nome} removido com sucesso"}
+        result = controller.remove_comercio(comercio_nome)
+        msg = {"message": f"comercio {comercio_nome} removido com sucesso"} if result else {"erro": "não foi possível remover o comércio"}
     except Exception as error:
         _assert(False, 400, str(error))
 
