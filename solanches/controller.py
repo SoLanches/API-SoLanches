@@ -38,8 +38,17 @@ def get_comercio_by_name(comercio_nome):
     return comercio
 
 
+def remove_comercio(comercio_nome):
+    assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio invalido'
+    comercio = Comercio.get_by_name(comercio_nome) 
+    assert comercio, f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    return Comercio.remove_comercio(comercio_nome)
+
+
 def get_cardapio(comercio_nome):
     assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio inválido!'
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} não cadastrado!'
     cardapio = Comercio.get_cardapio(comercio_nome)
     assert cardapio, f'Erro: cardapio não encontrado!'
     return cardapio

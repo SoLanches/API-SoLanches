@@ -48,8 +48,7 @@ class Comercio:
     @staticmethod
     def get_cardapio(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
-        cardapio = Cardapio.get_by_id(comercio.get("cardapio"))
-        return cardapio
+        return Cardapio.get_by_id(comercio.get("cardapio"))
 
     @staticmethod
     def add_produto(produto, nome_comercio):
@@ -79,6 +78,13 @@ class Comercio:
         Cardapio.add_destaques(comercio.get("cardapio"), destaques)
 
     @staticmethod
+    def remove_comercio(comercio_nome):
+        cardapio_id = Comercio.id(comercio_nome)
+        Cardapio.remove_cardapio(cardapio_id)
+        query = {"nome": comercio_nome}
+        comercio_deletado = DB.comercio.delete_one(query)
+        return comercio_deletado.deleted_count
+        
     def remove_produto(comercio_nome, produto_id):
         comercio = Comercio.get_by_name(comercio_nome)
         cardapio_id = comercio.get("cardapio")
@@ -122,6 +128,13 @@ class Cardapio:
         DB.cardapio.update_one(query, new_values)
 
     @staticmethod
+    def remove_cardapio(cardapio_id):
+      produtos = Cardapio.get_produtos(cardapio_id)
+      query = {"_id": cardapio_id}
+      DB.cardapio.remove(query) 
+      Produto.remove_produtos(produtos)
+
+    @staticmethod
     def add_destaques(cardapio_id, destaques):
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
@@ -149,7 +162,7 @@ class Cardapio:
         new_produtos = cardapio.get("produtos")
         new_produtos.remove(produto_id) if produto_id in new_produtos else new_produtos
         new_values = {"$set": {"destaques": new_destaques, "produtos": new_produtos}}
-        db.cardapio.update_one(query, new_values)
+        DB.cardapio.update_one(query, new_values)
         Produto.remove(produto_id)
     
     def to_dict(self):
@@ -186,6 +199,11 @@ class Produto:
         return produto
 
     @staticmethod
+    def remove_produtos(produtos):
+        query = {"_id": { "$in": produtos}}
+        DB.produto.remove(query)
+        
+    @staticmethod
     def get_all():
         produtos = DB.produto.find()
         return list(produtos)
@@ -193,7 +211,7 @@ class Produto:
     @staticmethod
     def remove(produto_id):
         query = {"_id": produto_id}
-        db.produto.remove(query)
+        DB.produto.remove(query)
 
         
     def to_dict(self):
