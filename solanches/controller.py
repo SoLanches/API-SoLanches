@@ -66,6 +66,22 @@ def cadastra_produto(comercio_nome, nome_produto, attributes={}):
     produto_id = Comercio.add_produto(novo_produto, comercio_nome)
     return produto_id
 
+def edita_produto(produto_id, comercio_nome, attributes):
+    assert comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido"
+
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f"Erro: comércio com nome {comercio_nome} não cadastrado"
+
+    assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
+    assert produto_id in Comercio.get_produtos(comercio_nome), "Erro: produto com id não cadastrado!"
+    assert attributes and type(attributes) is dict, "Erro: attributes inválidos!"
+
+    Produto.update(produto_id, attributes)
+
+    produto = Produto.get_by_id(produto_id)
+
+    return produto
+
 
 def adiciona_destaques(destaques, comercio_nome):
     assert destaques, f'Erro: destaques vazio!'
@@ -77,6 +93,17 @@ def adiciona_destaques(destaques, comercio_nome):
     destaques_comercio = Comercio.get_destaques(comercio_nome)
     filtered_destaques = [destaque for destaque in destaques if destaque not in destaques_comercio]
     Comercio.add_destaques(comercio_nome, filtered_destaques)
+
+
+def remove_produto(comercio_nome, produto_id):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    produtos_comercio = Comercio.get_produtos(comercio_nome)
+    assert produto_id in produtos_comercio, f'Erro: produto não faz parte do cardápio do comércio'
+
+    Comercio.remove_produto(comercio_nome, produto_id)
+    cardapio = get_cardapio(comercio_nome)
+    return cardapio
 
 
 #TODO: sumirá

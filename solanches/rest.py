@@ -1,3 +1,4 @@
+from solanches.models import Comercio
 import time
 import logging
 
@@ -113,6 +114,21 @@ def cadastra_produto(comercio_nome):
 
     return jsonify(msg), 201
 
+@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
+def edita_produto(comercio_nome, produto_id):
+
+    req = request.get_json()
+    _assert(req, 400, "Erro: json inválido!")
+    
+    attributes = req.get("attributes") if "attributes" in req else {}
+
+    try:
+        produto = controller.edita_produto(produto_id, comercio_nome, attributes)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produto), 200
+        
  
 @app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
 def adiciona_destaques(comercio_nome):
@@ -141,6 +157,17 @@ def remove_comercio(comercio_nome):
         _assert(False, 400, str(error))
 
     return jsonify(msg), 200
+
+
+@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
+def remove_produto(comercio_nome, produto_id):
+    try:
+        cardapio = controller.remove_produto(comercio_nome, produto_id)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio), 200
+
 
 #TODO: sumirá
 @app.route("/produto/<produto_id>", methods=['GET'])
