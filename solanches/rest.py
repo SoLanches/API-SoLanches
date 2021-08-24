@@ -188,17 +188,7 @@ def get_produtos():
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(produtos), 200 
-
-
-@app.errorhandler(Exception)
-def _error(error):
-    data = {}
-    data["error"]  = error.__class__.__name__
-    data["message"] = str(error)
-    client_errors = ["BadRequest"]
-    data["status_code"] = 400 if data["error"] in client_errors else 500
-    return data, data["status_code"]
+    return jsonify(produtos), 200
 
 
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
@@ -216,3 +206,13 @@ def update_comercio(comercio_nome):
         _assert(False, 400, str(error))
 
     return jsonify(msg), 201
+
+
+@app.errorhandler(Exception)
+def _error(error):
+    data = {}
+    data["error"]  = error.__class__.__name__
+    data["message"] = str(error)
+    client_errors = ["BadRequest"]
+    data["status_code"] = 400 if data["error"] in client_errors else 500
+    return data, data["status_code"]
