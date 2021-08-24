@@ -1,4 +1,5 @@
 import logging
+import json
 
 from . models import Produto, Comercio, Cardapio
 from . import connect2db
@@ -118,3 +119,19 @@ def get_produto(produto_id):
 def get_produtos():
     produtos = Produto.get_all()
     return produtos
+
+
+def atualiza_comercio(attributes, comercio_nome):
+
+    comercio = Comercio.get_by_name(comercio_nome)
+    atributos = comercio.get("attributes")
+
+    for k, v in attributes.items():
+        if(k in atributos):
+            atributos[k] = v
+
+    comercio_id = comercio.get("_id")
+    Comercio.update(comercio_id, atributos)
+    comercio = Comercio.get_by_name(comercio_nome)
+
+    return comercio
