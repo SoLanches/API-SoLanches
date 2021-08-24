@@ -200,12 +200,11 @@ def update_comercio(comercio_nome):
     attributes = req.get("attributes", {})
 
     try:
-        controller.atualiza_comercio(attributes, comercio_nome)
-        msg = {"message": f"comercio atualizado"}
+        comercio_atualizado = controller.atualiza_comercio(attributes, comercio_nome)
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(msg), 201
+    return jsonify(comercio_atualizado), 201
 
 
 @app.errorhandler(Exception)
