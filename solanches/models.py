@@ -94,6 +94,11 @@ class Comercio:
         comercio = vars(self).copy()
         return comercio
 
+    @staticmethod
+    def get_produto_categoria(produto_id):
+        categoria = Cardapio.get_produto_categoria(produto_id)
+        return categoria
+
 
 class Cardapio:
 
@@ -165,6 +170,11 @@ class Cardapio:
         DB.cardapio.update_one(query, new_values)
         Produto.remove(produto_id)
     
+    @staticmethod
+    def get_produto_categoria(produto_id):
+        categoria = Produto.get_categoria(produto_id)
+        return categoria
+
     def to_dict(self):
         cardapio = vars(self).copy()
         return cardapio
@@ -212,8 +222,14 @@ class Produto:
     def remove(produto_id):
         query = {"_id": produto_id}
         DB.produto.remove(query)
+    
+    @staticmethod
+    def get_categoria(produto_id):
+        produto = Produto.get_by_id(produto_id)
+        attributes = produto.get("attributes")
+        categoria = attributes.get("categoria")
+        return str(categoria)
 
-        
     def to_dict(self):
         produto = vars(self).copy()
         return produto

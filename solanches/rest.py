@@ -191,6 +191,18 @@ def get_produtos():
     return jsonify(produtos), 200
 
 
+@app.route("/comercio/<comercio_nome>/produtos", methods=['GET'])
+def get_produtos_categoria(comercio_nome):
+    req = request.args.get('categories')
+    try:
+        produtos = (controller.get_produtos_categoria(comercio_nome) if req == "true"
+        else controller.get_produtos(comercio_nome))
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produtos), 200
+
+
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 def update_comercio(comercio_nome):
     req = request.get_json()  
