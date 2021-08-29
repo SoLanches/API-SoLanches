@@ -27,9 +27,29 @@ def test_cadastra_comercio(client, controller):
     response = client.post(url)
     responseJson = response.json
     assert response.status_code == 200
-    assert responseJson['message'] == f'Erro: Comercio {comercio_nome} cadastrado com sucesso'
+    assert responseJson['message'] == f'Comercio {comercio_nome} cadastrado com sucesso.'
     assert responseJson['status_code'] == 200
     
+
+def test_cadastra_comercio_nome_nulo(client, controller):
+    controller.cadastra_comercio(None, {'telefone': '83999999999'})
+    url = '/comercio'
+    response = client.post(url)
+    responseJson = response.json
+    assert response.status_code == 400
+    assert responseJson['message'] == f'Erro: Comercio com nome nulo nao pode ser cadastrado.'
+    assert responseJson['status_code'] == 400
+
+
+def test_cadastra_comercio_sem_telefone(client, controller):
+    controller.cadastra_comercio(None, {'endereco': 'floriano peixoto'})
+    url = '/comercio'
+    response = client.post(url)
+    responseJson = response.json
+    assert response.status_code == 400
+    assert responseJson['message'] == f'Erro: Comercio nao pode cadastrar sem informar um telefone.'
+    assert responseJson['status_code'] == 400
+
 
 def test_cadastro_comercio_ja_cadastrado(client, controller):
     comercio_nome = 'test_comercio'
@@ -38,5 +58,6 @@ def test_cadastro_comercio_ja_cadastrado(client, controller):
     response = client.post(url)
     responseJson = response.json
     assert response.status_code == 400
-    assert responseJson['message'] == f'Comércio já cadastrado no banco de dados'
+    assert responseJson['message'] == 'Erro: Comércio já cadastrado no banco de dados'
     assert responseJson['status_code'] == 400
+
