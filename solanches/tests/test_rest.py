@@ -19,3 +19,24 @@ def test_status(client):
     assert type(status['service']) is str
     assert status['status'] == 'operacional'
     assert status['service'] == 'api-solanches'
+
+def test_cadastra_comercio(client, controller):
+    comercio_nome = 'test_comercio'
+    controller.cadastra_comercio(comercio_nome, {'telefone': '83999999999'})
+    url = '/comercio'
+    response = client.post(url)
+    responseJson = response.json
+    assert response.status_code == 200
+    assert responseJson['message'] == f'Erro: Comercio {comercio_nome} cadastrado com sucesso'
+    assert responseJson['status_code'] == 200
+    
+
+def test_cadastro_comercio_ja_cadastrado(client, controller):
+    comercio_nome = 'test_comercio'
+    controller.cadastra_comercio(comercio_nome, {'telefone': '66666666666'})
+    url = '/comercio'
+    response = client.post(url)
+    responseJson = response.json
+    assert response.status_code == 400
+    assert responseJson['message'] == f'Comércio já cadastrado no banco de dados'
+    assert responseJson['status_code'] == 400
