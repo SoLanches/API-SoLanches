@@ -1,9 +1,11 @@
 from urllib.parse import urlparse
-
+from dotenv import load_dotenv
+import os
 from . rest import app
 
+load_dotenv()
 
-SERVER_URL = "http://0.0.0.0:5000"
+SERVER_URL = f"{os.getenv('SOLANCHES_SERVER_HOST')}:{os.getenv('SOLANCHES_SERVER_PORT')}"
 
 url = urlparse(SERVER_URL)
 host, port = url.hostname, url.port
