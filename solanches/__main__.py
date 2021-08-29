@@ -10,4 +10,5 @@ SERVER_URL = f"{os.getenv('SOLANCHES_SERVER_HOST')}:{os.getenv('SOLANCHES_SERVER
 url = urlparse(SERVER_URL)
 host, port = url.hostname, url.port
 print(f"Iniciando servidor em: {url.geturl()}")
-app.run(host=host, port=port, debug=True)
+if __name__ == "__main__":
+    app.run(host=host, port=port, debug=True)
