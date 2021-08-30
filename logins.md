@@ -71,7 +71,7 @@ Irá receber o usuário logado e assim, prosseguir com sua execução.
 @app.route('/auth/protected')
 @jwt_required
 def protected(current_user):
-    result = User.get_all()
+    result = current_user.get_nome()
 
     return jsonify(result)
 ```
