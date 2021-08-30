@@ -135,6 +135,9 @@ def atualiza_comercio(attributes, comercio_nome):
 
 
 def get_produtos(comercio_nome):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+
     produtos = Comercio.get_produtos(comercio_nome)
     return produtos
 
