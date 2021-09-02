@@ -46,7 +46,7 @@ $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
-5. Rode a aplicação
+4. Rode a aplicação
 ``` 
 $ python3 -m solanches
 ```
