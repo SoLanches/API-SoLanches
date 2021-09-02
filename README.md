@@ -43,7 +43,10 @@ $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
-4. Rode a aplicação
+4. Crie um arquivo chamado .env para as variáveis de ambiente e coloque as variáveis necessárias para a execução do projeto. Exemplo em:
+[Variáveis de Ambiente](https://github.com/SoLanches/API-SoLanches/blob/feature/variaveis_ambiente/.env.example)
+
+5. Rode a aplicação
 ``` 
 $ python3 -m solanches
 ```
