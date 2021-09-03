@@ -134,11 +134,12 @@ def atualiza_comercio(attributes, comercio_nome):
     return comercio
 
 
-def get_produtos(comercio_nome):
+def get_produtos(comercio_nome, is_categories):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
 
-    produtos = Comercio.get_produtos(comercio_nome)
+    produtos = (Comercio.get_produtos(comercio_nome) if not is_categories
+                    else get_produtos_categoria(comercio_nome))
     return produtos
 
 
@@ -149,7 +150,7 @@ def get_produtos_categoria(comercio_nome):
     result = {}
     produtos = Comercio.get_produtos(comercio_nome)
     for produto in produtos:
-        categoria = Comercio.get_produto_categoria(comercio_nome, produto)
+        categoria = Comercio.get_produto_categoria(produto)
         if result.get(categoria):
             result[categoria] = result.get(categoria) + [produto]
         else:
