@@ -192,7 +192,7 @@ def get_produtos():
 
 #Para nao gerar conflito com a outra rota adicionei o _categoria
 @app.route("/comercio/<comercio_nome>/produtos", methods=['GET'])
-def get_produtos_ctageoria(comercio_nome):
+def get_produtos_categoria(comercio_nome):
     req = request.args.get('categories', "")
     is_categories = req.lower() == "true"
     try:
