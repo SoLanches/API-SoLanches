@@ -152,11 +152,11 @@ def adiciona_destaques(comercio_nome):
 def remove_comercio(comercio_nome):
     try:
         result = controller.remove_comercio(comercio_nome)
-        msg = {"message": f"comercio {comercio_nome} removido com sucesso", 'status_code': 200} if result else {"erro": "não foi possível remover o comércio"}
+        msg = {'message': f'comercio {comercio_nome} removido com sucesso', 'status_code': 200} if result else {"message": f'Erro: comercio com nome {comercio_nome} não cadastrado!', 'status_code': 400}
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(msg), 200
+    return jsonify(msg), msg['status_code']
 
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
