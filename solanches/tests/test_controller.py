@@ -1,11 +1,14 @@
 import pytest
 from unittest import mock
 
-def test_remove_comercio_inexistente(controller):
-    with pytest.raises(Exception) as execinfo:
-        comercio_nome = 'comercio_sem_id'
-        controller.remove_comercio(comercio_nome)
-    assert str(execinfo.value) == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+@mock.patch('solanches.models.Comercio')
+def test_remove_comercio_inexistente(mock_comercio, controller):
+    mock_comercio.side_effect = Exception()
+    try:
+      comercio_nome = 'comercio_sem_id'
+      controller.remove_comercio(comercio_nome)
+    except Exception as e:
+      assert str(e) == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
