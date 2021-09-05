@@ -1,52 +1,76 @@
-from contextlib import nullcontext
-import json
+from solanches.models import Comercio
 import pytest
+from unittest import mock
 
 
-def teste_cadastro_comercio_sucesso(controller):
-    comercio_nome = 'comercio_teste1'
-    attributes = {
-            'telefone': '8388775655',
-            'endereco': 'rua floriano peixoto'
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Cardapio.get_by_id')
+def test_cadastra_comercio(mock_get_by_name, mock_get_by_id, controller):
+    comercio_nome = 'comercio_test1'
+    comercio_attributes = {
+            'telefone': '12234'
     }
-
-    result = controller.cadastra_comercio(comercio_nome, attributes)
-    assert comercio_nome == result[comercio_nome]
-
-
-def teste_cadastro_comercio_nome_nulo(controller):
-    with pytest.raises(Exception) as execinfo:
-        comercio_nome = None
-        attributes = {
-                'telefone': '8388775655',
-                'endereco': 'rua floriano peixoto'
+    result = controller.cadastra_comercio(comercio_nome, comercio_attributes)
+    mock_get_by_id.return_value = {'produtos': []}
+    mock_get_by_name.return_value = {'nome': 'comercio_teste1', 'attributes': {"telefone": "12234"}}
+   
+    expectativa_return = {
+        "nome": "comercio_teste1",
+        "attributes": {
+            "telefone": "123"
         }
-
-        controller.cadastra_comercio(comercio_nome, attributes)
-    assert str(execinfo.value) == 'Comércio com nome nulo não pode ser cadastrado'
-
-
-def teste_cadastro_comercio_sem_telefone(controller):
-    with pytest.raises(Exception) as execinfo:
-        comercio_nome = 'comercio_teste2'
-        attributes = {
-                'endereco': 'rua floriano peixoto'
-        }
-
-        controller.cadastra_comercio(comercio_nome, attributes)
-    assert str(execinfo.value) == 'Erro: Telefone não informado'
+    }
+    
+    assert result == expectativa_return
 
 
-def teste_cadastro_comercio_ja_cadastrado(controller):
-    with pytest.raises(Exception) as execinfo:
-        comercio_nome = 'comercio_teste1'
-        attributes = {
-            'telefone': '8388775655',
+@mock.patch('solanches.models.Comercio')
+def test_cadastra_comercio_sem_nome(mock_comercio, controller):
+    mock_comercio.side_effect = Exception()
+    try:
+      comercio_attributes = {
+            'telefone': '83999999999'
+      }
+      controller.cadastra_comercio(None, comercio_attributes)
+    except Exception as e:
+      assert str(e) == 'Erro: nome inválido!'
+
+
+@mock.patch('solanches.models.Comercio')
+def test_cadastra_comercio_sem_telefone(mock_comercio, controller):
+    mock_comercio.side_effect = Exception()
+    try:
+      comercio_nome = 'comercio_test2'
+      comercio_attributes = {
             'endereco': 'rua floriano peixoto'
-        }
+      }
+      controller.cadastra_comercio(comercio_nome, comercio_attributes)
+    except Exception as e:
+      assert str(e) == "Erro: Telefone não informado"
 
-        controller.cadastra_comercio(comercio_nome, attributes)
 
-    assert str(execinfo.value) == f'Comércio já cadastrado no banco de dados'
+@mock.patch('solanches.models.Comercio')
+def test_cadastra_comercio_aatributos_invalidos(mock_comercio, controller):
+    mock_comercio.side_effect = Exception()
+    try:
+      comercio_nome = 'comercio_test2'
+      comercio_attributes = 'rua floriano peixoto'
+      controller.cadastra_comercio(comercio_nome, comercio_attributes)
+    except Exception as e:
+      assert str(e) == "Erro: campo attributes inválidos!"
 
 
+@mock.patch('solanches.models.Comercio')
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Cardapio.get_by_id')
+def test_cadastra_comercio_ja_cadastrado(mock_comercio, controller):
+    mock_comercio.side_effect = Exception()
+    try:
+      comercio_nome = 'comercio_test2'
+      comercio_attributes = {
+            'endereco': 'rua floriano peixoto'
+      }
+      controller.cadastra_comercio(comercio_nome, comercio_attributes)
+      controller.cadastra_comercio(comercio_nome, comercio_attributes)
+    except Exception as e:
+      assert str(e) == {"error":  "Comércio já cadastrado no banco de dados", "code": 409}
