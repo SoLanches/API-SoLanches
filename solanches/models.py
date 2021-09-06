@@ -227,8 +227,8 @@ class Produto:
     def get_categoria(produto_id):
         produto = Produto.get_by_id(produto_id)
         attributes = produto.get("attributes")
-        categoria = attributes.get("categoria")
-        return str(categoria)
+        categoria = attributes.get("categoria", "")
+        return categoria.strip(" ")
 
     def to_dict(self):
         produto = vars(self).copy()
