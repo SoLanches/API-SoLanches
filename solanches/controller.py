@@ -117,12 +117,6 @@ def get_produto(produto_id):
     return produto
 
 
-#TODO: sumirá
-def get_produtos():
-    produtos = Produto.get_all()
-    return produtos
-
-
 def atualiza_comercio(attributes, comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
@@ -132,3 +126,23 @@ def atualiza_comercio(attributes, comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
 
     return comercio
+
+
+def get_produtos(comercio_nome, has_categories):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+
+    produtos = Comercio.get_produtos(comercio_nome) if not has_categories else _get_produtos_categoria(comercio_nome)
+    return produtos
+
+
+def _get_produtos_categoria(comercio_nome):
+    result = {}
+    produtos = Comercio.get_produtos(comercio_nome)
+    for produto in produtos:
+        categoria = Comercio.get_produto_categoria(produto)
+        if result.get(categoria):
+            result[categoria] = result.get(categoria) + [produto]
+        else:
+            result[categoria] = [produto]
+    return result

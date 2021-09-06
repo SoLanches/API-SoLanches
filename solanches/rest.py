@@ -190,6 +190,18 @@ def get_produtos():
 
     return jsonify(produtos), 200
 
+#Para nao gerar conflito com a outra rota adicionei o _categoria
+@app.route("/comercio/<comercio_nome>/produtos", methods=['GET'])
+def get_produtos_categoria(comercio_nome):
+    categories = request.args.get('categories', "")
+    has_categories = categories.lower() == "true"
+    try:
+        produtos = controller.get_produtos(comercio_nome, has_categories)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produtos), 200
+
 
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 def update_comercio(comercio_nome):
