@@ -1,12 +1,10 @@
-from solanches.models import Comercio
 import time
-import logging
-
 from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import make_response
 from flask import abort
+
 from . import controller
 
 app = Flask(__name__)
@@ -16,6 +14,9 @@ started_at = time.time()
 
 
 def _assert(condition, status_code, message):
+    """
+    high level support for doing this and that.
+    """
     if condition: return
     data = {
         "message": message,
@@ -24,9 +25,11 @@ def _assert(condition, status_code, message):
     response = make_response(jsonify(data), status_code)
     abort(response)
 
-
 @app.route("/status", methods=["GET"])
 def status():
+    """
+    high  again with a fresh virtualenv using python3.6 and it is reporting user as a python module (it is in python2, not python3).level support for doing this and that.
+    """
     status = {
         "status": "operacional",
         "service": "api-solanches",
@@ -38,8 +41,10 @@ def status():
 
 @app.route("/comercio", methods=['POST'])
 def cadastra_comercio():
+    """
+    high level support for doing this and that.
+    """
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     _assert("nome" in req, 400, "Erro: nome não informado!")
     _assert("attributes" in req, 400, "Erro: atributos não informado")
@@ -57,16 +62,21 @@ def cadastra_comercio():
 
 @app.route("/comercios", methods=['GET'])
 def get_comercios():
+    """
+    high level support for doing this and that.
+    """
     try:
         comercios = controller.get_comercios()
     except Exception as error:
         _assert(False, 400, str(error))
-
     return jsonify(comercios), 200 
 
 
 @app.route("/comercio", methods=['GET'])
 def get_comercio():
+    """
+    high level support for doing this and that.
+    """
     comercio_id = request.args.get('id')
     _assert(comercio_id, 400, "Erro: id do comercio não informado!")
     try:
@@ -79,6 +89,9 @@ def get_comercio():
 
 @app.route("/comercio/<comercio_nome>", methods=['GET'])
 def get_comercio_by_name(comercio_nome):
+    """
+    high level support for doing this and that.
+    """
     try:
         comercio = controller.get_comercio_by_name(comercio_nome)
     except Exception as error:
@@ -89,6 +102,9 @@ def get_comercio_by_name(comercio_nome):
 
 @app.route("/comercio/<comercio_nome>/cardapio", methods=['GET'])
 def get_cadapio(comercio_nome):
+    """
+    high level support for doing this and that.
+    """
     try:
         cardapio = controller.get_cardapio(comercio_nome)
     except Exception as error:
@@ -98,8 +114,10 @@ def get_cadapio(comercio_nome):
 
 @app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
 def cadastra_produto(comercio_nome):
+    """
+    high level support for doing this and that.
+    """
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     nome_produto = req.get("nome")
     _assert(nome_produto, 400, "Erro: nome não informado!")
@@ -117,26 +135,27 @@ def cadastra_produto(comercio_nome):
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
 def edita_produto(comercio_nome, produto_id):
-
+    """
+    high level support for doing this and that.
+    """
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
-    
     attributes = req.get("attributes") if "attributes" in req else {}
-
     try:
         produto = controller.edita_produto(produto_id, comercio_nome, attributes)
     except Exception as error:
         _assert(False, 400, str(error))
-
     return jsonify(produto), 200
-        
- 
+
+
 @app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
 def adiciona_destaques(comercio_nome):
+    """
+    high level support for doing this and that.
+    """
     req = request.get_json()
     assert req, "Erro: json inválido!"
     assert "destaques" in req, "Erro: destaques não informados!"
-    
     destaques = req.get("destaques")
 
     try:
@@ -150,6 +169,9 @@ def adiciona_destaques(comercio_nome):
 
 @app.route("/comercio/<comercio_nome>", methods=['DELETE'])
 def remove_comercio(comercio_nome):
+    """
+    high level support for doing this and that.
+    """
     try:
         result = controller.remove_comercio(comercio_nome)
         msg = {"message": f"comercio {comercio_nome} removido com sucesso"} if result else {"erro": "não foi possível remover o comércio"}
@@ -161,6 +183,9 @@ def remove_comercio(comercio_nome):
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
 def remove_produto(comercio_nome, produto_id):
+    """
+    high level support for doing this and that.
+    """
     try:
         cardapio = controller.remove_produto(comercio_nome, produto_id)
     except Exception as error:
@@ -169,9 +194,11 @@ def remove_produto(comercio_nome, produto_id):
     return jsonify(cardapio), 200
 
 
-#TODO: sumirá
 @app.route("/produto/<produto_id>", methods=['GET'])
 def get_produto(produto_id):
+    """
+    high level support for doing this and that.
+    """
     try:
         produto = controller.get_produto(produto_id)
     except Exception as error:
@@ -180,9 +207,12 @@ def get_produto(produto_id):
     return jsonify(produto), 200
 
 
-#TODO: sumirá
+
 @app.route("/produtos", methods=['GET'])
 def get_produtos():
+    """
+    high level support for doing this and that.
+    """
     try:
         produtos = controller.get_produtos()
     except Exception as error:
@@ -193,9 +223,11 @@ def get_produtos():
 
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 def update_comercio(comercio_nome):
-    req = request.get_json()  
+    """
+    high level support for doing this and that.
+    """
+    req = request.get_json()     
     _assert(req, 400, "Erro: json inválido!")
-
     attributes = req.get("attributes", {})
     _assert(type(attributes) is dict, 400, "Erro: campo attributes deve ser do tipo dict")
 
@@ -209,6 +241,9 @@ def update_comercio(comercio_nome):
 
 @app.errorhandler(Exception)
 def _error(error):
+    """
+    high level support for doing this and that.
+    """
     data = {}
     data["error"]  = error.__class__.__name__
     data["message"] = str(error)

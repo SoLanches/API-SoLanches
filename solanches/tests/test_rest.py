@@ -1,5 +1,6 @@
+from solanches.tests.conftest import controller
 import pytest
-
+from unittest import mock
 
 @pytest.fixture
 def client(rest):
@@ -19,3 +20,8 @@ def test_status(client):
     assert type(status['service']) is str
     assert status['status'] == 'operacional'
     assert status['service'] == 'api-solanches'
+
+
+
+
+
