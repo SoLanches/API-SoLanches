@@ -71,7 +71,6 @@ def get_comercios():
         _assert(False, 400, str(error))
     return jsonify(comercios), 200 
 
-
 @app.route("/comercio", methods=['GET'])
 def get_comercio():
     """

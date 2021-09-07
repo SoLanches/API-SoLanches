@@ -161,11 +161,11 @@ class Cardapio:
         return self._id
 
     @staticmethod
-    def get_by_id(id):
+    def get_by_id(id_cardapio):
         """
         high level support for doing this and that.
         """
-        query = {"_id": id}
+        query = {"_id": id_cardapio}
         cardapio = DB.cardapio.find_one(query)
         return cardapio
     @staticmethod
@@ -260,9 +260,8 @@ class Produto:
         high level support for doing this and that.
         """
         id_fields = {"nome": nome, "timestamp": timestamp}
-        t = True
-        serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=t, ensure_ascii=False)
-        return hashlib.sha1(serialized.encode('utf-8')).hexdigest()  
+        serial_arq = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
+        return hashlib.sha1(serial_arq.encode('utf-8')).hexdigest()  
 
     def save(self):
         """
@@ -281,11 +280,11 @@ class Produto:
         DB.produto.update_one({"_id": produto_id}, {"$set": attributes})
 
     @staticmethod
-    def get_by_id(id):
+    def get_by_id(produto_id):
         """
         high level support for doing this and that.
         """
-        query = {"_id": id}
+        query = {"_id": produto_id}
         produto = DB.produto.find_one(query)
         return produto
 
