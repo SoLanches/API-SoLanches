@@ -1,1 +1,1 @@
-web: gunicorn solanches.rest:app
+web: python -m solanches
