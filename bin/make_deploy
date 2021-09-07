@@ -1,0 +1,6 @@
+#!/bin/bash
+
+heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
+git push heroku master
+
+exit

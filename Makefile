@@ -35,3 +35,6 @@ $(TESTS-REQS-INSTALLED): tests-requirements.txt
 	$(PIP) install --upgrade pip
 	$(PIP) install --requirement tests-requirements.txt
 	touch $(TESTS-REQS-INSTALLED)
+
+deploy:
+	./bin/make_deploy
