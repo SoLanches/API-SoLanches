@@ -42,7 +42,7 @@ def status():
 @app.route("/comercio", methods=['POST'])
 def cadastra_comercio():
     """
-    high level support for doing this and that.
+    high level about trade register
     """
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
@@ -63,7 +63,7 @@ def cadastra_comercio():
 @app.route("/comercios", methods=['GET'])
 def get_comercios():
     """
-    high level support for doing this and that.
+    high level about return all trades
     """
     try:
         comercios = controller.get_comercios()
@@ -74,7 +74,7 @@ def get_comercios():
 @app.route("/comercio", methods=['GET'])
 def get_comercio():
     """
-    high level support for doing this and that.
+    high level about return a trade
     """
     comercio_id = request.args.get('id')
     _assert(comercio_id, 400, "Erro: id do comercio não informado!")
@@ -89,7 +89,7 @@ def get_comercio():
 @app.route("/comercio/<comercio_nome>", methods=['GET'])
 def get_comercio_by_name(comercio_nome):
     """
-    high level support for doing this and that.
+    high level about return a trade from a name
     """
     try:
         comercio = controller.get_comercio_by_name(comercio_nome)
@@ -102,7 +102,7 @@ def get_comercio_by_name(comercio_nome):
 @app.route("/comercio/<comercio_nome>/cardapio", methods=['GET'])
 def get_cadapio(comercio_nome):
     """
-    high level support for doing this and that.
+    high level about return a menu
     """
     try:
         cardapio = controller.get_cardapio(comercio_nome)
@@ -114,7 +114,7 @@ def get_cadapio(comercio_nome):
 @app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
 def cadastra_produto(comercio_nome):
     """
-    high level support for doing this and that.
+     high level about menu register
     """
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
@@ -135,7 +135,7 @@ def cadastra_produto(comercio_nome):
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
 def edita_produto(comercio_nome, produto_id):
     """
-    high level support for doing this and that.
+    high level about product update
     """
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
@@ -150,7 +150,7 @@ def edita_produto(comercio_nome, produto_id):
 @app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
 def adiciona_destaques(comercio_nome):
     """
-    high level support for doing this and that.
+    add highlights to trade
     """
     req = request.get_json()
     assert req, "Erro: json inválido!"
@@ -169,7 +169,7 @@ def adiciona_destaques(comercio_nome):
 @app.route("/comercio/<comercio_nome>", methods=['DELETE'])
 def remove_comercio(comercio_nome):
     """
-    high level support for doing this and that.
+    high level about remove trade 
     """
     try:
         result = controller.remove_comercio(comercio_nome)
@@ -183,7 +183,7 @@ def remove_comercio(comercio_nome):
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
 def remove_produto(comercio_nome, produto_id):
     """
-    high level support for doing this and that.
+    high level about remove product
     """
     try:
         cardapio = controller.remove_produto(comercio_nome, produto_id)
@@ -196,7 +196,7 @@ def remove_produto(comercio_nome, produto_id):
 @app.route("/produto/<produto_id>", methods=['GET'])
 def get_produto(produto_id):
     """
-    high level support for doing this and that.
+    high level about return a product
     """
     try:
         produto = controller.get_produto(produto_id)
@@ -210,7 +210,7 @@ def get_produto(produto_id):
 @app.route("/produtos", methods=['GET'])
 def get_produtos():
     """
-    high level support for doing this and that.
+    high level about return all products
     """
     try:
         produtos = controller.get_produtos()
@@ -223,7 +223,7 @@ def get_produtos():
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 def update_comercio(comercio_nome):
     """
-    high level support for doing this and that.
+    high level about trade update.
     """
     req = request.get_json()     
     _assert(req, 400, "Erro: json inválido!")
@@ -241,7 +241,7 @@ def update_comercio(comercio_nome):
 @app.errorhandler(Exception)
 def _error(error):
     """
-    high level support for doing this and that.
+    high level support about error
     """
     data = {}
     data["error"]  = error.__class__.__name__

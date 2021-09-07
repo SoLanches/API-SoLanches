@@ -6,7 +6,7 @@ from . import connect2db
 
 def cadastra_comercio(nome, attributes):
     """
-    high level support for doing this and that.
+    high level support for trade register
     """
     assert nome and type(nome) is str, "Erro: nome inválido!"
     assert attributes and type(attributes) is dict, "Erro: campo attributes inválidos!"
@@ -24,14 +24,14 @@ def cadastra_comercio(nome, attributes):
 
 def get_comercios():
     """
-    high level support for doing this and that.
+    high level support for return all trades
     """
     return Comercio.get_all()
 
 
 def get_comercio(comercio_id):
     """
-    high level support for doing this and that.
+    high level support for return a trade
     """
     assert comercio_id and type(comercio_id) is str, f'Erro: comercio com id {comercio_id} inválido!'
     comercio = Comercio.get_by_id(comercio_id)
@@ -41,7 +41,7 @@ def get_comercio(comercio_id):
 
 def get_comercio_by_name(comercio_nome):
     """
-    high level support for doing this and that.
+    high level support for return a trade from name
     """
     assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
     comercio = Comercio.get_by_name(comercio_nome)
@@ -50,7 +50,7 @@ def get_comercio_by_name(comercio_nome):
 
 def remove_comercio(comercio_nome):
     """
-    high level support for doing this and that.
+    high level support for remove a trade
     """
     assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio invalido'
     comercio = Comercio.get_by_name(comercio_nome) 
@@ -60,7 +60,7 @@ def remove_comercio(comercio_nome):
 
 def get_cardapio(comercio_nome):
     """
-    high level support for doing this and that.
+    high level support for return a trade
     """
     assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
     comercio = Comercio.get_by_name(comercio_nome)
@@ -72,7 +72,7 @@ def get_cardapio(comercio_nome):
 
 def cadastra_produto(comercio_nome, nome_produto, attributes):
     """
-    high level support for doing this and that.
+    high level support for product register
     """
     assert nome_produto and type(nome_produto) is str, "Erro: nome inválido!"
     if attributes:
@@ -87,7 +87,7 @@ def cadastra_produto(comercio_nome, nome_produto, attributes):
 
 def edita_produto(produto_id, comercio_nome, attributes):
     """
-    high level support for doing this and that.
+    high level support for product update
     """
     assert comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido"
 
@@ -109,7 +109,7 @@ def edita_produto(produto_id, comercio_nome, attributes):
 
 def adiciona_destaques(destaques, comercio_nome):
     """
-    high level support for doing this and that.
+    high level support for add hightlights
     """
     assert destaques, 'Erro: destaques vazio!'
     comercio = Comercio.get_by_name(comercio_nome)
@@ -124,7 +124,7 @@ def adiciona_destaques(destaques, comercio_nome):
 
 def remove_produto(comercio_nome, produto_id):
     """
-    high level support for doing this and that.
+    high level support for remove product
     """
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
@@ -139,7 +139,7 @@ def remove_produto(comercio_nome, produto_id):
 
 def get_produto(produto_id):
     """
-    high level support for doing this and that.
+    high level support for return a product
     """
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
     produto = Produto.get_by_id(produto_id)
@@ -150,7 +150,7 @@ def get_produto(produto_id):
 
 def get_produtos():
     """
-    high level support for doing this and that.
+    high level support for return all products
     """
     produtos = Produto.get_all()
     return produtos
@@ -158,7 +158,7 @@ def get_produtos():
 
 def atualiza_comercio(attributes, comercio_nome):
     """
-    high level support for doing this and that.
+    high level support for update trade
     """
     comercio = Comercio.get_by_name(comercio_nome)
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
