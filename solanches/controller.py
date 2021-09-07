@@ -1,7 +1,6 @@
 import logging
-import json
 
-from . models import Produto, Comercio, Cardapio
+from . models import Produto, Comercio
 from . import connect2db
 
 
@@ -39,6 +38,16 @@ def get_comercio_by_name(comercio_nome):
     return comercio
 
 
+def atualiza_comercio(attributes, comercio_nome):
+    comercio = Comercio.get_by_name(comercio_nome)
+    set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
+
+    comercio_id = comercio.get("_id")
+    Comercio.update(comercio_id, set_attributes)
+    comercio = Comercio.get_by_name(comercio_nome)
+    return comercio
+
+
 def remove_comercio(comercio_nome):
     assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio invalido'
     comercio = Comercio.get_by_name(comercio_nome) 
@@ -66,6 +75,22 @@ def cadastra_produto(comercio_nome, nome_produto, attributes={}):
     novo_produto = Produto(nome_produto, attributes)
     produto_id = Comercio.add_produto(novo_produto, comercio_nome)
     return produto_id
+
+
+#TODO: será adaptado
+def get_produto(produto_id):
+    assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
+    produto = Produto.get_by_id(produto_id)
+    assert produto, "Erro: produto com id não cadastrado!"
+    return produto
+
+
+def get_produtos(comercio_nome, has_categories):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    produtos = Comercio.get_produtos(comercio_nome) if not has_categories else _get_produtos_categoria(comercio_nome)
+    return produtos
+
 
 def edita_produto(produto_id, comercio_nome, attributes):
     assert comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido"
@@ -107,33 +132,6 @@ def remove_produto(comercio_nome, produto_id):
     Comercio.remove_produto(comercio_nome, produto_id)
     cardapio = get_cardapio(comercio_nome)
     return cardapio
-
-
-#TODO: sumirá
-def get_produto(produto_id):
-    assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
-    produto = Produto.get_by_id(produto_id)
-    assert produto, "Erro: produto com id não cadastrado!"
-    return produto
-
-
-def atualiza_comercio(attributes, comercio_nome):
-    comercio = Comercio.get_by_name(comercio_nome)
-    set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
-
-    comercio_id = comercio.get("_id")
-    Comercio.update(comercio_id, set_attributes)
-    comercio = Comercio.get_by_name(comercio_nome)
-
-    return comercio
-
-
-def get_produtos(comercio_nome, has_categories):
-    comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
-
-    produtos = Comercio.get_produtos(comercio_nome) if not has_categories else _get_produtos_categoria(comercio_nome)
-    return produtos
 
 
 def _get_produtos_categoria(comercio_nome):

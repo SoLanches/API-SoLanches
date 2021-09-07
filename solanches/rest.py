@@ -1,16 +1,14 @@
-from solanches.models import Comercio
 import time
-import logging
 
 from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import make_response
 from flask import abort
+
 from . import controller
 
 app = Flask(__name__)
-
 
 started_at = time.time()
 
@@ -62,7 +60,7 @@ def get_comercios():
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(comercios), 200 
+    return jsonify(comercios), 200
 
 
 @app.route("/comercio", methods=['GET'])
@@ -85,6 +83,33 @@ def get_comercio_by_name(comercio_nome):
         _assert(False, 400, str(error))
 
     return jsonify(comercio), 200
+
+
+@app.route("/comercio/<comercio_nome>", methods=['PATCH'])
+def edita_comercio(comercio_nome):
+    req = request.get_json()  
+    _assert(req, 400, "Erro: json inválido!")
+
+    attributes = req.get("attributes", {})
+    _assert(type(attributes) is dict, 400, "Erro: campo attributes deve ser do tipo dict")
+
+    try:
+        comercio_atualizado = controller.atualiza_comercio(attributes, comercio_nome)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(comercio_atualizado), 200
+
+
+@app.route("/comercio/<comercio_nome>", methods=['DELETE'])
+def remove_comercio(comercio_nome):
+    try:
+        result = controller.remove_comercio(comercio_nome)
+        msg = {"message": f"comercio {comercio_nome} removido com sucesso"} if result else {"erro": "não foi possível remover o comércio"}
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(msg), 200
 
 
 @app.route("/comercio/<comercio_nome>/cardapio", methods=['GET'])
@@ -115,9 +140,31 @@ def cadastra_produto(comercio_nome):
     return jsonify(msg), 201
 
 
+#TODO: será adaptado
+@app.route("/produto/<produto_id>", methods=['GET'])
+def get_produto(produto_id):
+    try:
+        produto = controller.get_produto(produto_id)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produto), 200
+
+
+@app.route("/comercio/<comercio_nome>/produtos", methods=['GET'])
+def get_produtos(comercio_nome):
+    categories = request.args.get("categories", "")
+    has_categories = categories.lower() == "true"
+    try:
+        produtos = controller.get_produtos(comercio_nome, has_categories)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produtos), 200
+
+
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
 def edita_produto(comercio_nome, produto_id):
-
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
     
@@ -148,75 +195,13 @@ def adiciona_destaques(comercio_nome):
     return jsonify(msg), 201
 
 
-@app.route("/comercio/<comercio_nome>", methods=['DELETE'])
-def remove_comercio(comercio_nome):
-    try:
-        result = controller.remove_comercio(comercio_nome)
-        msg = {"message": f"comercio {comercio_nome} removido com sucesso"} if result else {"erro": "não foi possível remover o comércio"}
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(msg), 200
-
-
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
 def remove_produto(comercio_nome, produto_id):
     try:
         cardapio = controller.remove_produto(comercio_nome, produto_id)
     except Exception as error:
         _assert(False, 400, str(error))
-
     return jsonify(cardapio), 200
-
-
-#TODO: sumirá
-@app.route("/produto/<produto_id>", methods=['GET'])
-def get_produto(produto_id):
-    try:
-        produto = controller.get_produto(produto_id)
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(produto), 200
-
-
-#TODO: sumirá
-@app.route("/produtos", methods=['GET'])
-def get_produtos():
-    try:
-        produtos = controller.get_produtos()
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(produtos), 200
-
-#Para nao gerar conflito com a outra rota adicionei o _categoria
-@app.route("/comercio/<comercio_nome>/produtos", methods=['GET'])
-def get_produtos_categoria(comercio_nome):
-    categories = request.args.get('categories', "")
-    has_categories = categories.lower() == "true"
-    try:
-        produtos = controller.get_produtos(comercio_nome, has_categories)
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(produtos), 200
-
-
-@app.route("/comercio/<comercio_nome>", methods=['PATCH'])
-def update_comercio(comercio_nome):
-    req = request.get_json()  
-    _assert(req, 400, "Erro: json inválido!")
-
-    attributes = req.get("attributes", {})
-    _assert(type(attributes) is dict, 400, "Erro: campo attributes deve ser do tipo dict")
-
-    try:
-        comercio_atualizado = controller.atualiza_comercio(attributes, comercio_nome)
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(comercio_atualizado), 200
 
 
 @app.errorhandler(Exception)
