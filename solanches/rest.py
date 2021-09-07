@@ -160,7 +160,7 @@ def adiciona_destaques(comercio_nome):
 
     try:
         controller.adiciona_destaques(destaques, comercio_nome)
-        msg = {"message": f"destaques adicionados"}
+        msg = {"message": "destaques adicionados"}
     except Exception as error:
         _assert(False, 400, str(error))
 
