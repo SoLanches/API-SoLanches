@@ -1,12 +1,10 @@
-import pymongo
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+import pymongo
 
-DB_HOST = os.getenv("SOLANCHES_DB_HOST")
-DB_PORT = int(os.getenv("SOLANCHES_DB_PORT"))
 
-MONGO_CLIENT = pymongo.MongoClient(DB_HOST, DB_PORT)
+SOLANCHES_DB_URI = os.getenv("SOLANCHES_DB_URI")
+
+MONGO_CLIENT = pymongo.MongoClient(SOLANCHES_DB_URI)
 
 DB = MONGO_CLIENT.SolanchesDB
