@@ -27,11 +27,11 @@ def get_comercios(has_categories):
     
 
 def _get_comercios_categoria():
-    comercios = Comercio.get_all()
     result = {}
+    comercios = Comercio.get_all()
     for comercio in comercios:
         categoria = Comercio.get_categoria(comercio.get("nome"))
-        result[categoria] = result.get(categoria) + [comercio] if result.get(categoria) else [comercio]
+        result.setdefault(categoria, []).append(comercio)
     return result
 
 
