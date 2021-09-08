@@ -281,11 +281,11 @@ Status: 200 OK
 [
     {
         "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
-        "nome" : "coxinha de frango",
         "attributes" : {
             "categoria" : "coxinha"
         },
-        "created_at" : 1630631958.37054
+        "created_at" : 1630631958.37054,
+        "nome" : "coxinha de frango"
     }
 ]
 ```
@@ -306,11 +306,11 @@ Status: 200 OK
     "coxinha": [
         {
             "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
-            "nome" : "coxinha de frango",
             "attributes" : {
                 "categoria" : "coxinha"
             },
-            "created_at" : 1630631958.37054
+            "created_at" : 1630631958.37054, 
+            "nome" : "coxinha de frango"
         }
     ]
 }
