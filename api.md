@@ -97,7 +97,7 @@ Status: 400 BAD REQUEST
 Retorna uma lista com todos os comércios cadastrados no sistema, podendo ser agrupados por categoria.
 
 ```
-GET  /comercios?categories=true
+GET  /comercios?categories=
 ```
 
 Exemplo
