@@ -94,16 +94,16 @@ Status: 400 BAD REQUEST
 
 ## Lista comércios 
 
-Retorna uma lista com todos os comércios cadastrados no sistema.
+Retorna uma lista com todos os comércios cadastrados no sistema, podendo ser agrupados por categoria.
 
 ```
-GET  /comercios
+GET  /comercios?categories=true
 ```
 
 Exemplo
 
 ```
-curl http://api/comercios
+curl http://api/comercios?categories=false
 ```
 
 Resposta
@@ -116,13 +116,42 @@ Status: 200 OK
     {
         "id": "3671361e6d5dc1ee674156beed67b1fd",
         "attributes": {
-             "telefone": "123456"
+            "categoria": "lanchonete",
+            "telefone": "123456"
         },
         "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
         "created_at": 1628721657.488885,
         "nome": "lanche_feliz"
     }
 ]
+```
+
+Exemplo
+
+```
+curl http://api/comercios?categories=true
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "lanchonete": [
+        {
+            "id": "3671361e6d5dc1ee674156beed67b1fd",
+            "attributes": {
+                "categoria": "lanchonete",
+                "telefone": "123456"
+            },
+            "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
+            "created_at": 1628721657.488885,
+            "nome": "lanche_feliz"
+        }
+    ]
+}
 ```
 
 ## Retorna comércio por id
