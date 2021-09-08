@@ -260,16 +260,16 @@ Status: 400 BAD REQUEST
 
 ## Lista produtos de um comercio
 
-Retorna todos os produtos cadastrados no comercio, podendo ser agrupador por categoria.
+Retorna uma lista com todos os produtos cadastrados no comércio, sendo também possível o retorno de um dicionário com o agrupamento dos produtos por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de produtos.
 
 ```
-GET  /comercio/lanche_feliz/produtos?categories=
+GET  /comercio/<nome_comercio>/produtos?categories=
 ```
 
 Exemplo
 
 ```
-curl http://api/comercio/lanche_feliz/produtos?categories=false
+curl http://api/comercio/lanche_feliz/produtos
 ```
 
 Resposta
