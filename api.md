@@ -287,6 +287,68 @@ Status: 400 BAD REQUEST
 }
 ```
 
+## Edita produto no cardápio de um comércio
+
+Para realizar a edição de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `attributes` contendo as informações para atualização. O `attributes` do produto deve ser um dict. O nome do comércio e o id do produto são passados na URL.
+
+```
+PATCH /comercio/<comercio_nome>/produto/<produto_id>
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "attributes": {
+                "categoria": "salgado"
+            }
+        }' \
+    -H "Content-Type: application/json" \
+    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+    "attributes": {
+        "categoria": "salgado",
+    },
+    "created_at": 1631106735.893032,
+    "nome": "produto"
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "attributes": {
+                "categoria": "salgado"
+            }
+        }' \
+    -H "Content-Type: application/json" \
+    -X PATCH http://api/comercio/lanche_feliz/produto/68519638f502cb9a39801d5499c
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: produto com id não cadastrado!",
+    "status_code": 400
+}
+```
+
 ## Adiciona um produto aos destaques do cardápio
 
 Para adicionar um produto aos destaques, a requisição deve enviar no body um JSON com o campo obrigatório `destaques`, que corresponde à uma lista de ids de produtos. Além disso, os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.
