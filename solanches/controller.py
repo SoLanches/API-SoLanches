@@ -77,11 +77,16 @@ def cadastra_produto(comercio_nome, nome_produto, attributes={}):
     return produto_id
 
 
-#TODO: será adaptado
-def get_produto(produto_id):
+def get_produto(comercio_nome, produto_id):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comércio com nome {comercio_nome} não cadastrado'
+
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
     produto = Produto.get_by_id(produto_id)
     assert produto, "Erro: produto com id não cadastrado!"
+
+    assert produto_id in Comercio.get_produtos(comercio_nome), "Erro: produto não faz parte do comércio!"
+
     return produto
 
 
