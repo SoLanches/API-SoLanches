@@ -94,7 +94,7 @@ Status: 400 BAD REQUEST
 
 ## Lista comércios 
 
-Retorna uma lista com todos os comércios cadastrados no sistema, podendo ser agrupados por categoria.
+Retorna uma lista com todos os comércios cadastrados no sistema, sendo também possível o retorno de um dicionário com o agrupamento dos comércios por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de comércios.
 
 ```
 GET  /comercios?categories=
@@ -103,7 +103,7 @@ GET  /comercios?categories=
 Exemplo
 
 ```
-curl http://api/comercios?categories=false
+curl http://api/comercios
 ```
 
 Resposta
