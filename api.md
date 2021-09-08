@@ -287,6 +287,64 @@ Status: 400 BAD REQUEST
 }
 ```
 
+## Lista produtos de um comercio
+
+Retorna uma lista com todos os produtos cadastrados no comércio, sendo também possível o retorno de um dicionário com o agrupamento dos produtos por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de produtos.
+
+```
+GET  /comercio/<nome_comercio>/produtos?categories=
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produtos
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+[
+    {
+        "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
+        "attributes" : {
+            "categoria" : "coxinha"
+        },
+        "created_at" : 1630631958.37054,
+        "nome" : "coxinha de frango"
+    }
+]
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produtos?categories=true
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "coxinha": [
+        {
+            "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
+            "attributes" : {
+                "categoria" : "coxinha"
+            },
+            "created_at" : 1630631958.37054, 
+            "nome" : "coxinha de frango"
+        }
+    ]
+}
+```
+
 ## Edita produto no cardápio de um comércio
 
 Para realizar a edição de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `attributes` contendo as informações para atualização. O `attributes` do produto deve ser um dict. O nome do comércio e o id do produto são passados na URL.
@@ -346,64 +404,6 @@ Status: 400 BAD REQUEST
 {
     "message": "Erro: produto com id não cadastrado!",
     "status_code": 400
-}
-```
-
-## Lista produtos de um comercio
-
-Retorna uma lista com todos os produtos cadastrados no comércio, sendo também possível o retorno de um dicionário com o agrupamento dos produtos por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de produtos.
-
-```
-GET  /comercio/<nome_comercio>/produtos?categories=
-```
-
-Exemplo
-
-```
-curl http://api/comercio/lanche_feliz/produtos
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-[
-    {
-        "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
-        "attributes" : {
-            "categoria" : "coxinha"
-        },
-        "created_at" : 1630631958.37054,
-        "nome" : "coxinha de frango"
-    }
-]
-```
-
-Exemplo
-
-```
-curl http://api/comercio/lanche_feliz/produtos?categories=true
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-{
-    "coxinha": [
-        {
-            "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
-            "attributes" : {
-                "categoria" : "coxinha"
-            },
-            "created_at" : 1630631958.37054, 
-            "nome" : "coxinha de frango"
-        }
-    ]
 }
 ```
 

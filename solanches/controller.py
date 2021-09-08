@@ -8,7 +8,6 @@ def cadastra_comercio(nome, attributes):
     assert nome and type(nome) is str, "Erro: nome inválido!"
     assert attributes and type(attributes) is dict, "Erro: campo attributes inválidos!"
     assert "telefone" in attributes, "Erro: Telefone não informado"
-    
     try:
         novo_comercio = Comercio(nome, attributes)
         novo_comercio.save()
@@ -43,7 +42,7 @@ def get_comercio(comercio_id):
 
 
 def get_comercio_by_name(comercio_nome):
-    assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio inválido!'
+    assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     return comercio
@@ -60,22 +59,22 @@ def atualiza_comercio(attributes, comercio_nome):
 
 
 def remove_comercio(comercio_nome):
-    assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio invalido'
+    assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio invalido'
     comercio = Comercio.get_by_name(comercio_nome) 
     assert comercio, f'Erro: comercio com nome {comercio_nome} não cadastrado!'
     return Comercio.remove_comercio(comercio_nome)
 
 
 def get_cardapio(comercio_nome):
-    assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio inválido!'
+    assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} não cadastrado!'
     cardapio = Comercio.get_cardapio(comercio_nome)
-    assert cardapio, f'Erro: cardapio não encontrado!'
+    assert cardapio, 'Erro: cardapio não encontrado!'
     return cardapio
 
 
-def cadastra_produto(comercio_nome, nome_produto, attributes={}):
+def cadastra_produto(comercio_nome, nome_produto, attributes):
     assert nome_produto and type(nome_produto) is str, "Erro: nome inválido!"
     if attributes:
         assert type(attributes) is dict, "Erro: campo attributes inválidos!"
@@ -110,7 +109,7 @@ def edita_produto(produto_id, comercio_nome, attributes):
     assert comercio, f"Erro: comércio com nome {comercio_nome} não cadastrado"
 
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
-    assert produto_id in Comercio.get_produtos(comercio_nome), "Erro: produto com id não cadastrado!"
+    assert Comercio.get_produto(produto_id), "Erro: produto com id não cadastrado!"
     assert attributes and type(attributes) is dict, "Erro: attributes inválidos!"
 
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
@@ -118,16 +117,15 @@ def edita_produto(produto_id, comercio_nome, attributes):
     Produto.update(produto_id, set_attributes)
 
     produto = Produto.get_by_id(produto_id)
-
     return produto
 
 
 def adiciona_destaques(destaques, comercio_nome):
-    assert destaques, f'Erro: destaques vazio!'
+    assert destaques, 'Erro: destaques vazio!'
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     produtos_comercio = Comercio.get_produtos(comercio_nome)
-    assert all(produto in produtos_comercio for produto in destaques), f'Erro: produto precisa fazer parte do cardápio do comércio'
+    assert all(produto in produtos_comercio for produto in destaques), 'Erro: produto precisa fazer parte do cardápio do comércio'
 
     destaques_comercio = Comercio.get_destaques(comercio_nome)
     filtered_destaques = [destaque for destaque in destaques if destaque not in destaques_comercio]
@@ -138,7 +136,7 @@ def remove_produto(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     produtos_comercio = Comercio.get_produtos(comercio_nome)
-    assert produto_id in produtos_comercio, f'Erro: produto não faz parte do cardápio do comércio'
+    assert produto_id in produtos_comercio, 'Erro: produto não faz parte do cardápio do comércio'
 
     Comercio.remove_produto(comercio_nome, produto_id)
     cardapio = get_cardapio(comercio_nome)
@@ -149,9 +147,6 @@ def _get_produtos_categoria(comercio_nome):
     result = {}
     produtos = Comercio.get_produtos(comercio_nome)
     for produto in produtos:
-        categoria = Comercio.get_produto_categoria(produto)
-        if result.get(categoria):
-            result[categoria] = result.get(categoria) + [produto]
-        else:
-            result[categoria] = [produto]
+        categoria = Comercio.get_produto_categoria(produto.get("_id"))
+        result.setdefault(categoria, []).append(produto)
     return result

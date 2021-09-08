@@ -22,7 +22,6 @@ def _assert(condition, status_code, message):
     response = make_response(jsonify(data), status_code)
     abort(response)
 
-
 @app.route("/status", methods=["GET"])
 def status():
     status = {
@@ -37,7 +36,6 @@ def status():
 @app.route("/comercio", methods=['POST'])
 def cadastra_comercio():
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     _assert("nome" in req, 400, "Erro: nome não informado!")
     _assert("attributes" in req, 400, "Erro: atributos não informado")
@@ -61,8 +59,7 @@ def get_comercios():
         comercios = controller.get_comercios(has_categories)
     except Exception as error:
         _assert(False, 400, str(error))
-
-    return jsonify(comercios), 200
+    return jsonify(comercios), 200 
 
 
 @app.route("/comercio", methods=['GET'])
@@ -126,7 +123,6 @@ def get_cadapio(comercio_nome):
 @app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
 def cadastra_produto(comercio_nome):
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     nome_produto = req.get("nome")
     _assert(nome_produto, 400, "Erro: nome não informado!")
@@ -169,28 +165,24 @@ def get_produtos(comercio_nome):
 def edita_produto(comercio_nome, produto_id):
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
-    
     attributes = req.get("attributes") if "attributes" in req else {}
-
     try:
         produto = controller.edita_produto(produto_id, comercio_nome, attributes)
     except Exception as error:
         _assert(False, 400, str(error))
-
     return jsonify(produto), 200
-        
- 
+
+
 @app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
 def adiciona_destaques(comercio_nome):
     req = request.get_json()
     assert req, "Erro: json inválido!"
     assert "destaques" in req, "Erro: destaques não informados!"
-    
     destaques = req.get("destaques")
 
     try:
         controller.adiciona_destaques(destaques, comercio_nome)
-        msg = {"message": f"destaques adicionados"}
+        msg = {"message": "destaques adicionados"}
     except Exception as error:
         _assert(False, 400, str(error))
 
