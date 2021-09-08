@@ -59,6 +59,11 @@ class Comercio:
         return produto_id
 
     @staticmethod
+    def get_produto(produto_id):
+        produto = Cardapio.get_produto(produto_id)
+        return produto
+
+    @staticmethod
     def get_produtos(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
         cardapio_id = comercio.get("cardapio")
@@ -147,6 +152,11 @@ class Cardapio:
         new_destaques += destaques if type(destaques) is list else [destaques]
         new_values = {"$set": {"destaques": new_destaques}}
         DB.cardapio.update_one(query, new_values)
+
+    @staticmethod
+    def get_produto(produto_id):
+        produto = Produto.get_by_id(produto_id)
+        return produto
 
     @staticmethod
     def get_produtos(cardapio_id):
