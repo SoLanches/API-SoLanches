@@ -136,9 +136,6 @@ def _get_produtos_categoria(comercio_nome):
     result = {}
     produtos = Comercio.get_produtos(comercio_nome)
     for produto in produtos:
-        categoria = Comercio.get_produto_categoria(produto)
-        if result.get(categoria):
-            result[categoria] = result.get(categoria) + [produto]
-        else:
-            result[categoria] = [produto]
+        categoria = Comercio.get_produto_categoria(produto.get("_id"))
+        result.setdefault(categoria, []).append(produto)
     return result

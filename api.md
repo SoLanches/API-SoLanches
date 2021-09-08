@@ -258,6 +258,64 @@ Status: 400 BAD REQUEST
 }
 ```
 
+## Lista produtos de um comercio
+
+Retorna uma lista com todos os produtos cadastrados no comércio, sendo também possível o retorno de um dicionário com o agrupamento dos produtos por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de produtos.
+
+```
+GET  /comercio/<nome_comercio>/produtos?categories=
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produtos
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+[
+    {
+        "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
+        "attributes" : {
+            "categoria" : "coxinha"
+        },
+        "created_at" : 1630631958.37054,
+        "nome" : "coxinha de frango"
+    }
+]
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produtos?categories=true
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "coxinha": [
+        {
+            "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
+            "attributes" : {
+                "categoria" : "coxinha"
+            },
+            "created_at" : 1630631958.37054, 
+            "nome" : "coxinha de frango"
+        }
+    ]
+}
+```
+
 ## Adiciona um produto aos destaques do cardápio
 
 Para adicionar um produto aos destaques, a requisição deve enviar no body um JSON com o campo obrigatório `destaques`, que corresponde à uma lista de ids de produtos. Além disso, os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.

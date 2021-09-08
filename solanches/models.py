@@ -151,7 +151,8 @@ class Cardapio:
     @staticmethod
     def get_produtos(cardapio_id):
         cardapio = Cardapio.get_by_id(cardapio_id)
-        return cardapio.get("produtos")
+        produtos = [Produto.get_by_id(produto) for produto in cardapio.get("produtos")]
+        return produtos
 
     @staticmethod
     def get_destaques(cardapio_id):
