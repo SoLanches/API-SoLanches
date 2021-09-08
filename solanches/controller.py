@@ -137,5 +137,5 @@ def _get_produtos_categoria(comercio_nome):
     produtos = Comercio.get_produtos(comercio_nome)
     for produto in produtos:
         categoria = Comercio.get_produto_categoria(produto)
-        result[categoria] = result.get(categoria) + [produto] if result.get(categoria) else [produto]
+        result.setdefault(categoria, []).append(produto)
     return result
