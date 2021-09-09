@@ -215,3 +215,13 @@ def _error(error):
     client_errors = ["BadRequest"]
     data["status_code"] = 400 if data["error"] in client_errors else 500
     return data, data["status_code"]
+    
+
+@app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['DELETE'])
+def remove_produto_destaques(comercio_nome, produto_id):
+    try:
+        cardapio = controller.remove_produto_destaques(comercio_nome, produto_id)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio), 200

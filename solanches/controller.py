@@ -132,3 +132,14 @@ def atualiza_comercio(attributes, comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
 
     return comercio
+
+
+def remove_produto(comercio_nome, produto_id):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    produtos_comercio = Comercio.get_destaques(comercio_nome)
+    assert produto_id in produtos_comercio, f'Erro: produto não faz parte dos destaques do cardápio do comércio relacionado'
+
+    Comercio.remove_produto(comercio_nome, produto_id)
+    cardapio = get_cardapio(comercio_nome)
+    return cardapio
