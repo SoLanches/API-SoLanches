@@ -8,6 +8,7 @@ def cadastra_comercio(nome, attributes):
     assert nome and type(nome) is str, "Erro: nome inválido!"
     assert attributes and type(attributes) is dict, "Erro: campo attributes inválidos!"
     assert "telefone" in attributes, "Erro: Telefone não informado"
+    assert "password" in attributes, "Erro: Senha não informada!"
     try:
         novo_comercio = Comercio(nome, attributes)
         novo_comercio.save()
@@ -139,3 +140,10 @@ def _get_produtos_categoria(comercio_nome):
         categoria = Comercio.get_produto_categoria(produto.get("_id"))
         result.setdefault(categoria, []).append(produto)
     return result
+
+def get_by_credentials(comercio_nome, password):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    assert Comercio.verify_password(comercio_nome, password), "Erro! Senha incorreta"
+
+    return comercio

@@ -89,6 +89,12 @@ class Comercio:
         query = {"nome": comercio_nome}
         comercio_deletado = DB.comercio.delete_one(query)
         return comercio_deletado.deleted_count
+    
+    @staticmethod
+    def verify_password(comercio_nome, password):
+        comercio = Comercio.get_by_name(comercio_nome)
+
+        return comercio.get("attributes").get('password') == password ## TO-DO DESCRIPTOGRAFAR
 
     def remove_produto(comercio_nome, produto_id):
         comercio = Comercio.get_by_name(comercio_nome)

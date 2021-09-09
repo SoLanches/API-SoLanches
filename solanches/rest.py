@@ -1,4 +1,7 @@
 import time
+import datetime
+from flask.globals import current_app
+import jwt
 
 from flask import Flask
 from flask import jsonify
@@ -7,9 +10,10 @@ from flask import make_response
 from flask import abort
 
 from . import controller
+from functools import wraps
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'secret'
 started_at = time.time()
 
 
@@ -22,6 +26,27 @@ def _assert(condition, status_code, message):
     response = make_response(jsonify(data), status_code)
     abort(response)
 
+def jwt_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        token = None
+
+        if 'authorization' in request.headers:
+            token = request.headers['authorization']
+
+        _assert(token != None, 403, "Error: Você não tem permissão para acessar essa rota.")
+        _assert("Bearer" in token, 401, "Error: Token inválido.")
+
+        try:
+            token_pure = token.replace("Bearer ", "")
+            decoded = jwt.decode(token_pure, current_app.config['SECRET_KEY'])
+            current_user = controller.get_comercio(decoded['id'])
+        except:
+            jsonify({"Error": "Token é inválido."}), 403    
+        
+        return f(current_user=current_user, *args, **kwargs)
+
+    return wrapper
 
 @app.after_request
 def after_request(response):
@@ -92,8 +117,9 @@ def get_comercio_by_name(comercio_nome):
     return jsonify(comercio), 200
 
 
-@app.route("/comercio/<comercio_nome>", methods=['PATCH'])
-def edita_comercio(comercio_nome):
+@app.route("/comercio", methods=['PATCH'])
+@jwt_required
+def edita_comercio(current_user):
     req = request.get_json()  
     _assert(req, 400, "Erro: json inválido!")
 
@@ -101,7 +127,7 @@ def edita_comercio(comercio_nome):
     _assert(type(attributes) is dict, 400, "Erro: campo attributes deve ser do tipo dict")
 
     try:
-        comercio_atualizado = controller.atualiza_comercio(attributes, comercio_nome)
+        comercio_atualizado = controller.atualiza_comercio(attributes, current_user.get("nome"))
     except Exception as error:
         _assert(False, 400, str(error))
 
@@ -214,3 +240,29 @@ def _error(error):
     client_errors = ["BadRequest"]
     data["status_code"] = 400 if data["error"] in client_errors else 500
     return data, data["status_code"]
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    req = request.get_json()
+    
+    _assert(req, 400, "Erro: json inválido!")
+    _assert("nome" in req, 400, "Erro: nome não informado!")
+    _assert("password" in req, 400, "Erro: senha não informada")
+
+    nome = req.get('nome')
+    password = req.get('password')
+
+    try:
+        comercio = controller.get_by_credentials(nome, password)
+    except Exception as error:
+        _assert(False, 403, str(error))
+
+    payload = {
+        'id': comercio.get("_id"),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+    }
+
+    token = "Bearer " + jwt.encode(payload, app.config['SECRET_KEY'])
+
+    return jsonify({'token': token})
