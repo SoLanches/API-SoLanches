@@ -134,7 +134,7 @@ def atualiza_comercio(attributes, comercio_nome):
     return comercio
 
 
-def remove_produto(comercio_nome, produto_id):
+def remove_produto_destaques(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     produtos_comercio = Comercio.get_destaques(comercio_nome)
