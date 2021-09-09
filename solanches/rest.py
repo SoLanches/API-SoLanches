@@ -44,7 +44,7 @@ def jwt_required(f):
         except:
             jsonify({"Error": "Token é inválido."}), 403    
         
-        return f(current_user=current_user, *args, **kwargs)
+        return f(*args, **kwargs)
 
     return wrapper
 
@@ -117,9 +117,9 @@ def get_comercio_by_name(comercio_nome):
     return jsonify(comercio), 200
 
 
-@app.route("/comercio", methods=['PATCH'])
+@app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 @jwt_required
-def edita_comercio(current_user):
+def edita_comercio(comercio_nome):
     req = request.get_json()  
     _assert(req, 400, "Erro: json inválido!")
 
@@ -127,7 +127,7 @@ def edita_comercio(current_user):
     _assert(type(attributes) is dict, 400, "Erro: campo attributes deve ser do tipo dict")
 
     try:
-        comercio_atualizado = controller.atualiza_comercio(attributes, current_user.get("nome"))
+        comercio_atualizado = controller.atualiza_comercio(attributes, comercio_nome)
     except Exception as error:
         _assert(False, 400, str(error))
 
