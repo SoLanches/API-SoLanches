@@ -22,6 +22,16 @@ def _assert(condition, status_code, message):
     response = make_response(jsonify(data), status_code)
     abort(response)
 
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
+    return response
+
+
 @app.route("/status", methods=["GET"])
 def status():
     status = {
