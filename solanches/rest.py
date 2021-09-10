@@ -10,6 +10,7 @@ import jwt
 
 from . import controller
 from .authenticate import jwt_required
+from .models import BlockList
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -219,7 +220,8 @@ def _error(error):
     data["status_code"] = 400 if data["error"] in client_errors else 500
     return data, data["status_code"]
 
-@app.route("/login", methods=["GET", "POST"])
+
+@app.route("/login", methods=["POST"])
 def login():
 
     req = request.get_json()
@@ -244,3 +246,19 @@ def login():
     token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm="HS256")
 
     return jsonify({'token': token})
+
+
+@app.route("/logout", methods=["DELETE"])
+@jwt_required
+def logout(current_user):
+    token = None
+
+    if 'authorization' in request.headers:
+        token = request.headers['authorization']
+
+    _assert(token != None, 403, "Error: Você não está logado.")
+
+    block_token = BlockList(token)
+    block_token.save()
+
+    return jsonify({"msg": "Access token revoked"}), 200

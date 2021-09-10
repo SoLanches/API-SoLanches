@@ -250,3 +250,21 @@ class Produto:
     def to_dict(self):
         produto = vars(self).copy()
         return produto
+
+
+class BlockList:
+
+    def __init__(self, token):
+        self.token = token
+    
+    def save(self):
+        self._id = self.token
+        DB.block_list.insert_one(vars(self))
+        return self._id
+
+    @staticmethod
+    def contains(token):
+        query = {"_id": token}
+        token_get = DB.block_list.find_one(query)
+
+        return token_get != None
