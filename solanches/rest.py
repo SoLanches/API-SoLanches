@@ -1,16 +1,15 @@
 import time
 import datetime
-from flask.globals import current_app
-import jwt
 
 from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import make_response
 from flask import abort
+import jwt
 
 from . import controller
-from functools import wraps
+from .authenticate import jwt_required
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -26,27 +25,6 @@ def _assert(condition, status_code, message):
     response = make_response(jsonify(data), status_code)
     abort(response)
 
-def jwt_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        token = None
-
-        if 'authorization' in request.headers:
-            token = request.headers['authorization']
-
-        _assert(token != None, 403, "Error: Você não tem permissão para acessar essa rota.")
-        _assert("Bearer" in token, 401, "Error: Token inválido.")
-
-        try:
-            token_pure = token.replace("Bearer ", "")
-            decoded = jwt.decode(token_pure, current_app.config['SECRET_KEY'])
-            current_user = controller.get_comercio(decoded['id'])
-        except:
-            jsonify({"Error": "Token é inválido."}), 403    
-        
-        return f(*args, **kwargs)
-
-    return wrapper
 
 @app.after_request
 def after_request(response):
@@ -118,7 +96,7 @@ def get_comercio_by_name(comercio_nome):
 
 
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
-@jwt_required
+#@jwt_required
 def edita_comercio(comercio_nome):
     req = request.get_json()  
     _assert(req, 400, "Erro: json inválido!")
@@ -263,6 +241,6 @@ def login():
         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
     }
 
-    token = "Bearer " + jwt.encode(payload, app.config['SECRET_KEY'])
+    token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm="HS256")
 
     return jsonify({'token': token})

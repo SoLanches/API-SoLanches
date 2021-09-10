@@ -9,6 +9,7 @@ def cadastra_comercio(nome, attributes):
     assert attributes and type(attributes) is dict, "Erro: campo attributes inválidos!"
     assert "telefone" in attributes, "Erro: Telefone não informado"
     assert "password" in attributes, "Erro: Senha não informada!"
+    
     try:
         novo_comercio = Comercio(nome, attributes)
         novo_comercio.save()
