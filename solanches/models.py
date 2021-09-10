@@ -1,3 +1,4 @@
+from datetime import datetime
 import hashlib
 import time
 import json
@@ -255,10 +256,10 @@ class Produto:
 class BlockList:
 
     def __init__(self, token):
-        self.token = token
+        self._id = token
     
     def save(self):
-        self._id = self.token
+        self.date = datetime.utcnow()
         DB.block_list.insert_one(vars(self))
         return self._id
 
