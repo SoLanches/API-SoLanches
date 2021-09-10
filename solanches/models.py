@@ -29,12 +29,18 @@ class Comercio:
     def get_by_id(id):
         query = {"_id": id}
         comercio = DB.comercio.find_one(query)
+        if "password" in comercio.get("attributes"):
+            comercio.get("attributes").pop("password")        
         return comercio
 
     @staticmethod
     def get_all():
         comercios = DB.comercio.find()
-        return list(comercios)
+        comercios = list(comercios)
+        for comercio in comercios:
+            if "password" in comercio.get("attributes"):
+                comercio.get("attributes").pop("password")
+        return comercios
 
     @staticmethod
     def update(comercio_id, attributes):
@@ -44,6 +50,8 @@ class Comercio:
     def get_by_name(name):
         query = {"nome": name}
         comercio = DB.comercio.find_one(query)
+        if "password" in comercio.get("attributes"):
+            comercio.get("attributes").pop("password")
         return comercio
 
     @staticmethod
