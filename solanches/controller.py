@@ -21,8 +21,18 @@ def cadastra_comercio(nome, attributes):
     return result
 
 
-def get_comercios():
-    return Comercio.get_all()
+def get_comercios(has_categories):
+    comercios = _get_comercios_categoria() if has_categories else Comercio.get_all()
+    return comercios
+    
+
+def _get_comercios_categoria():
+    result = {}
+    comercios = Comercio.get_all()
+    for comercio in comercios:
+        categoria = Comercio.get_categoria(comercio.get("nome"))
+        result.setdefault(categoria, []).append(comercio)
+    return result
 
 
 def get_comercio(comercio_id):
