@@ -16,7 +16,7 @@ class Comercio:
         id_fields = {"nome": nome}
         serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
         return hashlib.sha1(serialized.encode('utf-8')).hexdigest()
-    
+
     def save(self):
         self.created_at = time.time()
         self._id = Comercio.id(self.nome)
@@ -38,7 +38,7 @@ class Comercio:
     @staticmethod
     def update(comercio_id, attributes):
         DB.comercio.update_one({"_id": comercio_id}, {"$set": attributes})
-        
+
     @staticmethod
     def get_by_name(name):
         query = {"nome": name}
@@ -57,14 +57,19 @@ class Comercio:
         comercio_id = comercio.get("_id")
         Cardapio.add_produtos(comercio_id, produto_id)
         return produto_id
-    
+
+    @staticmethod
+    def get_produto(produto_id):
+        produto = Cardapio.get_produto(produto_id)
+        return produto
+
     @staticmethod
     def get_produtos(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
         cardapio_id = comercio.get("cardapio")
         produtos = Cardapio.get_produtos(cardapio_id)
         return produtos
-    
+
     @staticmethod
     def get_destaques(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
@@ -84,15 +89,27 @@ class Comercio:
         query = {"nome": comercio_nome}
         comercio_deletado = DB.comercio.delete_one(query)
         return comercio_deletado.deleted_count
-        
+
     def remove_produto(comercio_nome, produto_id):
         comercio = Comercio.get_by_name(comercio_nome)
         cardapio_id = comercio.get("cardapio")
         Cardapio.remove_produto(cardapio_id, produto_id)
 
+    @staticmethod
+    def get_categoria(comercio_nome):
+        comercio = Comercio.get_by_name(comercio_nome)
+        attributes = comercio.get("attributes")
+        categoria = attributes.get("categoria", "")
+        return categoria.strip(" ")
+
     def to_dict(self):
         comercio = vars(self).copy()
         return comercio
+
+    @staticmethod
+    def get_produto_categoria(produto_id):
+        categoria = Cardapio.get_produto_categoria(produto_id)
+        return categoria
 
 
 class Cardapio:
@@ -108,11 +125,11 @@ class Cardapio:
         return self._id
 
     @staticmethod
-    def get_by_id(id):
-        query = {"_id": id}
+    def get_by_id(id_cardapio):
+        query = {"_id": id_cardapio}
         cardapio = DB.cardapio.find_one(query)
         return cardapio
-    
+
     @staticmethod
     def get_all():
         cardapios = DB.cardapio.find()
@@ -129,10 +146,10 @@ class Cardapio:
 
     @staticmethod
     def remove_cardapio(cardapio_id):
-      produtos = Cardapio.get_produtos(cardapio_id)
-      query = {"_id": cardapio_id}
-      DB.cardapio.remove(query) 
-      Produto.remove_produtos(produtos)
+        produtos = Cardapio.get_produtos(cardapio_id)
+        query = {"_id": cardapio_id}
+        DB.cardapio.remove(query) 
+        Produto.remove_produtos(produtos)
 
     @staticmethod
     def add_destaques(cardapio_id, destaques):
@@ -141,13 +158,19 @@ class Cardapio:
         new_destaques = cardapio.get("destaques")
         new_destaques += destaques if type(destaques) is list else [destaques]
         new_values = {"$set": {"destaques": new_destaques}}
-        DB.cardapio.update_one(query, new_values)  
-  
+        DB.cardapio.update_one(query, new_values)
+
+    @staticmethod
+    def get_produto(produto_id):
+        produto = Produto.get_by_id(produto_id)
+        return produto
+
     @staticmethod
     def get_produtos(cardapio_id):
         cardapio = Cardapio.get_by_id(cardapio_id)
-        return cardapio.get("produtos")
-    
+        produtos = [Produto.get_by_id(produto) for produto in cardapio.get("produtos")]
+        return produtos
+
     @staticmethod
     def get_destaques(cardapio_id):
         cardapio = Cardapio.get_by_id(cardapio_id)
@@ -165,6 +188,11 @@ class Cardapio:
         DB.cardapio.update_one(query, new_values)
         Produto.remove(produto_id)
     
+    @staticmethod
+    def get_produto_categoria(produto_id):
+        categoria = Produto.get_categoria(produto_id)
+        return categoria
+
     def to_dict(self):
         cardapio = vars(self).copy()
         return cardapio
@@ -175,12 +203,12 @@ class Produto:
     def __init__(self, nome, attributes={}):
         self.nome = nome
         self.attributes = attributes
-    
+
     @staticmethod
     def id(nome, timestamp):
         id_fields = {"nome": nome, "timestamp": timestamp}
-        serialized = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
-        return hashlib.sha1(serialized.encode('utf-8')).hexdigest()  
+        serial_arq = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
+        return hashlib.sha1(serial_arq.encode('utf-8')).hexdigest()  
 
     def save(self):
         self.created_at = time.time()
@@ -193,16 +221,16 @@ class Produto:
         DB.produto.update_one({"_id": produto_id}, {"$set": attributes})
 
     @staticmethod
-    def get_by_id(id):
-        query = {"_id": id}
+    def get_by_id(produto_id):
+        query = {"_id": produto_id}
         produto = DB.produto.find_one(query)
         return produto
 
     @staticmethod
     def remove_produtos(produtos):
         query = {"_id": { "$in": produtos}}
-        DB.produto.remove(query)
-        
+        DB.produto.remove(query) 
+  
     @staticmethod
     def get_all():
         produtos = DB.produto.find()
@@ -212,8 +240,14 @@ class Produto:
     def remove(produto_id):
         query = {"_id": produto_id}
         DB.produto.remove(query)
+    
+    @staticmethod
+    def get_categoria(produto_id):
+        produto = Produto.get_by_id(produto_id)
+        attributes = produto.get("attributes")
+        categoria = attributes.get("categoria", "")
+        return categoria.strip(" ")
 
-        
     def to_dict(self):
         produto = vars(self).copy()
         return produto
