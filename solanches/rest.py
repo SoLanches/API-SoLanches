@@ -63,8 +63,10 @@ def cadastra_comercio():
 
 @app.route("/comercios", methods=['GET'])
 def get_comercios():
+    categories = request.args.get("categories", "")
+    has_categories = categories.lower() == "true"
     try:
-        comercios = controller.get_comercios()
+        comercios = controller.get_comercios(has_categories)
     except Exception as error:
         _assert(False, 400, str(error))
     return jsonify(comercios), 200 
