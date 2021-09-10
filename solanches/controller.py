@@ -20,8 +20,7 @@ def cadastra_comercio(nome, attributes):
 
 
 def get_comercios(has_categories):
-    comercios = Comercio.get_all()
-    comercios = _get_comercios_categoria() if has_categories else comercios
+    comercios = _get_comercios_categoria() if has_categories else Comercio.get_all()
     return comercios
     
 
