@@ -169,6 +169,16 @@ def get_produtos(comercio_nome):
     return jsonify(produtos), 200
 
 
+@app.route("/comercio/<comercio_nome>/produtos/ids", methods=['GET'])
+def get_produtos_ids(comercio_nome):
+    try:
+        produtos = controller.get_produtos_ids(comercio_nome)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produtos), 200
+
+
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
 def edita_produto(comercio_nome, produto_id):
     req = request.get_json()

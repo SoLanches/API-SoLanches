@@ -91,6 +91,13 @@ def get_produtos(comercio_nome, has_categories):
     return produtos
 
 
+def get_produtos_ids(comercio_nome):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    produtos = Comercio.get_produtos_ids(comercio_nome)
+    return produtos
+
+
 def edita_produto(produto_id, comercio_nome, attributes):
     assert comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido"
 
