@@ -113,7 +113,7 @@ def adiciona_destaques(destaques, comercio_nome):
     assert destaques, 'Erro: destaques vazio!'
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
-    produtos_comercio = Comercio.get_produtos(comercio_nome)
+    produtos_comercio = Comercio.get_produtos_ids(comercio_nome)
     assert all(produto in produtos_comercio for produto in destaques), 'Erro: produto precisa fazer parte do cardápio do comércio'
 
     destaques_comercio = Comercio.get_destaques(comercio_nome)
