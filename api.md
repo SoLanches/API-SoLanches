@@ -316,6 +316,33 @@ Status: 200 OK
 }
 ```
 
+## Lista ids dos produtos de um comercio
+
+Retorna uma lista com todos os ids dos produtos cadastrados no comércio.
+
+```
+GET  /comercio/<nome_comercio>/produtos/ids
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produtos/ids
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+[
+    "3d3f5f603fe10d0dc519e6fc94e4df04928cf3df",
+    "3752b85753550e2a5a691efdbbb406df97474903",
+    "9ef383839b477c683b0f58d74fbb6fa4db56628e"
+]
+```
+
 ## Adiciona um produto aos destaques do cardápio
 
 Para adicionar um produto aos destaques, a requisição deve enviar no body um JSON com o campo obrigatório `destaques`, que corresponde à uma lista de ids de produtos. Além disso, os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.
