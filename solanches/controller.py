@@ -117,11 +117,11 @@ def edita_produto(produto_id, comercio_nome, attributes, nome):
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
     assert produto_id in Comercio.get_produtos_ids(comercio_nome), "Erro: produto precisa fazer parte do cardápio do comércio"
     assert Comercio.get_produto(comercio_nome, produto_id), "Erro: produto com id não cadastrado!"
-    assert attributes and type(attributes) is dict, "Erro: attributes inválidos!"
+    assert type(attributes) is dict, "Erro: attributes inválidos!"
     assert type(nome) is str, "Erro: nome inválido!"
 
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
-    set_nome = {f'nome': nome if nome else Comercio.get_produto(produto_id).get("nome")}
+    set_nome = {f'nome': nome if nome else Comercio.get_produto(comercio_nome, produto_id).get("nome")}
 
     Comercio.update_produto(produto_id, set_attributes, set_nome)
     produto = Comercio.get_produto(comercio_nome, produto_id)

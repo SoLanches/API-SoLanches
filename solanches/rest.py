@@ -185,8 +185,8 @@ def get_produtos_ids(comercio_nome):
 def edita_produto(comercio_nome, produto_id):
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
-    attributes = req.get("attributes")
-    nome = req.get("nome")
+    attributes = req.get("attributes") if "attributes" in req else {}
+    nome = req.get("nome") if "nome" in req else ""
     try:
         produto = controller.edita_produto(produto_id, comercio_nome, attributes, nome)
     except Exception as error:
