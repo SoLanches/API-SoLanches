@@ -1,5 +1,5 @@
 from unittest import mock
-
+from pymongo.errors import DuplicateKeyError
 import pytest
 
 
@@ -47,29 +47,21 @@ def test_cadastra_comercio_sem_telefone(controller):
     assert str(exinfo.value) == "Erro: Telefone não informado"
 
 
-@mock.patch('solanches.models.Comercio')
-def test_cadastra_comercio_atributos_invalidos(mock_comercio, controller):
-    mock_comercio.side_effect = Exception()
-    try:
-      comercio_nome = 'comercio_test2'
-      comercio_attributes = 'rua floriano peixoto'
+def test_cadastra_comercio_atributos_invalidos(controller):
+    comercio_nome = 'comercio_test4'
+    comercio_attributes = 2
+    with pytest.raises(AssertionError) as exinfo:
       controller.cadastra_comercio(comercio_nome, comercio_attributes)
-    except Exception as e:
-      assert str(e) == "Erro: campo attributes inválidos!"
+    assert str(exinfo.value) == "Erro: campo attributes inválidos!"
 
 
-@pytest.mark.skip(reason="TODO")
-@mock.patch('solanches.models.Comercio')
-@mock.patch('solanches.models.Comercio.get_by_name')
-@mock.patch('solanches.models.Cardapio.get_by_id')
-def test_cadastra_comercio_ja_cadastrado(mock_comercio, controller):
-    mock_comercio.side_effect = Exception()
-    try:
-      comercio_nome = 'comercio_test2'
-      comercio_attributes = {
-            'endereco': 'rua floriano peixoto'
-      }
+def test_cadastra_comercio_ja_cadastrado(controller):
+    comercio_nome = 'comercio_test'
+    comercio_attributes = {
+          'endereco': 'rua floriano peixoto'
+    }
+    controller.cadastra_comercio(comercio_nome, comercio_attributes)
+    with pytest.raises(DuplicateKeyError) as exinfo:
       controller.cadastra_comercio(comercio_nome, comercio_attributes)
-      controller.cadastra_comercio(comercio_nome, comercio_attributes)
-    except Exception as e:
-      assert str(e) == {"error":  "Comércio já cadastrado no banco de dados", "code": 409}
+    assert dict(exinfo.value) == {"error":  "Comércio já cadastrado no banco de dados", "code": 409}
+
