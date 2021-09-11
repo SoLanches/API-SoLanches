@@ -1,8 +1,5 @@
 Flask==1.1.2
 pytest==5.4.3
-<<<<<<< HEAD
 pylint==2.10.2
-=======
->>>>>>> f5200b0f0b662481df1ec212a07fe605d949bee8
 pymongo[srv]==3.12.0
 gunicorn==20.1.0
