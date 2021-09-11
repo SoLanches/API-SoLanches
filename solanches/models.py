@@ -102,19 +102,16 @@ class Comercio:
         cardapio_id = comercio.get("cardapio")
         Cardapio.remove_produto(cardapio_id, produto_id)
 
-<<<<<<< HEAD
     def remove_produto_destaques(comercio_nome, produto_id):
         comercio = Comercio.get_by_name(comercio_nome)
         cardapio_id = comercio.get("cardapio")
         Cardapio.remove_produto_destaques(cardapio_id, produto_id)
-=======
     @staticmethod
     def get_categoria(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
         attributes = comercio.get("attributes")
         categoria = attributes.get("categoria", "")
         return categoria.strip(" ")
->>>>>>> 5b977401c220ba8a09af809e129170f4382126bb
 
     def to_dict(self):
         comercio = vars(self).copy()

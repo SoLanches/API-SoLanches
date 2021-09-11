@@ -149,32 +149,6 @@ def remove_produto(comercio_nome, produto_id):
     return cardapio
 
 
-<<<<<<< HEAD
-#TODO: sumirá
-def get_produto(produto_id):
-    assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
-    produto = Produto.get_by_id(produto_id)
-    assert produto, "Erro: produto com id não cadastrado!"
-    return produto
-
-
-#TODO: sumirá
-def get_produtos():
-    produtos = Produto.get_all()
-    return produtos
-
-
-def atualiza_comercio(attributes, comercio_nome):
-    comercio = Comercio.get_by_name(comercio_nome)
-    set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
-
-    comercio_id = comercio.get("_id")
-    Comercio.update(comercio_id, set_attributes)
-    comercio = Comercio.get_by_name(comercio_nome)
-
-    return comercio
-
-
 def remove_produto_destaques(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
@@ -184,7 +158,8 @@ def remove_produto_destaques(comercio_nome, produto_id):
     Comercio.remove_produto_destaques(comercio_nome, produto_id)
     cardapio = get_cardapio(comercio_nome)
     return cardapio
-=======
+
+    
 def _get_produtos_categoria(comercio_nome):
     result = {}
     produtos = Comercio.get_produtos(comercio_nome)
@@ -192,4 +167,3 @@ def _get_produtos_categoria(comercio_nome):
         categoria = Comercio.get_produto_categoria(produto.get("_id"))
         result.setdefault(categoria, []).append(produto)
     return result
->>>>>>> 5b977401c220ba8a09af809e129170f4382126bb
