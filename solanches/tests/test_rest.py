@@ -73,4 +73,18 @@ def test_cadastra_comercio_com_json_invalido(client):
     assert response_json['message'] == "Erro: json inválido!"
 
 
-#TODO: Exception no controller
+@mock.patch('solanches.rest.controller.cadastra_comercio')
+def test_cadastra_comercio_exception_controller(mock_cadastra_comercio, client):
+    exception_msg = "uma exceção ocorreu"
+    mock_cadastra_comercio.side_effect = Exception(exception_msg)
+    comercio = {
+        "nome": "comercio_teste1",
+        "attributes": {
+            "telefone": "123"
+        }
+    }
+    url = '/comercio'
+    response = client.post(url, json=comercio)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == exception_msg
