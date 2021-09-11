@@ -442,7 +442,7 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: produto não faz parte dos destaques do cardápio do comércio relacionado",
+   "message": "Erro: produto não faz parte dos destaques do cardápio no comércio relacionado",
    "status_code" : 400 
 }
 ```
