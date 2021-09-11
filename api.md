@@ -345,6 +345,33 @@ Status: 200 OK
 }
 ```
 
+## Lista ids dos produtos de um comercio
+
+Retorna uma lista com todos os ids dos produtos cadastrados no comércio.
+
+```
+GET  /comercio/<nome_comercio>/produtos/ids
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produtos/ids
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+[
+    "3d3f5f603fe10d0dc519e6fc94e4df04928cf3df",
+    "3752b85753550e2a5a691efdbbb406df97474903",
+    "9ef383839b477c683b0f58d74fbb6fa4db56628e"
+]
+```
+
 ## Edita produto no cardápio de um comércio
 
 Para realizar a edição de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `attributes` contendo as informações para atualização. O `attributes` do produto deve ser um dict. O nome do comércio e o id do produto são passados na URL.

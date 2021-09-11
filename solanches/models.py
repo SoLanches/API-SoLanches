@@ -71,6 +71,13 @@ class Comercio:
         return produtos
 
     @staticmethod
+    def get_produtos_ids(comercio_nome):
+        comercio = Comercio.get_by_name(comercio_nome)
+        cardapio_id = comercio.get("cardapio")
+        produtos = Cardapio.get_produtos_ids(cardapio_id)
+        return produtos
+
+    @staticmethod
     def get_destaques(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
         cardapio_id = comercio.get("cardapio")
@@ -169,6 +176,12 @@ class Cardapio:
     def get_produtos(cardapio_id):
         cardapio = Cardapio.get_by_id(cardapio_id)
         produtos = [Produto.get_by_id(produto) for produto in cardapio.get("produtos")]
+        return produtos
+
+    @staticmethod
+    def get_produtos_ids(cardapio_id):
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        produtos = cardapio.get("produtos")
         return produtos
 
     @staticmethod
