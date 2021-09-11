@@ -4,8 +4,8 @@ import os
 from . rest import app
 
 
-SERVER_HOST = os.getenv('SOLANCHES_SERVER_HOST')
-SERVER_PORT = os.getenv('SOLANCHES_SERVER_PORT')
+SERVER_HOST = os.getenv('SOLANCHES_HOST')
+SERVER_PORT = os.getenv('SOLANCHES_PORT')
 SERVER_URL = f"{SERVER_HOST}:{SERVER_PORT}"
 
 url = urlparse(SERVER_URL)
