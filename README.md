@@ -20,6 +20,9 @@ A documentação com instruções de uso para requisições à API pode ser enco
 
 ## Como executar localmente
 
+Crie um arquivo chamado .env para as variáveis de ambiente e coloque as variáveis necessárias para a execução do projeto. Exemplo em:
+[Variáveis de Ambiente](.env.example)
+
 Para executar o sistema de forma automática, basta utilizar o seguinte comando
 
 ```
