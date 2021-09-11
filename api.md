@@ -414,9 +414,6 @@ Exemplo
 ```
 curl \
     -d '{
-            "attributes": {
-                "categoria": "salgado"
-            },
             "nome": "pastel de frango"
         }' \
     -H "Content-Type: application/json" \
@@ -444,6 +441,9 @@ Exemplo
 ```
 curl \
     -d '{
+            "attributes": {
+                "valor": 3.00
+            },
             "nome": "pastel de frango com queijo"
         }' \
     -H "Content-Type: application/json" \
@@ -459,7 +459,8 @@ Status: 200 OK
 {
     "_id": "c3h2foe6di3e1ee6bd3ctb4r",
     "attributes": {
-        "categoria": "salgado"
+        "categoria": "salgado",
+        "valor": 3.00
     },
     "created_at": 1631106735.893032,
     "nome": "pastel de frango com queijo"
