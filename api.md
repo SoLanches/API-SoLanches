@@ -374,7 +374,7 @@ Status: 200 OK
 
 ## Edita produto no cardápio de um comércio
 
-Para realizar a edição de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `attributes`, obrigatório, contendo as informações para atualização e o campo `nome`, opcional, com o novo nome do produto. O `attributes` do produto deve ser um dict e o `nome` uma string. O nome do comércio e o id do produto são passados na URL.
+Para realizar a edição de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `attributes`, opcional, contendo as informações para atualização e o campo `nome`, opcional, com o novo nome do produto. O `attributes` do produto deve ser um dict e o `nome` uma string. O nome do comércio e o id do produto são passados na URL.
 
 ```
 PATCH /comercio/<comercio_nome>/produto/<produto_id>
@@ -444,16 +444,43 @@ Exemplo
 ```
 curl \
     -d '{
-            "nome": "pastel de frango"
+            "nome": "pastel de frango com queijo"
         }' \
     -H "Content-Type: application/json" \
-    -X PATCH http://api/comercio/lanche_feliz/produto/68519638f502cb9a39801d5499c
+    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
 ```
 
 Resposta
 
 ```
-Status: 400 BAD REQUEST
+Status: 200 OK
+```
+```
+{
+    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+    "attributes": {
+        "categoria": "salgado"
+    },
+    "created_at": 1631106735.893032,
+    "nome": "pastel de frango com queijo"
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "attributes": "salgado"
+        }' \
+    -H "Content-Type: application/json" \
+    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+400 BAD REQUEST
 ```
 ```
 {
