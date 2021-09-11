@@ -1,4 +1,5 @@
 import pytest
+from unittest import mock
 
 @pytest.fixture
 def client(rest):
@@ -19,99 +20,129 @@ def test_status(client):
     assert status['status'] == 'operacional'
     assert status['service'] == 'api-solanches'
 
-def test_get_comercios_vazio(client):
+@mock.patch('solanches.rest.controller.get_comercios')
+def test_get_comercios_vazio(mock_get_comercios, client):
+    expected_return = []
+    
     response = client.get('/comercios')
-    responseJson = response.json
+    response_json = response.json
+
+    mock_get_comercios.return_value = response_json
 
     assert response.status_code == 200
-    assert len(responseJson) == 0
-    assert type(responseJson) == list
+    assert len(response_json) == 0
+    assert type(response_json) == list
+    assert response_json == expected_return
 
-def test_get_comercios_sucesso(client, controller):
-    comercio_name1, comercio_attr1 = "SoLanches Test", { "telefone": "91234-5678", "email": "solanches@test.com"}
-    comercio_name2, comercio_attr2 = "Test", { "telefone": "98765-4321", "email": "test@test.com"}
-    comercio_name3, comercio_attr3 = "SoLanchess", { "telefone": "91234-4321", "email": "solanchess@test.com"}
+@mock.patch('solanches.rest.controller.get_comercios')
+def test_get_comercios_sucesso(mock_get_comercios, client):
+    comercio_nome, comercio_attr = "SoLanches Test", { "telefone": "91234-5678", "email": "solanches@test.com"}
+    expected_return = {
+        "_id": "",
+        "nome": comercio_nome,
+        "cardapio": "23232",
+        "created_at": 1212.11,
+        "attributes": comercio_attr
+    }
 
-    comercio = controller.cadastra_comercio(comercio_name1, comercio_attr1)
-    controller.cadastra_comercio(comercio_name2, comercio_attr2)
-    controller.cadastra_comercio(comercio_name3, comercio_attr3)
+    mock_get_comercios.return_value = expected_return
 
     response = client.get('/comercios')
-    responseJson = response.json
+    response_json = response.json
     
     assert response.status_code == 200
-    assert len(responseJson) == 3
-    assert type(responseJson) == list
-    assert type(responseJson[0]) == dict
-    assert type(responseJson[0]['_id']) == str
-    assert type(responseJson[0]['nome']) == str
-    assert type(responseJson[0]['cardapio']) == str
-    assert type(responseJson[0]['created_at']) == float
-    assert type(responseJson[0]['attributes']) == dict
+    assert type(response_json) == dict
+    assert type(response_json['_id']) == str
+    assert type(response_json['nome']) == str
+    assert type(response_json['cardapio']) == str
+    assert type(response_json['created_at']) == float
+    assert type(response_json['attributes']) == dict
+    assert response_json == expected_return
 
-    assert responseJson[0]['_id'] == comercio['_id']
-    assert responseJson[0]['nome'] == comercio['nome']
-    assert responseJson[0]['cardapio'] == comercio['cardapio']
-    assert responseJson[0]['created_at'] == comercio['created_at']
-    assert responseJson[0]['attributes']['email'] == comercio['attributes']['email']
-    assert responseJson[1]['nome'] == comercio_name2
-    assert responseJson[1]['attributes']['email'] == comercio_attr2['email']
-    assert responseJson[2]['nome'] == comercio_name3
-    assert responseJson[2]['attributes']['email'] == comercio_attr3['email']
+def test_get_comercio_by_name_cadastrado(mock_get_comercio_by_name, client):
+    comercio_nome, comercio_attr = "SoLanches Test", { "telefone": "91234-5678", "email": "solanches@test.com"}
+    expected_return = {
+        "_id": "",
+        "nome": comercio_nome,
+        "cardapio": "23232",
+        "created_at": 1212.11,
+        "attributes": comercio_attr
+    }
 
-def test_get_comercio_by_name_cadastrado(client, controller):
-    comercio_nome = "SoLanches Test"
-    comercio = controller.cadastra_comercio(comercio_nome, { "telefone": "91234-5678", "email": "solanches@test.com"})
-    
+    mock_get_comercio_by_name.return_value = expected_return
     response = client.get(f'/comercio/{comercio_nome}')
-    responseJson = response.json
+    response_json = response.json
 
     assert response.status_code == 200
-    assert type(responseJson) == dict
-    assert type(responseJson['_id']) == str
-    assert type(responseJson['nome']) == str
-    assert type(responseJson['cardapio']) == str
-    assert type(responseJson['created_at']) == float
-    assert type(responseJson['attributes']) == dict
+    assert type(response_json) == dict
+    assert type(response_json['_id']) == str
+    assert type(response_json['nome']) == str
+    assert type(response_json['cardapio']) == str
+    assert type(response_json['created_at']) == float
+    assert type(response_json['attributes']) == dict
+    assert response_json == expected_return
 
-    assert responseJson['_id'] == comercio['_id']
-    assert responseJson['nome'] == comercio['nome']
-    assert responseJson['cardapio'] == comercio['cardapio']
-    assert responseJson['created_at'] == comercio['created_at']
-    assert responseJson['attributes']['email'] == comercio['attributes']['email']
-    assert responseJson['attributes']['telefone'] == comercio['attributes']['telefone']
-
-def test_get_comercio_by_name_inexistente(client):
+@mock.patch('solanches.rest.controller.get_comercio_by_name')
+def test_get_comercio_by_name_inexistente(mock_get_comercio_by_name, client):
     comercio_nome = "SoLanches Test"
+    expected_error = f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     
+    mock_get_comercio_by_name.side_effect = expected_error
     response = client.get(f'/comercio/{comercio_nome}')
-    responseJson = response.json
+    response_json = response.json
 
     assert response.status_code == 400
-    assert responseJson['message'] == f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
-    assert responseJson['status_code'] == 400
+    assert response_json['message'] == expected_error
+    assert response_json['status_code'] == 400
+    assert response_json == expected_error
 
-def test_get_comercio_com_sucesso(client, controller):
-    comercio = controller.cadastra_comercio("SoLanches Test", { "telefone": "91234-5678", "email": "solanches@test.com"})
-    comercio_id = comercio['_id']
+@mock.patch('solanches.rest.controller.get_comercio_by_name')
+def test_get_comercio_by_name_sem_informar_nome(mock_get_comercio_by_name, client):
+    expected_error = f'Erro: nome de comercio inválido!'
+    
+    mock_get_comercio_by_name.side_effect = expected_error
+    
+    response = client.get(f'/comercio/')
+    response_json = response.json
 
-    response = client.get(f'/comercio?id={comercio_id}')
-    responseJson = response.json
+    assert response.status_code == 400
+    assert response_json == expected_error
 
-    assert response.status_code == 200
-    assert responseJson['_id'] == comercio['_id']
-    assert responseJson['nome'] == comercio['nome']
-    assert responseJson['cardapio'] == comercio['cardapio']
-    assert responseJson['created_at'] == comercio['created_at']
-    assert responseJson['attributes']['email'] == comercio['attributes']['email']
-    assert responseJson['attributes']['telefone'] == comercio['attributes']['telefone']
 
-def test_get_comercio_inexistente(client):
+@mock.patch('solanches.rest.controller.get_comercio')
+def test_get_comercio_com_sucesso(mock_get_comercio, client):
+    expected_return = {
+        "_id": "",
+        "nome": "nome",
+        "cardapio": "23232",
+        "created_at": 1212.11,
+        "attributes": {"telefone": "121212" }
+    }
+
+    mock_get_comercio.return_value = expected_return
+
+
+@mock.patch('solanches.rest.controller.get_comercio')
+def test_get_comercio_inexistente(mock_get_comercio, client):
     id_inexistente = "98765"
+    expected_error = f'Erro: comercio com id {id_inexistente} não cadastrado!'
+
+    mock_get_comercio.side_effect = expected_error
 
     response = client.get(f'/comercio?id={id_inexistente}')
-    responseJson = response.json
+    response_json = response.json
 
     assert response.status_code == 400
-    assert responseJson['message'] == f'Erro: comercio com id {id_inexistente} não cadastrado!'
-    assert responseJson['status_code'] == 400
+    assert response_json['message'] == expected_error
+
+@mock.patch('solanches.rest.controller.get_comercio')
+def test_get_comercio_sem_informar_id(mock_get_comercio, client):
+    expected_error = f'Erro: id do comercio não informado!'
+
+    mock_get_comercio.side_effect = expected_error
+
+    response = client.get(f'/comercio?id=')
+    response_json = response.json
+
+    assert response.status_code == 400
+    assert response_json['message'] == expected_error
