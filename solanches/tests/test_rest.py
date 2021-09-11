@@ -1,5 +1,7 @@
-import pytest
 from unittest import mock
+
+import pytest
+
 
 @pytest.fixture
 def client(rest):
