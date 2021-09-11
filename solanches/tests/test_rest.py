@@ -1,7 +1,6 @@
 import pytest
 from unittest import mock
 
-
 @pytest.fixture
 def client(rest):
     client = rest.app.test_client()

@@ -1,16 +1,14 @@
-from solanches.models import Comercio
 import time
-import logging
 
 from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import make_response
 from flask import abort
+
 from . import controller
 
 app = Flask(__name__)
-
 
 started_at = time.time()
 
@@ -23,6 +21,15 @@ def _assert(condition, status_code, message):
     }
     response = make_response(jsonify(data), status_code)
     abort(response)
+
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
+    return response
 
 
 @app.route("/status", methods=["GET"])
@@ -39,7 +46,6 @@ def status():
 @app.route("/comercio", methods=['POST'])
 def cadastra_comercio():
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     _assert("nome" in req, 400, "Erro: nome não informado!")
     _assert("attributes" in req, 400, "Erro: atributos não informados!")
@@ -57,11 +63,12 @@ def cadastra_comercio():
 
 @app.route("/comercios", methods=['GET'])
 def get_comercios():
+    categories = request.args.get("categories", "")
+    has_categories = categories.lower() == "true"
     try:
-        comercios = controller.get_comercios()
+        comercios = controller.get_comercios(has_categories)
     except Exception as error:
         _assert(False, 400, str(error))
-
     return jsonify(comercios), 200 
 
 
@@ -87,6 +94,33 @@ def get_comercio_by_name(comercio_nome):
     return jsonify(comercio), 200
 
 
+@app.route("/comercio/<comercio_nome>", methods=['PATCH'])
+def edita_comercio(comercio_nome):
+    req = request.get_json()  
+    _assert(req, 400, "Erro: json inválido!")
+
+    attributes = req.get("attributes", {})
+    _assert(type(attributes) is dict, 400, "Erro: campo attributes deve ser do tipo dict")
+
+    try:
+        comercio_atualizado = controller.atualiza_comercio(attributes, comercio_nome)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(comercio_atualizado), 200
+
+
+@app.route("/comercio/<comercio_nome>", methods=['DELETE'])
+def remove_comercio(comercio_nome):
+    try:
+        result = controller.remove_comercio(comercio_nome)
+        msg = {"message": f"comercio {comercio_nome} removido com sucesso"} if result else {"erro": "não foi possível remover o comércio"}
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(msg), 200
+
+
 @app.route("/comercio/<comercio_nome>/cardapio", methods=['GET'])
 def get_cadapio(comercio_nome):
     try:
@@ -99,7 +133,6 @@ def get_cadapio(comercio_nome):
 @app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
 def cadastra_produto(comercio_nome):
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     nome_produto = req.get("nome")
     _assert(nome_produto, 400, "Erro: nome não informado!")
@@ -115,61 +148,7 @@ def cadastra_produto(comercio_nome):
     return jsonify(msg), 201
 
 
-@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
-def edita_produto(comercio_nome, produto_id):
-
-    req = request.get_json()
-    _assert(req, 400, "Erro: json inválido!")
-    
-    attributes = req.get("attributes") if "attributes" in req else {}
-
-    try:
-        produto = controller.edita_produto(produto_id, comercio_nome, attributes)
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(produto), 200
-        
- 
-@app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
-def adiciona_destaques(comercio_nome):
-    req = request.get_json()
-    assert req, "Erro: json inválido!"
-    assert "destaques" in req, "Erro: destaques não informados!"
-    
-    destaques = req.get("destaques")
-
-    try:
-        controller.adiciona_destaques(destaques, comercio_nome)
-        msg = {"message": f"destaques adicionados"}
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(msg), 201
-
-
-@app.route("/comercio/<comercio_nome>", methods=['DELETE'])
-def remove_comercio(comercio_nome):
-    try:
-        result = controller.remove_comercio(comercio_nome)
-        msg = {"message": f"comercio {comercio_nome} removido com sucesso"} if result else {"erro": "não foi possível remover o comércio"}
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(msg), 200
-
-
-@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
-def remove_produto(comercio_nome, produto_id):
-    try:
-        cardapio = controller.remove_produto(comercio_nome, produto_id)
-    except Exception as error:
-        _assert(False, 400, str(error))
-
-    return jsonify(cardapio), 200
-
-
-#TODO: sumirá
+#TODO: será adaptado
 @app.route("/produto/<produto_id>", methods=['GET'])
 def get_produto(produto_id):
     try:
@@ -180,31 +159,63 @@ def get_produto(produto_id):
     return jsonify(produto), 200
 
 
-#TODO: sumirá
-@app.route("/produtos", methods=['GET'])
-def get_produtos():
+@app.route("/comercio/<comercio_nome>/produtos", methods=['GET'])
+def get_produtos(comercio_nome):
+    categories = request.args.get("categories", "")
+    has_categories = categories.lower() == "true"
     try:
-        produtos = controller.get_produtos()
+        produtos = controller.get_produtos(comercio_nome, has_categories)
     except Exception as error:
         _assert(False, 400, str(error))
 
     return jsonify(produtos), 200
 
 
-@app.route("/comercio/<comercio_nome>", methods=['PATCH'])
-def update_comercio(comercio_nome):
-    req = request.get_json()  
-    _assert(req, 400, "Erro: json inválido!")
-
-    attributes = req.get("attributes", {})
-    _assert(type(attributes) is dict, 400, "Erro: campo attributes deve ser do tipo dict")
-
+@app.route("/comercio/<comercio_nome>/produtos/ids", methods=['GET'])
+def get_produtos_ids(comercio_nome):
     try:
-        comercio_atualizado = controller.atualiza_comercio(attributes, comercio_nome)
+        produtos = controller.get_produtos_ids(comercio_nome)
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(comercio_atualizado), 200
+    return jsonify(produtos), 200
+
+
+@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
+def edita_produto(comercio_nome, produto_id):
+    req = request.get_json()
+    _assert(req, 400, "Erro: json inválido!")
+    attributes = req.get("attributes") if "attributes" in req else {}
+    try:
+        produto = controller.edita_produto(produto_id, comercio_nome, attributes)
+    except Exception as error:
+        _assert(False, 400, str(error))
+    return jsonify(produto), 200
+
+
+@app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
+def adiciona_destaques(comercio_nome):
+    req = request.get_json()
+    assert req, "Erro: json inválido!"
+    assert "destaques" in req, "Erro: destaques não informados!"
+    destaques = req.get("destaques")
+
+    try:
+        controller.adiciona_destaques(destaques, comercio_nome)
+        msg = {"message": "destaques adicionados"}
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(msg), 201
+
+
+@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
+def remove_produto(comercio_nome, produto_id):
+    try:
+        cardapio = controller.remove_produto(comercio_nome, produto_id)
+    except Exception as error:
+        _assert(False, 400, str(error))
+    return jsonify(cardapio), 200
 
 
 @app.errorhandler(Exception)
