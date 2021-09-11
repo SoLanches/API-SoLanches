@@ -108,6 +108,15 @@ def get_produtos_ids(comercio_nome):
     return produtos
 
 
+def _get_produtos_categoria(comercio_nome):
+    result = {}
+    produtos = Comercio.get_produtos(comercio_nome)
+    for produto in produtos:
+        categoria = Comercio.get_produto_categoria(produto.get("_id"))
+        result.setdefault(categoria, []).append(produto)
+    return result
+
+
 def edita_produto(produto_id, comercio_nome, attributes):
     assert comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido"
 
@@ -159,11 +168,3 @@ def remove_produto_destaques(comercio_nome, produto_id):
     cardapio = get_cardapio(comercio_nome)
     return cardapio
 
-    
-def _get_produtos_categoria(comercio_nome):
-    result = {}
-    produtos = Comercio.get_produtos(comercio_nome)
-    for produto in produtos:
-        categoria = Comercio.get_produto_categoria(produto.get("_id"))
-        result.setdefault(categoria, []).append(produto)
-    return result
