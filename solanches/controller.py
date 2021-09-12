@@ -19,7 +19,7 @@ def cadastra_comercio(nome, attributes):
     return result
 
 
-def get_comercios(has_categories):
+def get_comercios(has_categories=False):
     comercios = _get_comercios_categoria() if has_categories else Comercio.get_all()
     return comercios
     
@@ -33,7 +33,7 @@ def _get_comercios_categoria():
     return result
 
 
-def get_comercio(comercio_id):
+def get_comercio_by_id(comercio_id):
     assert comercio_id and type(comercio_id) is str, f'Erro: comercio com id {comercio_id} inválido!'
     comercio = Comercio.get_by_id(comercio_id)
     assert comercio, f'Erro: comercio com id {comercio_id} não cadastrado!'
@@ -41,7 +41,7 @@ def get_comercio(comercio_id):
 
 
 def get_comercio_by_name(comercio_nome):
-    assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
+    assert type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     return comercio
