@@ -1,5 +1,5 @@
 import logging
-
+from solanches.custom_erros import *
 from . models import Produto, Comercio
 from . import connect2db
 
@@ -14,9 +14,8 @@ def cadastra_comercio(nome, attributes):
         novo_comercio.save()
         result = novo_comercio.to_dict()
     except connect2db.pymongo.errors.DuplicateKeyError:
-        erro = {"error":  "Comércio já cadastrado no banco de dados", "code": 409}
-        logging.error(erro)
-        result = erro
+        message = f'Erro: comercio com nome {nome} já cadastrado!'
+        raise SolanchesDuplicateKey(message)
     return result
 
 
@@ -27,21 +26,28 @@ def get_comercios():
 def get_comercio(comercio_id):
     assert comercio_id and type(comercio_id) is str, f'Erro: comercio com id {comercio_id} inválido!'
     comercio = Comercio.get_by_id(comercio_id)
-    assert comercio, f'Erro: comercio com id {comercio_id} não cadastrado!'
+    if(not comercio):
+        message = f'Erro: comercio com id {comercio_id} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
     return comercio
 
 
 def get_comercio_by_name(comercio_nome):
     assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio inválido!'
     comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
     return comercio
 
 
 def atualiza_comercio(attributes, comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
+        
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
-
     comercio_id = comercio.get("_id")
     Comercio.update(comercio_id, set_attributes)
     comercio = Comercio.get_by_name(comercio_nome)
@@ -50,17 +56,20 @@ def atualiza_comercio(attributes, comercio_nome):
 
 def remove_comercio(comercio_nome):
     assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio invalido'
-    comercio = Comercio.get_by_name(comercio_nome) 
-    assert comercio, f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    comercio = Comercio.get_by_name(comercio_nome)
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
     return Comercio.remove_comercio(comercio_nome)
 
 
 def get_cardapio(comercio_nome):
     assert comercio_nome and type(comercio_nome) is str, f'Erro: nome de comercio inválido!'
     comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
     cardapio = Comercio.get_cardapio(comercio_nome)
-    assert cardapio, f'Erro: cardapio não encontrado!'
     return cardapio
 
 
@@ -70,8 +79,9 @@ def cadastra_produto(comercio_nome, nome_produto, attributes={}):
         assert type(attributes) is dict, "Erro: campo attributes inválidos!"
 
     comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f"Erro: comércio com nome {comercio_nome} não cadastrado"
-
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
     novo_produto = Produto(nome_produto, attributes)
     produto_id = Comercio.add_produto(novo_produto, comercio_nome)
     return produto_id
@@ -81,53 +91,67 @@ def cadastra_produto(comercio_nome, nome_produto, attributes={}):
 def get_produto(produto_id):
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
     produto = Produto.get_by_id(produto_id)
-    assert produto, "Erro: produto com id não cadastrado!"
+    if(not produto):
+        message = f'Erro: produto com o id {produto_id} não cadastrado!'
+        raise SolanchesProdutoNaoEncontrado(message)
     return produto
 
 
 def get_produtos(comercio_nome, has_categories):
     comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
+
     produtos = Comercio.get_produtos(comercio_nome) if not has_categories else _get_produtos_categoria(comercio_nome)
     return produtos
 
 
 def edita_produto(produto_id, comercio_nome, attributes):
     assert comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido"
-
-    comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f"Erro: comércio com nome {comercio_nome} não cadastrado"
-
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
-    assert produto_id in Comercio.get_produtos(comercio_nome), "Erro: produto com id não cadastrado!"
     assert attributes and type(attributes) is dict, "Erro: attributes inválidos!"
 
+    comercio = Comercio.get_by_name(comercio_nome)
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
+    if(not produto_id in Comercio.get_produtos(comercio_nome)):
+        message = f'Erro: produto com o id {produto_id} não cadastrado!'
+        raise SolanchesProdutoNaoEncontrado(message)
+
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
-
     Produto.update(produto_id, set_attributes)
-
     produto = Produto.get_by_id(produto_id)
-
     return produto
 
 
 def adiciona_destaques(destaques, comercio_nome):
     assert destaques, f'Erro: destaques vazio!'
     comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
     produtos_comercio = Comercio.get_produtos(comercio_nome)
-    assert all(produto in produtos_comercio for produto in destaques), f'Erro: produto precisa fazer parte do cardápio do comércio'
+
+    if(not all(produto in produtos_comercio for produto in destaques)):
+        message =f'Erro: produto precisa fazer parte do cardápio do comércio!'
+        raise SolanchesProdutoNaoEstaNoCardapio(message)
 
     destaques_comercio = Comercio.get_destaques(comercio_nome)
-    filtered_destaques = [destaque for destaque in destaques if destaque not in destaques_comercio]
-    Comercio.add_destaques(comercio_nome, filtered_destaques)
+    destaques_filtrados = [destaque for destaque in destaques if destaque not in destaques_comercio]
+    Comercio.add_destaques(comercio_nome, destaques_filtrados)
 
 
 def remove_produto(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    if(not comercio):
+        message = f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+        raise SolanchesComercioNaoEncontrado(message)
     produtos_comercio = Comercio.get_produtos(comercio_nome)
-    assert produto_id in produtos_comercio, f'Erro: produto não faz parte do cardápio do comércio'
+    if(not produto_id in produtos_comercio):
+        message = f'Erro: produto não faz parte do cardápio do comércio ou não está cadastrado!'
+        raise SolanchesProdutoNaoEncontrado(message)
 
     Comercio.remove_produto(comercio_nome, produto_id)
     cardapio = get_cardapio(comercio_nome)
