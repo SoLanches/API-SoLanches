@@ -100,29 +100,31 @@ def get_produtos(comercio_nome, has_categories):
     produtos = Comercio.get_produtos(comercio_nome) if not has_categories else _get_produtos_categoria(comercio_nome)
     return produtos
 
-
+  
 def get_produtos_ids(comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     produtos = Comercio.get_produtos_ids(comercio_nome)
     return produtos
-
-
-def edita_produto(produto_id, comercio_nome, attributes):
+  
+  
+def edita_produto(produto_id, comercio_nome, attributes, nome):
     assert comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido"
 
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f"Erro: comércio com nome {comercio_nome} não cadastrado"
 
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
-    assert Comercio.get_produto(produto_id), "Erro: produto com id não cadastrado!"
-    assert attributes and type(attributes) is dict, "Erro: attributes inválidos!"
+    assert produto_id in Comercio.get_produtos_ids(comercio_nome), "Erro: produto precisa fazer parte do cardápio do comércio"
+    assert Comercio.get_produto(comercio_nome, produto_id), "Erro: produto com id não cadastrado!"
+    assert type(attributes) is dict, "Erro: attributes inválidos!"
+    assert type(nome) is str, "Erro: nome inválido!"
 
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
+    set_nome = {f'nome': nome if nome else Comercio.get_produto(comercio_nome, produto_id).get("nome")}
 
-    Produto.update(produto_id, set_attributes)
-
-    produto = Produto.get_by_id(produto_id)
+    Comercio.update_produto(produto_id, set_attributes, set_nome)
+    produto = Comercio.get_produto(comercio_nome, produto_id)
     return produto
 
 
