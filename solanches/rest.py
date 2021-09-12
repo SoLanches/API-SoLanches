@@ -77,7 +77,7 @@ def get_comercio_by_id():
     comercio_id = request.args.get('id')
     _assert(comercio_id, 400, "Erro: id do comercio não informado!")
     try:
-        comercio = controller.get_comercio(comercio_id)
+        comercio = controller.get_comercio_by_id(comercio_id)
     except Exception as error:
         _assert(False, 400, str(error))
 

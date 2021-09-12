@@ -1,4 +1,3 @@
-from attr import attributes
 import pytest
 from unittest import mock
 
@@ -126,7 +125,7 @@ def test_get_comercio_by_name_exception_controller(mock_get_comercio_by_name, cl
     assert response_json['message'] == exception_msg
 
 
-@mock.patch('solanches.rest.controller.get_comercio')
+@mock.patch('solanches.rest.controller.get_comercio_by_id')
 def test_get_comercio_by_id_com_sucesso(mock_get_comercio, client, comercio_cadastrado):
     expected_return = comercio_cadastrado
     mock_get_comercio.return_value = expected_return
@@ -136,7 +135,7 @@ def test_get_comercio_by_id_com_sucesso(mock_get_comercio, client, comercio_cada
     assert response.json == expected_return
 
 
-@mock.patch('solanches.rest.controller.get_comercio')
+@mock.patch('solanches.rest.controller.get_comercio_by_id')
 def test_get_comercio_by_id_exception_no_controller(mock_get_comercio, client):
     comercio_id = "irrelevante"
     exception_msg = 'exception no controller'
