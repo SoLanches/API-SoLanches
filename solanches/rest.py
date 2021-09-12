@@ -194,20 +194,14 @@ def edita_produto(comercio_nome, produto_id):
     return jsonify(produto), 200
 
 
-@app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
-def adiciona_destaques(comercio_nome):
-    req = request.get_json()
-    assert req, "Erro: json inválido!"
-    assert "destaques" in req, "Erro: destaques não informados!"
-    destaques = req.get("destaques")
-
+@app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['POST'])
+def adiciona_destaques(comercio_nome, produto_id):
     try:
-        controller.adiciona_destaques(destaques, comercio_nome)
-        msg = {"message": "destaques adicionados"}
+        cardapio = controller.adiciona_destaques(comercio_nome, produto_id)
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(msg), 201
+    return jsonify(cardapio), 201
 
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
