@@ -23,6 +23,15 @@ def _assert(condition, status_code, message):
     abort(response)
 
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
+    return response
+
+
 @app.route("/status", methods=["GET"])
 def status():
     status = {
@@ -37,7 +46,6 @@ def status():
 @app.route("/comercio", methods=['POST'])
 def cadastra_comercio():
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     _assert("nome" in req, 400, "Erro: nome não informado!")
     _assert("attributes" in req, 400, "Erro: atributos não informado")
@@ -55,12 +63,13 @@ def cadastra_comercio():
 
 @app.route("/comercios", methods=['GET'])
 def get_comercios():
+    categories = request.args.get("categories", "")
+    has_categories = categories.lower() == "true"
     try:
-        comercios = controller.get_comercios()
+        comercios = controller.get_comercios(has_categories)
     except Exception as error:
         _assert(False, 400, str(error))
-
-    return jsonify(comercios), 200
+    return jsonify(comercios), 200 
 
 
 @app.route("/comercio", methods=['GET'])
@@ -124,7 +133,6 @@ def get_cadapio(comercio_nome):
 @app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
 def cadastra_produto(comercio_nome):
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     nome_produto = req.get("nome")
     _assert(nome_produto, 400, "Erro: nome não informado!")
@@ -162,32 +170,39 @@ def get_produtos(comercio_nome):
     return jsonify(produtos), 200
 
 
+@app.route("/comercio/<comercio_nome>/produtos/ids", methods=['GET'])
+def get_produtos_ids(comercio_nome):
+    try:
+        produtos = controller.get_produtos_ids(comercio_nome)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produtos), 200
+
+
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
 def edita_produto(comercio_nome, produto_id):
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
-    
     attributes = req.get("attributes") if "attributes" in req else {}
-
+    nome = req.get("nome") if "nome" in req else ""
     try:
-        produto = controller.edita_produto(produto_id, comercio_nome, attributes)
+        produto = controller.edita_produto(produto_id, comercio_nome, attributes, nome)
     except Exception as error:
         _assert(False, 400, str(error))
-
     return jsonify(produto), 200
-        
- 
+
+
 @app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
 def adiciona_destaques(comercio_nome):
     req = request.get_json()
     assert req, "Erro: json inválido!"
     assert "destaques" in req, "Erro: destaques não informados!"
-    
     destaques = req.get("destaques")
 
     try:
         controller.adiciona_destaques(destaques, comercio_nome)
-        msg = {"message": f"destaques adicionados"}
+        msg = {"message": "destaques adicionados"}
     except Exception as error:
         _assert(False, 400, str(error))
 
