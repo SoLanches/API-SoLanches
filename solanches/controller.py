@@ -92,9 +92,10 @@ def get_produto(comercio_nome, produto_id):
 
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
     produto = Produto.get_by_id(produto_id)
-    assert produto, "Erro: produto com id não cadastrado!"
+    assert produto, "Erro: produto não cadastrado no sistema"
 
-    assert produto_id in Comercio.get_produtos(comercio_nome), "Erro: produto não faz parte do comércio!"
+    produto = Comercio.get_produto(comercio_nome, produto_id)
+    assert produto, "Erro: produto não faz parte desse comércio"
 
     return produto
 
