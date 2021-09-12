@@ -73,7 +73,7 @@ def get_comercios():
 
 
 @app.route("/comercio", methods=['GET'])
-def get_comercio():
+def get_comercio_by_id():
     comercio_id = request.args.get('id')
     _assert(comercio_id, 400, "Erro: id do comercio não informado!")
     try:
