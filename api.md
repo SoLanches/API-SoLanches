@@ -701,6 +701,7 @@ Status: 400 BAD REQUEST
    "status_code" : 400
 }
 ```
+
 ## Deleta produto por id
 
 Deleta produto do cardápio de comércio. O nome do comércio e o id do produto são passados na URL.
@@ -746,49 +747,3 @@ Status: 400 BAD REQUEST
    "status_code" : 400 
 }
 ```
-## Deleta produto dos destaques por id
-
-Deleta produto dos destaques do cardápio de comércio. O nome do comércio e o id do produto são passados na URL.
-
-```
-DELETE /comercio/<comercio_nome>/destaques/<produto_id>
-```
-
-Exemplo
-
-```
-curl -x DELETE http://api/comercio/lanche_feliz/destaques/b4f2g7p6w86di3e1ee6bd9t0q3g
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-{
-    "id": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
-    "destaques": [],
-    "produtos": []
-}
-```
-
-Exemplo
-
-```
-curl http://api/comercio/lanche_feliz/destaques/a9f5g7p6w86di3e1ee6bd9t7h4p
-```
-
-Resposta
-
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-   "message": "Erro: produto não faz parte dos destaques do cardápio no comércio relacionado",
-   "status_code" : 400 
-}
-```
-
