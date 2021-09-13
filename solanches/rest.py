@@ -148,11 +148,10 @@ def cadastra_produto(comercio_nome):
     return jsonify(msg), 201
 
 
-#TODO: será adaptado
-@app.route("/produto/<produto_id>", methods=['GET'])
-def get_produto(produto_id):
+@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['GET'])
+def get_produto(comercio_nome, produto_id):
     try:
-        produto = controller.get_produto(produto_id)
+        produto = controller.get_produto(comercio_nome, produto_id)
     except Exception as error:
         _assert(False, 400, str(error))
 
@@ -227,3 +226,13 @@ def _error(error):
     client_errors = ["BadRequest"]
     data["status_code"] = 400 if data["error"] in client_errors else 500
     return data, data["status_code"]
+    
+
+@app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['DELETE'])
+def remove_produto_destaques(comercio_nome, produto_id):
+    try:
+        cardapio = controller.remove_produto_destaques(comercio_nome, produto_id)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio), 200
