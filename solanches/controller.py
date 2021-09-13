@@ -19,7 +19,7 @@ def cadastra_comercio(nome, attributes):
     return result
 
 
-def get_comercios(has_categories):
+def get_comercios(has_categories=False):
     comercios = _get_comercios_categoria() if has_categories else Comercio.get_all()
     return comercios
     
@@ -33,7 +33,7 @@ def _get_comercios_categoria():
     return result
 
 
-def get_comercio(comercio_id):
+def get_comercio_by_id(comercio_id):
     assert comercio_id and type(comercio_id) is str, f'Erro: comercio com id {comercio_id} inválido!'
     comercio = Comercio.get_by_id(comercio_id)
     assert comercio, f'Erro: comercio com id {comercio_id} não cadastrado!'
@@ -41,7 +41,7 @@ def get_comercio(comercio_id):
 
 
 def get_comercio_by_name(comercio_nome):
-    assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
+    assert type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     return comercio
@@ -86,11 +86,17 @@ def cadastra_produto(comercio_nome, nome_produto, attributes):
     return produto_id
 
 
-#TODO: será adaptado
-def get_produto(produto_id):
+def get_produto(comercio_nome, produto_id):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comércio com nome {comercio_nome} não cadastrado'
+
     assert produto_id and type(produto_id) is str, "Erro: produto com id inválido!"
     produto = Produto.get_by_id(produto_id)
-    assert produto, "Erro: produto com id não cadastrado!"
+    assert produto, "Erro: produto não cadastrado no sistema"
+
+    produto = Comercio.get_produto(comercio_nome, produto_id)
+    assert produto, "Erro: produto não faz parte desse comércio"
+
     return produto
 
 
@@ -106,6 +112,15 @@ def get_produtos_ids(comercio_nome):
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
     produtos = Comercio.get_produtos_ids(comercio_nome)
     return produtos
+
+
+def _get_produtos_categoria(comercio_nome):
+    result = {}
+    produtos = Comercio.get_produtos(comercio_nome)
+    for produto in produtos:
+        categoria = Comercio.get_produto_categoria(produto.get("_id"))
+        result.setdefault(categoria, []).append(produto)
+    return result
   
   
 def edita_produto(produto_id, comercio_nome, attributes, nome):
@@ -173,10 +188,13 @@ def remove_produto(comercio_nome, produto_id):
     return cardapio
 
 
-def _get_produtos_categoria(comercio_nome):
-    result = {}
-    produtos = Comercio.get_produtos(comercio_nome)
-    for produto in produtos:
-        categoria = Comercio.get_produto_categoria(produto.get("_id"))
-        result.setdefault(categoria, []).append(produto)
-    return result
+def remove_produto_destaques(comercio_nome, produto_id):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    produtos_comercio = Comercio.get_destaques(comercio_nome)
+    assert produto_id in produtos_comercio, f'Erro: produto não faz parte dos destaques do cardápio no comércio relacionado'
+
+    Comercio.remove_produto_destaques(comercio_nome, produto_id)
+    cardapio = get_cardapio(comercio_nome)
+    return cardapio
+
