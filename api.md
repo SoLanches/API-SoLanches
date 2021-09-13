@@ -287,6 +287,70 @@ Status: 400 BAD REQUEST
 }
 ```
 
+## Retorna produto de um comercio
+
+Recupera um json do produto através do nome do comércio e o id do produto. 
+
+```
+GET  /comercio/<nome_comercio>/produtos/<produto_id>
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produto/c666ae577afa4776148c2e09b9545320cbbbfac1
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "c666ae577afa4776148c2e09b9545320cbbbfac1",
+    "attributes": {},
+    "created_at": 1630117957.674759,
+    "nome": "empanado_de_frango"
+}
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produto/ioasjfoankfn
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: produto não cadastrado no sistema",
+    "status_code": 400
+}
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_bom/produto/c666ae577afa4776148c2e09b9545320cbbbfac1
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: produto não faz parte desse comércio",
+    "status_code": 400
+}
+```
+
 ## Lista produtos de um comercio
 
 Retorna uma lista com todos os produtos cadastrados no comércio, sendo também possível o retorno de um dicionário com o agrupamento dos produtos por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de produtos.
@@ -574,7 +638,7 @@ Status: 200 OK
 Exemplo
 
 ```
-curl http://api/comercio/abc_da_xuxa/cardapio
+curl -x DELETE http://api/comercio/abc_da_xuxa/cardapio
 ```
 
 Resposta
@@ -588,7 +652,6 @@ Status: 400 BAD REQUEST
    "status_code" : 400
 }
 ```
-
 ## Deleta produto por id
 
 Deleta produto do cardápio de comércio. O nome do comércio e o id do produto são passados na URL.
@@ -634,3 +697,49 @@ Status: 400 BAD REQUEST
    "status_code" : 400 
 }
 ```
+## Deleta produto dos destaques por id
+
+Deleta produto dos destaques do cardápio de comércio. O nome do comércio e o id do produto são passados na URL.
+
+```
+DELETE /comercio/<comercio_nome>/destaques/<produto_id>
+```
+
+Exemplo
+
+```
+curl -x DELETE http://api/comercio/lanche_feliz/destaques/b4f2g7p6w86di3e1ee6bd9t0q3g
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "id": "3671361e6d5dc1ee674156beed67b1fd",
+    "created_at": 1628721657.488885,
+    "destaques": [],
+    "produtos": []
+}
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/destaques/a9f5g7p6w86di3e1ee6bd9t7h4p
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+   "message": "Erro: produto não faz parte dos destaques do cardápio no comércio relacionado",
+   "status_code" : 400 
+}
+```
+
