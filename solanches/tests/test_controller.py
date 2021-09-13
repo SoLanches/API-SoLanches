@@ -1,4 +1,3 @@
-from solanches.tests.conftest import controller
 from unittest import mock
 
 import pytest
