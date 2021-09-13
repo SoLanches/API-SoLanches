@@ -542,6 +542,56 @@ Status: 400 BAD REQUEST
 }
 ```
 
+## Remove um produto dos destaques do cardápio
+
+Remove um produto dos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. Os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.
+
+```
+DELETE /comercio/<comercio_nome>/destaques/<produto_id>
+```
+
+Exemplo
+
+```
+curl /comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "created_at": 1628721657.488885,
+    "destaques": [],
+    "produtos": [
+        "c3h2foe6di3e1ee6bd3ctb4r",
+        "3d3f5f603fe10d0dc519e6fc",
+        "3752b85753550e2a5a691efd"
+    ]
+}
+```
+
+Exemplo
+
+```
+curl /comercio/lanche_feliz/destaques/7522b85753550e2a5a691abe
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+   "message": "Erro: produto precisa fazer parte do cardápio do comércio!",
+   "status_code" : 400
+}
+```
+
 ## Recupera o cardápio de um comércio
 
 Retorna o cardápio de um comércio, com os produtos e os destaques cadastrados.
