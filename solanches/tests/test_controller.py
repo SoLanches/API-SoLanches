@@ -1,8 +1,34 @@
+from solanches.tests.conftest import controller
 from unittest import mock
 
 import pytest
 
 from . data_test import COMERCIOS
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_comercio_inexistente(mock_comercio, controller):
+    mock_comercio.return_value = None
+    with pytest.raises(Exception) as e:
+      comercio_nome = 'comercio_sem_id'
+      controller.remove_comercio(comercio_nome)
+    assert str(e.value) == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+
+
+def test_remove_comercio_nome_invalido(controller):
+    with pytest.raises(Exception) as e:
+        comercio_nome_invalido = None
+        controller.remove_comercio(comercio_nome_invalido)
+    assert str(e.value) == f'Erro: nome de comercio invalido'
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Comercio.remove_comercio')
+def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  controller):
+    comercio_nome = 'comercio_test'
+    mock_get_by_name.return_value = {'produtos': []}
+    mock_remove_comercio.return_value = 1
+    result = controller.remove_comercio(comercio_nome)
+    assert result == 1
 
 
 @pytest.fixture
