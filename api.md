@@ -574,7 +574,7 @@ Status: 200 OK
 Exemplo
 
 ```
-curl http://api/comercio/abc_da_xuxa/cardapio
+curl -x DELETE http://api/comercio/abc_da_xuxa/cardapio
 ```
 
 Resposta
@@ -644,7 +644,7 @@ DELETE /comercio/<comercio_nome>/destaques/<produto_id>
 Exemplo
 
 ```
-curl http://api/comercio/lanche_feliz/destaques/b4f2g7p6w86di3e1ee6bd9t0q3g
+curl -x DELETE http://api/comercio/lanche_feliz/destaques/b4f2g7p6w86di3e1ee6bd9t0q3g
 ```
 
 Resposta
