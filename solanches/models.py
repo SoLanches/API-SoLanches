@@ -92,11 +92,6 @@ class Comercio:
         Cardapio.add_destaques(comercio.get("cardapio"), destaques)
 
     @staticmethod
-    def remove_destaque(comercio_nome, produto_id):
-        comercio = Comercio.get_by_name(comercio_nome)
-        Cardapio.remove_destaque(comercio.get("cardapio"), produto_id)
-
-    @staticmethod
     def update_produto(produto_id, attributes, nome):
         Cardapio.update_produto(produto_id, attributes, nome)
 
@@ -115,8 +110,8 @@ class Comercio:
 
     def remove_produto_destaques(comercio_nome, produto_id):
         comercio = Comercio.get_by_name(comercio_nome)
-        cardapio_id = comercio.get("cardapio")
-        Cardapio.remove_produto_destaques(cardapio_id, produto_id)
+        Cardapio.remove_produto_destaques(comercio.get("cardapio"), produto_id)
+
     @staticmethod
     def get_categoria(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
@@ -221,24 +216,15 @@ class Cardapio:
         new_values = {"$set": {"destaques": new_destaques, "produtos": new_produtos}}
         DB.cardapio.update_one(query, new_values)
         Produto.remove(produto_id)
-
+        
     @staticmethod
-    def remove_destaque(cardapio_id, produto_id):
+    def remove_produto_destaques(cardapio_id, produto_id):
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
         destaques = cardapio.get("destaques")
         destaques.remove(produto_id) if produto_id in destaques else destaques
         new_destaques = {"$set": {"destaques": destaques}}
         DB.cardapio.update_one(query, new_destaques)
-        
-    @staticmethod
-    def remove_produto_destaques(cardapio_id, produto_id):
-        query = {"_id": cardapio_id}
-        cardapio = Cardapio.get_by_id(cardapio_id)
-        new_destaques = cardapio.get("destaques")
-        new_destaques.remove(produto_id) if produto_id in new_destaques else new_destaques
-        new_values = {"$set": {"destaques": new_destaques}}
-        DB.cardapio.update_one(query, new_values)
     
     @staticmethod
     def get_produto_categoria(produto_id):
