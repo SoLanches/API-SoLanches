@@ -158,3 +158,24 @@ def _get_produtos_categoria(comercio_nome):
         categoria = Comercio.get_produto_categoria(produto.get("_id"))
         result.setdefault(categoria, []).append(produto)
     return result
+
+
+def adiciona_categoria(comercio_nome, categoria):
+    assert categoria, 'Erro: categoria vazia!'
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    assert categoria not in Comercio.get_categorias(comercio_nome), f'Erro: categoria já cadastrada nesse comércio!'
+
+    Comercio.adiciona_categoria(comercio_nome, categoria)
+
+
+def remove_categoria(comercio_nome, categoria):
+    assert categoria, 'Erro: categoria vazia!'
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    categorias = Comercio.get_categorias(comercio_nome)
+    assert categoria in categorias, 'Erro: categoria não faz parte do comércio'
+    
+    Comercio.remove_categoria(comercio_nome, categoria)
+
+    return Comercio.get_categorias(comercio_nome)

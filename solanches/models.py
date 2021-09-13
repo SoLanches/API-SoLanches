@@ -124,6 +124,21 @@ class Comercio:
         categoria = Cardapio.get_produto_categoria(produto_id)
         return categoria
 
+    @staticmethod
+    def adiciona_categoria(comercio_nome, categoria):
+        comercio = Comercio.get_by_name(comercio_nome)
+        Cardapio.add_categoria(comercio.get("cardapio"), categoria)
+
+    @staticmethod
+    def remove_categoria(comercio_nome, categoria):
+        comercio = Comercio.get_by_name(comercio_nome)
+        Cardapio.remove_categoria(comercio.get("cardapio"), categoria)
+
+    @staticmethod
+    def get_categorias(comercio_nome):
+        comercio = Comercio.get_by_name(comercio_nome)
+        categorias = Cardapio.get_categorias(comercio.get("cardapio"))
+        return categorias
 
 class Cardapio:
 
@@ -131,6 +146,7 @@ class Cardapio:
         self._id = cardapio_id
         self.produtos = []
         self.destaques = []
+        self.categorias = []
 
     def save(self):
         self.created_at = time.time()
@@ -222,6 +238,29 @@ class Cardapio:
         cardapio = vars(self).copy()
         return cardapio
 
+    @staticmethod
+    def add_categoria(cardapio_id, categoria):
+        query = {"_id": cardapio_id}
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        new_categoria = cardapio.get("categorias")
+        new_categoria += categoria if type(categoria) is list else [categoria]
+        new_values = {"$set": {"categorias": new_categoria}}
+        DB.cardapio.update_one(query, new_values)
+
+    @staticmethod
+    def remove_categoria(cardapio_id, categoria):
+        query = {"_id": cardapio_id}
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        new_categoria = cardapio.get("categorias")
+        new_categoria.remove(categoria) if categoria in new_categoria else new_categoria
+        new_values = {"$set": {"categorias": new_categoria}}
+        DB.cardapio.update_one(query, new_values)
+
+    @staticmethod
+    def get_categorias(cardapio_id):
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        categorias = cardapio.get("categorias")
+        return categorias
 
 class Produto:
 

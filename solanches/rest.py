@@ -227,3 +227,34 @@ def _error(error):
     client_errors = ["BadRequest"]
     data["status_code"] = 400 if data["error"] in client_errors else 500
     return data, data["status_code"]
+
+
+@app.route("/comercio/<comercio_nome>/categoria", methods=['POST'])
+def adiciona_categoria(comercio_nome):
+    req = request.get_json()
+    _assert (req, 400, "Erro: json inválido!")
+    categoria = req.get("categoria")
+    _assert (categoria, 400, "Erro: categoria não informada!")
+
+    try:
+        controller.adiciona_categoria(comercio_nome, categoria)
+        msg = {"message": "Categoria adicionada!"}
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(msg), 201
+
+
+@app.route("/comercio/<comercio_nome>/categoria", methods=['DELETE'])
+def remove_categoria(comercio_nome):
+    req = request.get_json()
+    _assert (req, 400, "Erro: json inválido!")
+    categoria = req.get("categoria")
+    _assert (categoria, 400, "Erro: categoria não informada!")
+
+    try:
+        categorias = controller.remove_categoria(comercio_nome, categoria)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(categorias), 204
