@@ -244,7 +244,7 @@ def remove_produto(comercio_nome, produto_id):
         raise Exception(erro_interno)
 
     return jsonify(cardapio), 200
-
+ 
 
 @app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['DELETE'])
 def remove_produto_destaques(comercio_nome, produto_id):
@@ -254,6 +254,7 @@ def remove_produto_destaques(comercio_nome, produto_id):
         _assert(False, 400, str(error))
 
     return jsonify(cardapio), 200
+
 
 @app.errorhandler(SolanchesDuplicateKey)
 def handle_duplicate_key(error):
@@ -272,6 +273,7 @@ def handle_produto_nao_encontrado(error):
     error.status_code = 404
     return construct_error(error), error.status_code
 
+  
 @app.errorhandler(SolanchesProdutoNaoEstaNoCardapio)
 def handle_produto_nao_esta_no_cardapio(error):
     error.status_code = 404
