@@ -239,9 +239,7 @@ def _error(error):
 
 @app.route("/login", methods=["POST"])
 def login():
-
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     _assert("nome" in req, 400, "Erro: nome não informado!")
     _assert("password" in req, 400, "Erro: senha não informada")
