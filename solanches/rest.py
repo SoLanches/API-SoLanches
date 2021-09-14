@@ -47,8 +47,8 @@ def status():
 def cadastra_comercio():
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
-    _assert("nome" in req, 400, "Erro: nome não informado!")
-    _assert("attributes" in req, 400, "Erro: attributes não informado!")
+    _assert("nome" in req, 400, "Erro: campo nome não informado!")
+    _assert("attributes" in req, 400, "Erro: campo attributes não informado!")
 
     nome = req.get("nome")
     attributes = req.get("attributes")

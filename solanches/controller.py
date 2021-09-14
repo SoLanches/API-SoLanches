@@ -7,8 +7,8 @@ from . import connect2db
 def cadastra_comercio(nome, attributes):
     assert nome and type(nome) is str, 'Erro: nome inválido!'
     assert attributes and type(attributes) is dict, 'Erro: campo attributes inválidos!'
-    assert "endereco" in attributes, 'Erro: Endereço não informado!'
-    assert "horarios" in attributes, 'Erro: Horários não informados!'
+    assert "endereco" in attributes, 'Erro: campo endereco não informado!'
+    assert "horarios" in attributes, 'Erro: campo horarios não informados!'
     try:
         novo_comercio = Comercio(nome, attributes)
         novo_comercio.save()
