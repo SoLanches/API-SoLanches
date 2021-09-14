@@ -556,7 +556,7 @@ Resposta
 
 ## Adiciona um produto aos destaques do cardápio
 
-Adiciona um produto aos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. Os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.
+Adiciona um produto aos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual os id corresponde, já deve estar cadastrado no cardápio do comércio.
 
 ```
 POST /comercio/<comercio_nome>/destaques/<produto_id>
@@ -608,7 +608,7 @@ Status: 400 BAD REQUEST
 
 ## Remove um produto dos destaques do cardápio
 
-Remove um produto dos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. Os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.
+Remove um produto dos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual o id corresponde, já deve estar cadastrado no cardápio do comércio.
 
 ```
 DELETE /comercio/<comercio_nome>/destaques/<produto_id>
