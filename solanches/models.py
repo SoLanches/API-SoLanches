@@ -87,9 +87,9 @@ class Comercio:
         return destaques
 
     @staticmethod
-    def add_destaques(comercio_nome, destaques):
+    def add_destaque(comercio_nome, destaque):
         comercio = Comercio.get_by_name(comercio_nome)
-        Cardapio.add_destaques(comercio.get("cardapio"), destaques)
+        Cardapio.add_destaque(comercio.get("cardapio"), destaque)
 
     @staticmethod
     def update_produto(produto_id, attributes, nome):
@@ -169,11 +169,11 @@ class Cardapio:
         Produto.remove_produtos(produtos)
 
     @staticmethod
-    def add_destaques(cardapio_id, destaques):
+    def add_destaque(cardapio_id, destaque):
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
         new_destaques = cardapio.get("destaques")
-        new_destaques += destaques if type(destaques) is list else [destaques]
+        new_destaques += destaque if type(destaque) is list else [destaque]
         new_values = {"$set": {"destaques": new_destaques}}
         DB.cardapio.update_one(query, new_values)
 

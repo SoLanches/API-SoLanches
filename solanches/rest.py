@@ -194,9 +194,9 @@ def edita_produto(comercio_nome, produto_id):
 
 
 @app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['POST'])
-def adiciona_destaques(comercio_nome, produto_id):
+def adiciona_destaque(comercio_nome, produto_id):
     try:
-        cardapio = controller.adiciona_destaques(comercio_nome, produto_id)
+        cardapio = controller.adiciona_destaque(comercio_nome, produto_id)
     except Exception as error:
         _assert(False, 400, str(error))
 
