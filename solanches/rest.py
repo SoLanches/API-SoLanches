@@ -1,3 +1,4 @@
+from solanches.models import Comercio
 import time
 
 from flask import Flask
@@ -193,20 +194,14 @@ def edita_produto(comercio_nome, produto_id):
     return jsonify(produto), 200
 
 
-@app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
-def adiciona_destaques(comercio_nome):
-    req = request.get_json()
-    assert req, "Erro: json inválido!"
-    assert "destaques" in req, "Erro: destaques não informados!"
-    destaques = req.get("destaques")
-
+@app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['POST'])
+def adiciona_destaque(comercio_nome, produto_id):
     try:
-        controller.adiciona_destaques(destaques, comercio_nome)
-        msg = {"message": "destaques adicionados"}
+        cardapio = controller.adiciona_destaque(comercio_nome, produto_id)
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(msg), 201
+    return jsonify(cardapio), 201
 
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
@@ -231,32 +226,31 @@ def remove_produto_destaques(comercio_nome, produto_id):
 @app.route("/comercio/<comercio_nome>/categoria", methods=['POST'])
 def adiciona_categoria(comercio_nome):
     req = request.get_json()
-    _assert (req, 400, "Erro: json inválido!")
+    _assert(req, 400, "Erro: json inválido!")
     categoria = req.get("categoria")
-    _assert (categoria, 400, "Erro: categoria não informada!")
+    _assert(categoria, 400, "Erro: categoria não informada!")
 
     try:
-        controller.adiciona_categoria(comercio_nome, categoria)
-        msg = {"message": "Categoria adicionada!"}
+        cardapio_atualizado = controller.adiciona_categoria(comercio_nome, categoria)
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(msg), 201
+    return jsonify(cardapio_atualizado), 201
 
 
 @app.route("/comercio/<comercio_nome>/categoria", methods=['DELETE'])
 def remove_categoria(comercio_nome):
     req = request.get_json()
-    _assert (req, 400, "Erro: json inválido!")
+    _assert(req, 400, "Erro: json inválido!")
     categoria = req.get("categoria")
-    _assert (categoria, 400, "Erro: categoria não informada!")
+    _assert(categoria, 400, "Erro: categoria não informada!")
 
     try:
-        categorias = controller.remove_categoria(comercio_nome, categoria)
+        cardapio_atualizado = controller.remove_categoria(comercio_nome, categoria)
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(categorias), 204
+    return jsonify(cardapio_atualizado), 200
     
 
 @app.errorhandler(Exception)

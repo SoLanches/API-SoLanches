@@ -556,21 +556,16 @@ Resposta
 
 ## Adiciona um produto aos destaques do cardápio
 
-Para adicionar um produto aos destaques, a requisição deve enviar no body um JSON com o campo obrigatório `destaques`, que corresponde à uma lista de ids de produtos. Além disso, os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.
+Adiciona um produto aos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual os id corresponde, já deve estar cadastrado no cardápio do comércio.
 
 ```
-POST /comercio/<comercio_nome>/destaques
+POST /comercio/<comercio_nome>/destaques/<produto_id>
 ```
 
 Exemplo
 
 ```
-curl \
-    -d '{
-             "destaques": ["c3h2foe6di3e1ee6bd3ctb4r"]
-         }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio/lanche_feliz/destaques
+curl -x POST http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
 ```
 
 Resposta
@@ -580,19 +575,23 @@ Status: 201 CREATED
 ```
 ```
 {
-   "message": "destaques adicionados!",
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "created_at": 1628721657.488885,
+    "destaques": [
+        "c3h2foe6di3e1ee6bd3ctb4r"
+    ],
+    "produtos": [
+        "c3h2foe6di3e1ee6bd3ctb4r",
+        "3d3f5f603fe10d0dc519e6fc",
+        "3752b85753550e2a5a691efd"
+    ]
 }
 ```
 
 Exemplo
 
 ```
-curl \
-    -d '{
-             "destaques": ["1234"]
-         }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio/lanche_feliz/destaques
+curl -x POST http://api/comercio/lanche_feliz/destaques/7522b85753550e2a5a691abe
 ```
 
 Resposta
@@ -602,8 +601,58 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: produto precisa fazer parte do cardápio do comércio",
-   "status_code" : 400
+    "message": "Erro: produto não faz parte do cardápio do comércio!",
+    "status_code": 400
+}
+```
+
+## Remove um produto dos destaques do cardápio
+
+Remove um produto dos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual o id corresponde, já deve estar cadastrado no cardápio do comércio.
+
+```
+DELETE /comercio/<comercio_nome>/destaques/<produto_id>
+```
+
+Exemplo
+
+```
+curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "created_at": 1628721657.488885,
+    "destaques": [],
+    "produtos": [
+        "c3h2foe6di3e1ee6bd3ctb4r",
+        "3d3f5f603fe10d0dc519e6fc",
+        "3752b85753550e2a5a691efd"
+    ]
+}
+```
+
+Exemplo
+
+```
+curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: produto com id c3h2foe6di3e1ee6bd3ctb4r não está nos destaques!",
+    "status_code": 400
 }
 ```
 
@@ -638,7 +687,7 @@ Status: 200 OK
 Exemplo
 
 ```
-curl -x DELETE http://api/comercio/abc_da_xuxa/cardapio
+curl http://api/comercio/abc_da_xuxa/cardapio
 ```
 
 Resposta
@@ -652,6 +701,7 @@ Status: 400 BAD REQUEST
    "status_code" : 400
 }
 ```
+
 ## Deleta produto por id
 
 Deleta produto do cardápio de comércio. O nome do comércio e o id do produto são passados na URL.
@@ -663,7 +713,7 @@ DELETE /comercio/<comercio_nome>/produto/<id_produto>
 Exemplo
 
 ```
-curl http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+curl -x DELETE http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
 ```
 
 Resposta
@@ -683,7 +733,7 @@ Status: 200 OK
 Exemplo
 
 ```
-curl http://api/comercio/lanche_feliz/produto/b1cef4d8hb611df8c443a1
+curl -x DELETE http://api/comercio/lanche_feliz/produto/b1cef4d8hb611df8c443a1
 ```
 
 Resposta
@@ -697,29 +747,38 @@ Status: 400 BAD REQUEST
    "status_code" : 400 
 }
 ```
-## Deleta produto dos destaques por id
 
-Deleta produto dos destaques do cardápio de comércio. O nome do comércio e o id do produto são passados na URL.
+## Adiciona categoria ao cardápio de um comércio
+
+Adiciona uma categoria ao comércio. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria. O retorno é um JSON do cardápio do comércio.
 
 ```
-DELETE /comercio/<comercio_nome>/destaques/<produto_id>
+POST /comercio/<comercio_nome>/categoria
 ```
 
 Exemplo
 
 ```
-curl -x DELETE http://api/comercio/lanche_feliz/destaques/b4f2g7p6w86di3e1ee6bd9t0q3g
+curl \
+    -d '{
+            "categoria": "categoria inovação"
+        }' \
+    -H "Content-Type: application/json" \
+    -X POST http://api/comercio/lanche_feliz/categoria
 ```
 
 Resposta
 
 ```
-Status: 200 OK
+Status: 201 CREATED
 ```
 ```
 {
-    "id": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "categorias": [
+        "categoria inovação"
+    ],
+    "created_at": 1631625353.1946077,
     "destaques": [],
     "produtos": []
 }
@@ -728,7 +787,12 @@ Status: 200 OK
 Exemplo
 
 ```
-curl http://api/comercio/lanche_feliz/destaques/a9f5g7p6w86di3e1ee6bd9t7h4p
+curl \
+    -d '{
+            "categoria": ""
+        }' \
+    -H "Content-Type: application/json" \
+    -X POST http://api/comercio/lanche_feliz/categoria
 ```
 
 Resposta
@@ -738,8 +802,64 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: produto não faz parte dos destaques do cardápio no comércio relacionado",
-   "status_code" : 400 
+    "message": "Erro: categoria não informada!",
+    "status_code": 400
 }
 ```
 
+## Remove categoria de um cardápio
+
+Remove uma categoria. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria a ser removida. O retorno é um JSON do cardápio do comércio.
+
+```
+DELETE /comercio/<comercio_nome>/categoria
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria inovação"
+        }' \
+    -H "Content-Type: application/json" \
+    -X DELETE http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "d81d37521e2ee08c5b50ac4f5c9bed652634fb95",
+    "categorias": [],
+    "created_at": 1631625353.1946077,
+    "destaques": [],
+    "produtos": []
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria que não existe"
+        }' \
+    -H "Content-Type: application/json" \
+    -X DELETE http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: categoria não faz parte do comércio",
+    "status_code": 400
+}
+```

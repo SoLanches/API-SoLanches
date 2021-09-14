@@ -3,7 +3,6 @@ from unittest import mock
 import pytest
 import mongomock
 
-
 DB_TEST = mongomock.MongoClient().tests_solanches
 
 @pytest.fixture(scope='session', autouse=True)
