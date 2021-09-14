@@ -1,4 +1,3 @@
-from solanches.models import Comercio
 import time
 
 from flask import Flask

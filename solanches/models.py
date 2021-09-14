@@ -261,12 +261,8 @@ class Cardapio:
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
         categories = cardapio.get("categorias")
-        new_categories = []
-        if len(categories) == 1:
-            categories.remove(categoria) if categoria in categories else categories
-        else:
-            new_categories = categories.remove(categoria) if categoria in categories else categories
-        new_values = {"$set": {"categorias": new_categories}}
+        categories.remove(categoria) if categoria in categories else categories
+        new_values = {"$set": {"categorias": categories}}
         DB.cardapio.update_one(query, new_values)
 
     @staticmethod
