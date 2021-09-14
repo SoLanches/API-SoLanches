@@ -292,7 +292,7 @@ def logout(current_user):
     if 'authorization' in request.headers:
         token = request.headers['authorization']
 
-    _assert(token, 403, "Error: Você não está logado.")
+    _assert(token, 401, "Error: Você não está logado.")
     controller.logout(token)
 
     response = {
