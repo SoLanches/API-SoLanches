@@ -270,7 +270,7 @@ def logout(current_user):
     if 'authorization' in request.headers:
         token = request.headers['authorization']
 
-    _assert(token != None, 403, "Error: Você não está logado.")
+    _assert(token, 403, "Error: Você não está logado.")
 
     block_token = BlockList(token)
     block_token.save()
