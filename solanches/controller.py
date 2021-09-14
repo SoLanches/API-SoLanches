@@ -226,6 +226,7 @@ def remove_categoria(comercio_nome, categoria):
 
     return cardapio_atualizado
 
+
 def login(comercio_nome, password, secret):
     comercio = Comercio.get_by_name(comercio_nome)
     assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
@@ -238,6 +239,7 @@ def login(comercio_nome, password, secret):
 
     token = jwt.encode(payload, secret, algorithm="HS256")
     return token
+
 
 def logout(token):
     block_token = BlockList(token)

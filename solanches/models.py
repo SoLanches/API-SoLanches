@@ -159,6 +159,7 @@ class Comercio:
             comercio.pop("password")
         return comercio
 
+
 class Cardapio:
 
     def __init__(self, cardapio_id):
@@ -289,6 +290,7 @@ class Cardapio:
     def to_dict(self):
         cardapio = vars(self).copy()
         return cardapio
+
 
 class Produto:
 

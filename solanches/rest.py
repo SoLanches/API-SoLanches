@@ -295,4 +295,9 @@ def logout(current_user):
     _assert(token, 403, "Error: Você não está logado.")
     controller.logout(token)
 
-    return jsonify({"msg": "Access token revoked", "status_code": 200}), 200
+    response = {
+        "message": "Access token revoked", 
+        "status_code": 200
+    }
+
+    return jsonify(response), 200
