@@ -1,14 +1,14 @@
-from urllib.parse import urlparse
 import os
+
+from dotenv import load_dotenv
 
 from . rest import app
 
+load_dotenv()
 
-SERVER_HOST = os.getenv('SOLANCHES_SERVER_HOST')
-SERVER_PORT = os.getenv('SOLANCHES_SERVER_PORT')
+SERVER_HOST = os.getenv('SOLANCHES_HOST')
+SERVER_PORT = os.getenv('SOLANCHES_PORT')
 SERVER_URL = f"{SERVER_HOST}:{SERVER_PORT}"
 
-url = urlparse(SERVER_URL)
-host, port = url.hostname, url.port
-print(f"Iniciando servidor em: {url.geturl()}")
-app.run(host=host, port=port, debug=True)
+print(f"Iniciando servidor em: {SERVER_URL}")
+app.run(host=SERVER_HOST, port=SERVER_PORT, debug=True)

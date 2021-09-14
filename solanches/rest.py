@@ -21,6 +21,15 @@ def _assert(condition, status_code, message):
     abort(response)
 
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
+    return response
+
+
 @app.route("/status", methods=["GET"])
 def status():
     status = {
@@ -35,7 +44,6 @@ def status():
 @app.route("/comercio", methods=['POST'])
 def cadastra_comercio():
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     _assert("nome" in req, 400, "Erro: nome não informado!")
     _assert("attributes" in req, 400, "Erro: atributos não informado")
@@ -55,6 +63,8 @@ def cadastra_comercio():
 
 @app.route("/comercios", methods=['GET'])
 def get_comercios():
+    categories = request.args.get("categories", "")
+    has_categories = categories.lower() == "true"
     try:
         comercios = controller.get_comercios()
     except Exception as erro_interno:
@@ -64,7 +74,7 @@ def get_comercios():
 
 
 @app.route("/comercio", methods=['GET'])
-def get_comercio():
+def get_comercio_by_id():
     comercio_id = request.args.get('id')
     _assert(comercio_id, 400, "Erro: id do comercio não informado!")
     try:
@@ -135,7 +145,6 @@ def get_cardapio(comercio_nome):
 @app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
 def cadastra_produto(comercio_nome):
     req = request.get_json()
-    
     _assert(req, 400, "Erro: json inválido!")
     nome_produto = req.get("nome")
     _assert(nome_produto, 400, "Erro: nome não informado!")
@@ -153,9 +162,8 @@ def cadastra_produto(comercio_nome):
     return jsonify(msg), 201
 
 
-#TODO: será adaptado
-@app.route("/produto/<produto_id>", methods=['GET'])
-def get_produto(produto_id):
+@app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['GET'])
+def get_produto(comercio_nome, produto_id):
     try:
         produto = controller.get_produto(produto_id)
     except SolanchesProdutoNaoEncontrado as erro_produto:
@@ -178,13 +186,22 @@ def get_produtos(comercio_nome):
     return jsonify(produtos), 200
 
 
+@app.route("/comercio/<comercio_nome>/produtos/ids", methods=['GET'])
+def get_produtos_ids(comercio_nome):
+    try:
+        produtos = controller.get_produtos_ids(comercio_nome)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(produtos), 200
+
+
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
 def edita_produto(comercio_nome, produto_id):
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
-    
     attributes = req.get("attributes") if "attributes" in req else {}
-
+    nome = req.get("nome") if "nome" in req else ""
     try:
         produto = controller.edita_produto(produto_id, comercio_nome, attributes)
     except SolanchesComercioNaoEncontrado as erro_comercio:
@@ -195,14 +212,13 @@ def edita_produto(comercio_nome, produto_id):
         raise Exception(erro_interno)
 
     return jsonify(produto), 200
-        
- 
+
+
 @app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
 def adiciona_destaques(comercio_nome):
     req = request.get_json()
     assert req, "Erro: json inválido!"
     assert "destaques" in req, "Erro: destaques não informados!"
-    
     destaques = req.get("destaques")
 
     try:
@@ -230,6 +246,16 @@ def remove_produto(comercio_nome, produto_id):
         raise Exception(erro_interno)
 
     return jsonify(cardapio), 200
+ 
+
+@app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['DELETE'])
+def remove_produto_destaques(comercio_nome, produto_id):
+    try:
+        cardapio = controller.remove_produto_destaques(comercio_nome, produto_id)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio), 200
 
 
 @app.errorhandler(SolanchesDuplicateKey)
@@ -249,6 +275,7 @@ def handle_produto_nao_encontrado(error):
     error.status_code = 404
     return construct_error(error), error.status_code
 
+  
 @app.errorhandler(SolanchesProdutoNaoEstaNoCardapio)
 def handle_produto_nao_esta_no_cardapio(error):
     error.status_code = 404
