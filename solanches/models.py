@@ -36,12 +36,8 @@ class Comercio:
 
     @staticmethod
     def get_all():
-        comercios = DB.comercio.find()
-        comercios = list(comercios)
-        for comercio in comercios:
-            if "password" in comercio.get("attributes"):
-                comercio.get("attributes").pop("password")
-        return comercios
+        comercios = DB.comercio.find({}, {"password": 0})
+        return list(comercios)
 
     @staticmethod
     def update(comercio_id, attributes):
