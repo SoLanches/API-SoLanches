@@ -30,8 +30,8 @@ class Comercio:
     def get_by_id(id):
         query = {"_id": id}
         comercio = DB.comercio.find_one(query)
-        if "password" in comercio.get("attributes"):
-            comercio.get("attributes").pop("password")        
+        if "password" in comercio:
+            comercio.pop("password")        
         return comercio
 
     @staticmethod
@@ -47,8 +47,8 @@ class Comercio:
     def get_by_name(name):
         query = {"nome": name}
         comercio = DB.comercio.find_one(query)
-        if "password" in comercio.get("attributes"):
-            comercio.get("attributes").pop("password")
+        if "password" in comercio:
+            comercio.pop("password")
         return comercio
 
     @staticmethod
