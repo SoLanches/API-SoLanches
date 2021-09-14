@@ -111,7 +111,8 @@ class Comercio:
     
     @staticmethod
     def verify_password(comercio_nome, password):
-        comercio = Comercio.get_by_name(comercio_nome)
+        query = {"nome": comercio_nome}
+        comercio = DB.comercio.find_one(query)
 
         return comercio.get('password') == password
 
@@ -154,6 +155,8 @@ class Comercio:
 
     def to_dict(self):
         comercio = vars(self).copy()
+        if "password" in comercio:
+            comercio.pop("password")
         return comercio
 
 class Cardapio:
@@ -358,4 +361,4 @@ class BlockList:
         query = {"_id": token}
         token_get = DB.block_list.find_one(query)
 
-        return token_get != None
+        return bool(token_get)
