@@ -91,7 +91,7 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: attributes não informado!",
+   "message": "Erro: campo attributes não informado!",
    "status_code" : 400
 }
 ```
