@@ -601,8 +601,8 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: produto precisa fazer parte do cardápio do comércio!",
-   "status_code" : 400
+    "message": "Erro: produto não faz parte do cardápio do comércio!",
+    "status_code": 400
 }
 ```
 
@@ -641,7 +641,7 @@ Status: 200 OK
 Exemplo
 
 ```
-curl -x DELETE http://api/comercio/lanche_feliz/destaques/7522b85753550e2a5a691abe
+curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
 ```
 
 Resposta
@@ -651,8 +651,8 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: produto precisa fazer parte do cardápio do comércio!",
-   "status_code" : 400
+    "message": "Erro: produto com id c3h2foe6di3e1ee6bd3ctb4r não está nos destaques!",
+    "status_code": 400
 }
 ```
 
