@@ -26,3 +26,7 @@ class SolanchesProdutoNaoEncontrado(SolanchesException):
 class SolanchesProdutoNaoEstaNoCardapio(SolanchesException):
     def __init__(self, message):
         super().__init__(message)
+
+class SolanchesProdutoEstaNosDestaques(SolanchesException):
+    def __init__(self, message):
+        super().__init__(message)
