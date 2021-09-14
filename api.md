@@ -32,7 +32,7 @@ Status: 200 OK
 
 ## Cadastra o comércio
 
-Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos nome, do tipo string, e attributes, do tipo dict, que possui o campo telefone como obrigatório. Ambos os campos, nome e attributes, são obrigatórios. 
+Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos `nome`, do tipo string, e `attributes`, do tipo dict, que possui os campos `endereco` e `horarios` como obrigatórios. Ambos os campos, `nome` e `attributes`, são obrigatórios. 
 
 ```
 POST /comercio
@@ -43,10 +43,12 @@ Exemplo
 ```
 curl \
     -d '{
-             "nome": "lanche_feliz",
-             "attributes": {
-                 "telefone": "123456"
-             }
+            "nome": "lanche_feliz",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade/UF",
+                "horarios": "Terça-feira - Domingo, 17:00 - 23:00",
+                "categoria": "lanchonete"
+            }
          }' \
     -H "Content-Type: application/json" \
     -X POST http://api/comercio
@@ -61,7 +63,9 @@ Status: 201 CREATED
 {
     "id": "3671361e6d5dc1ee674156beed67b1fd",
     "attributes": {
-         "telefone": "123456"
+        "endereco": "rua, numero - bairro - cidade/UF",
+        "horarios": "Terça-feira - Domingo, 17:00 - 23:00",
+        "categoria": "lanchonete"
     },
     "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
     "created_at": 1628721657.488885,
@@ -87,7 +91,7 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: atributos não informados",
+   "message": "Erro: campo attributes não informado!",
    "status_code" : 400
 }
 ```
