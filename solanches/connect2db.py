@@ -1,6 +1,9 @@
 import os
 
 import pymongo
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 SOLANCHES_DB_URI = os.getenv("SOLANCHES_DB_URI")
