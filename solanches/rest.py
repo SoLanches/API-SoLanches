@@ -258,7 +258,6 @@ def login():
     }
 
     token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm="HS256")
-
     return jsonify({'token': token})
 
 
