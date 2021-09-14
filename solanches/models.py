@@ -1,3 +1,4 @@
+from datetime import datetime
 import hashlib
 import time
 import json
@@ -7,8 +8,9 @@ from . connect2db import DB
 
 class Comercio:
 
-    def __init__(self, nome, attributes):
+    def __init__(self, nome, password, attributes):
         self.nome = nome
+        self.password = password
         self.attributes = attributes
 
     @staticmethod
@@ -28,11 +30,13 @@ class Comercio:
     def get_by_id(id):
         query = {"_id": id}
         comercio = DB.comercio.find_one(query)
+        if "password" in comercio:
+            comercio.pop("password")        
         return comercio
 
     @staticmethod
     def get_all():
-        comercios = DB.comercio.find()
+        comercios = DB.comercio.find({}, {"password": 0})
         return list(comercios)
 
     @staticmethod
@@ -43,6 +47,8 @@ class Comercio:
     def get_by_name(name):
         query = {"nome": name}
         comercio = DB.comercio.find_one(query)
+        if "password" in comercio:
+            comercio.pop("password")
         return comercio
 
     @staticmethod
@@ -102,6 +108,13 @@ class Comercio:
         query = {"nome": comercio_nome}
         comercio_deletado = DB.comercio.delete_one(query)
         return comercio_deletado.deleted_count
+    
+    @staticmethod
+    def verify_password(comercio_nome, password):
+        query = {"nome": comercio_nome}
+        comercio = DB.comercio.find_one(query)
+
+        return comercio.get('password') == password
 
     def remove_produto(comercio_nome, produto_id):
         comercio = Comercio.get_by_name(comercio_nome)
@@ -142,7 +155,10 @@ class Comercio:
 
     def to_dict(self):
         comercio = vars(self).copy()
+        if "password" in comercio:
+            comercio.pop("password")
         return comercio
+
 
 class Cardapio:
 
@@ -275,6 +291,7 @@ class Cardapio:
         cardapio = vars(self).copy()
         return cardapio
 
+
 class Produto:
 
     def __init__(self, nome, attributes={}):
@@ -329,3 +346,21 @@ class Produto:
     def to_dict(self):
         produto = vars(self).copy()
         return produto
+
+
+class BlockList:
+
+    def __init__(self, token):
+        self._id = token
+    
+    def save(self):
+        self.date = datetime.utcnow()
+        DB.block_list.insert_one(vars(self))
+        return self._id
+
+    @staticmethod
+    def contains(token):
+        query = {"_id": token}
+        token_get = DB.block_list.find_one(query)
+
+        return bool(token_get)

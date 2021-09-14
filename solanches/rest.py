@@ -7,9 +7,10 @@ from flask import make_response
 from flask import abort
 
 from . import controller
+from .authenticate import jwt_required
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'secret'
 started_at = time.time()
 
 
@@ -48,13 +49,15 @@ def cadastra_comercio():
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
     _assert("nome" in req, 400, "Erro: campo nome não informado!")
+    _assert("password" in req, 400, "Erro: campo senha não informado!")
     _assert("attributes" in req, 400, "Erro: campo attributes não informado!")
 
     nome = req.get("nome")
+    password = req.get("password")
     attributes = req.get("attributes")
 
     try:
-        comercio_id = controller.cadastra_comercio(nome, attributes)
+        comercio_id = controller.cadastra_comercio(nome, password, attributes)
     except Exception as error:
         _assert(False, 400, str(error))
 
@@ -95,6 +98,7 @@ def get_comercio_by_name(comercio_nome):
 
 
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
+#@jwt_required
 def edita_comercio(comercio_nome):
     req = request.get_json()  
     _assert(req, 400, "Erro: json inválido!")
@@ -260,3 +264,40 @@ def _error(error):
     client_errors = ["BadRequest"]
     data["status_code"] = 400 if data["error"] in client_errors else 500
     return data, data["status_code"]
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    req = request.get_json()
+    _assert(req, 400, "Erro: json inválido!")
+    _assert("nome" in req, 400, "Erro: nome não informado!")
+    _assert("password" in req, 400, "Erro: senha não informada")
+
+    nome = req.get('nome')
+    password = req.get('password')
+
+    try:
+        token = controller.login(nome, password, app.config['SECRET_KEY'])
+    except Exception as error:
+        _assert(False, 403, str(error))
+
+    return jsonify({'token': token})
+
+
+@app.route("/logout", methods=["DELETE"])
+@jwt_required
+def logout(current_user):
+    token = None
+
+    if 'authorization' in request.headers:
+        token = request.headers['authorization']
+
+    _assert(token, 401, "Error: Você não está logado.")
+    controller.logout(token)
+
+    response = {
+        "message": "Access token revoked", 
+        "status_code": 200
+    }
+
+    return jsonify(response), 200
