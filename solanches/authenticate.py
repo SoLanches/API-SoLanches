@@ -11,6 +11,7 @@ from flask import make_response
 from . import controller
 from .models import BlockList
 
+
 def _assert(condition, status_code, message):
     if condition: return
     data = {
