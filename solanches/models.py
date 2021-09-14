@@ -87,9 +87,9 @@ class Comercio:
         return destaques
 
     @staticmethod
-    def add_destaques(comercio_nome, destaques):
+    def add_destaque(comercio_nome, destaque):
         comercio = Comercio.get_by_name(comercio_nome)
-        Cardapio.add_destaques(comercio.get("cardapio"), destaques)
+        Cardapio.add_destaque(comercio.get("cardapio"), destaque)
 
     @staticmethod
     def update_produto(produto_id, attributes, nome):
@@ -110,8 +110,8 @@ class Comercio:
 
     def remove_produto_destaques(comercio_nome, produto_id):
         comercio = Comercio.get_by_name(comercio_nome)
-        cardapio_id = comercio.get("cardapio")
-        Cardapio.remove_produto_destaques(cardapio_id, produto_id)
+        Cardapio.remove_produto_destaques(comercio.get("cardapio"), produto_id)
+
     @staticmethod
     def get_categoria(comercio_nome):
         comercio = Comercio.get_by_name(comercio_nome)
@@ -169,11 +169,11 @@ class Cardapio:
         Produto.remove_produtos(produtos)
 
     @staticmethod
-    def add_destaques(cardapio_id, destaques):
+    def add_destaque(cardapio_id, destaque):
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
         new_destaques = cardapio.get("destaques")
-        new_destaques += destaques if type(destaques) is list else [destaques]
+        new_destaques += destaque if type(destaque) is list else [destaque]
         new_values = {"$set": {"destaques": new_destaques}}
         DB.cardapio.update_one(query, new_values)
 
@@ -216,15 +216,15 @@ class Cardapio:
         new_values = {"$set": {"destaques": new_destaques, "produtos": new_produtos}}
         DB.cardapio.update_one(query, new_values)
         Produto.remove(produto_id)
-
+        
     @staticmethod
     def remove_produto_destaques(cardapio_id, produto_id):
         query = {"_id": cardapio_id}
         cardapio = Cardapio.get_by_id(cardapio_id)
-        new_destaques = cardapio.get("destaques")
-        new_destaques.remove(produto_id) if produto_id in new_destaques else new_destaques
-        new_values = {"$set": {"destaques": new_destaques}}
-        DB.cardapio.update_one(query, new_values)
+        destaques = cardapio.get("destaques")
+        destaques.remove(produto_id) if produto_id in destaques else destaques
+        new_destaques = {"$set": {"destaques": destaques}}
+        DB.cardapio.update_one(query, new_destaques)
     
     @staticmethod
     def get_produto_categoria(produto_id):

@@ -193,20 +193,14 @@ def edita_produto(comercio_nome, produto_id):
     return jsonify(produto), 200
 
 
-@app.route("/comercio/<comercio_nome>/destaques", methods=['POST'])
-def adiciona_destaques(comercio_nome):
-    req = request.get_json()
-    assert req, "Erro: json inválido!"
-    assert "destaques" in req, "Erro: destaques não informados!"
-    destaques = req.get("destaques")
-
+@app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['POST'])
+def adiciona_destaque(comercio_nome, produto_id):
     try:
-        controller.adiciona_destaques(destaques, comercio_nome)
-        msg = {"message": "destaques adicionados"}
+        cardapio = controller.adiciona_destaque(comercio_nome, produto_id)
     except Exception as error:
         _assert(False, 400, str(error))
 
-    return jsonify(msg), 201
+    return jsonify(cardapio), 201
 
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
@@ -218,16 +212,6 @@ def remove_produto(comercio_nome, produto_id):
     return jsonify(cardapio), 200
 
 
-@app.errorhandler(Exception)
-def _error(error):
-    data = {}
-    data["error"]  = error.__class__.__name__
-    data["message"] = str(error)
-    client_errors = ["BadRequest"]
-    data["status_code"] = 400 if data["error"] in client_errors else 500
-    return data, data["status_code"]
-    
-
 @app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['DELETE'])
 def remove_produto_destaques(comercio_nome, produto_id):
     try:
@@ -236,3 +220,13 @@ def remove_produto_destaques(comercio_nome, produto_id):
         _assert(False, 400, str(error))
 
     return jsonify(cardapio), 200
+    
+
+@app.errorhandler(Exception)
+def _error(error):
+    data = {}
+    data["error"]  = error.__class__.__name__
+    data["message"] = str(error)
+    client_errors = ["BadRequest"]
+    data["status_code"] = 400 if data["error"] in client_errors else 500
+    return data, data["status_code"]
