@@ -32,7 +32,7 @@ def jwt_required(f):
 
         token_in_block_list = BlockList.contains(token)
 
-        _assert(token != None and not token_in_block_list, 403, "Error: Você não tem permissão para acessar essa rota.")
+        _assert(token and not token_in_block_list, 403, "Error: Você não tem permissão para acessar essa rota.")
         
         try:
             decoded = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
