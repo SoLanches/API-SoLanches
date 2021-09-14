@@ -747,3 +747,119 @@ Status: 400 BAD REQUEST
    "status_code" : 400 
 }
 ```
+
+## Adiciona categoria ao cardápio de um comércio
+
+Adiciona uma categoria ao comércio. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria. O retorno é um JSON do cardápio do comércio.
+
+```
+POST /comercio/<comercio_nome>/categoria
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria inovação"
+        }' \
+    -H "Content-Type: application/json" \
+    -X POST http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 201 CREATED
+```
+```
+{
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "categorias": [
+        "categoria inovação"
+    ],
+    "created_at": 1631625353.1946077,
+    "destaques": [],
+    "produtos": []
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": ""
+        }' \
+    -H "Content-Type: application/json" \
+    -X POST http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: categoria não informada!",
+    "status_code": 400
+}
+```
+
+## Remove categoria de um cardápio
+
+Remove uma categoria. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria a ser removida. O retorno é um JSON do cardápio do comércio.
+
+```
+DELETE /comercio/<comercio_nome>/categoria
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria inovação"
+        }' \
+    -H "Content-Type: application/json" \
+    -X DELETE http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "d81d37521e2ee08c5b50ac4f5c9bed652634fb95",
+    "categorias": [],
+    "created_at": 1631625353.1946077,
+    "destaques": [],
+    "produtos": []
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria que não existe"
+        }' \
+    -H "Content-Type: application/json" \
+    -X DELETE http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: categoria não faz parte do comércio",
+    "status_code": 400
+}
+```

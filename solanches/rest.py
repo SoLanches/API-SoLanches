@@ -220,6 +220,36 @@ def remove_produto_destaques(comercio_nome, produto_id):
         _assert(False, 400, str(error))
 
     return jsonify(cardapio), 200
+
+
+@app.route("/comercio/<comercio_nome>/categoria", methods=['POST'])
+def adiciona_categoria(comercio_nome):
+    req = request.get_json()
+    _assert(req, 400, "Erro: json inválido!")
+    categoria = req.get("categoria")
+    _assert(categoria, 400, "Erro: categoria não informada!")
+
+    try:
+        cardapio_atualizado = controller.adiciona_categoria(comercio_nome, categoria)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio_atualizado), 201
+
+
+@app.route("/comercio/<comercio_nome>/categoria", methods=['DELETE'])
+def remove_categoria(comercio_nome):
+    req = request.get_json()
+    _assert(req, 400, "Erro: json inválido!")
+    categoria = req.get("categoria")
+    _assert(categoria, 400, "Erro: categoria não informada!")
+
+    try:
+        cardapio_atualizado = controller.remove_categoria(comercio_nome, categoria)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio_atualizado), 200
     
 
 @app.errorhandler(Exception)
