@@ -1,4 +1,3 @@
-from datetime import datetime
 from functools import wraps
 
 import jwt
@@ -22,8 +21,8 @@ def _assert(condition, status_code, message):
     abort(response)
 
 
-def jwt_required(f):
-    @wraps(f)
+def jwt_required(function):
+    @wraps(function)
     def wrapper(*args, **kwargs):
         token = None
 
@@ -36,10 +35,10 @@ def jwt_required(f):
         
         try:
             decoded = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = controller.get_comercio(decoded.get("id"))
+            current_user = controller.get_comercio_by_id(decoded.get("id"))
         except:
             _assert(False, 403, "Error: Token inválido ou expirado.")    
         
-        return f(current_user=current_user, *args, **kwargs)
+        return function(current_user=current_user, *args, **kwargs)
 
     return wrapper

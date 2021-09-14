@@ -8,8 +8,9 @@ from . connect2db import DB
 
 class Comercio:
 
-    def __init__(self, nome, attributes):
+    def __init__(self, nome, password, attributes):
         self.nome = nome
+        self.password = password
         self.attributes = attributes
 
     @staticmethod
@@ -116,7 +117,7 @@ class Comercio:
     def verify_password(comercio_nome, password):
         comercio = Comercio.get_by_name(comercio_nome)
 
-        return comercio.get("attributes").get('password') == password ## TO-DO DESCRIPTOGRAFAR
+        return comercio.get('password') == password
 
     def remove_produto(comercio_nome, produto_id):
         comercio = Comercio.get_by_name(comercio_nome)
@@ -134,15 +135,30 @@ class Comercio:
         categoria = attributes.get("categoria", "")
         return categoria.strip(" ")
 
-    def to_dict(self):
-        comercio = vars(self).copy()
-        return comercio
-
     @staticmethod
     def get_produto_categoria(produto_id):
         categoria = Cardapio.get_produto_categoria(produto_id)
         return categoria
 
+    @staticmethod
+    def adiciona_categoria(comercio_nome, categoria):
+        comercio = Comercio.get_by_name(comercio_nome)
+        Cardapio.add_categoria(comercio.get("cardapio"), categoria)
+
+    @staticmethod
+    def remove_categoria(comercio_nome, categoria):
+        comercio = Comercio.get_by_name(comercio_nome)
+        Cardapio.remove_categoria(comercio.get("cardapio"), categoria)
+
+    @staticmethod
+    def get_cardapio_categorias(comercio_nome):
+        comercio = Comercio.get_by_name(comercio_nome)
+        categorias = Cardapio.get_categorias(comercio.get("cardapio"))
+        return categorias
+
+    def to_dict(self):
+        comercio = vars(self).copy()
+        return comercio
 
 class Cardapio:
 
@@ -150,6 +166,7 @@ class Cardapio:
         self._id = cardapio_id
         self.produtos = []
         self.destaques = []
+        self.categorias = []
 
     def save(self):
         self.created_at = time.time()
@@ -246,10 +263,33 @@ class Cardapio:
         categoria = Produto.get_categoria(produto_id)
         return categoria
 
+    @staticmethod
+    def add_categoria(cardapio_id, categoria):
+        query = {"_id": cardapio_id}
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        categorias = cardapio.get("categorias")
+        categorias.append(categoria)
+        new_values = {"$set": {"categorias": categorias}}
+        DB.cardapio.update_one(query, new_values)
+
+    @staticmethod
+    def remove_categoria(cardapio_id, categoria):
+        query = {"_id": cardapio_id}
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        categories = cardapio.get("categorias")
+        categories.remove(categoria) if categoria in categories else categories
+        new_values = {"$set": {"categorias": categories}}
+        DB.cardapio.update_one(query, new_values)
+
+    @staticmethod
+    def get_categorias(cardapio_id):
+        cardapio = Cardapio.get_by_id(cardapio_id)
+        categorias = cardapio.get("categorias")
+        return categorias
+
     def to_dict(self):
         cardapio = vars(self).copy()
         return cardapio
-
 
 class Produto:
 
