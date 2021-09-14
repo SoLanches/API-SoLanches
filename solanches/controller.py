@@ -1,15 +1,21 @@
 import logging
 from solanches.errors import *
-from . models import Produto, Comercio
+from . models import Produto, Comercio, BlockList
+import datetime
+
+import jwt
+
 from . import connect2db
 
 
-def cadastra_comercio(nome, attributes):
-    assert nome and type(nome) is str, "Erro: nome inválido!"
-    assert attributes and type(attributes) is dict, "Erro: campo attributes inválidos!"
-    assert "telefone" in attributes, "Erro: Telefone não informado"
+def cadastra_comercio(nome, password, attributes):
+    assert nome and type(nome) is str, 'Erro: nome inválido!'
+    assert password and type(password) is str, "Erro: Senha não informada!"
+    assert attributes and type(attributes) is dict, 'Erro: campo attributes inválidos!'
+    assert "endereco" in attributes, 'Erro: campo endereco não informado!'
+    assert "horarios" in attributes, 'Erro: campo horarios não informados!'
     try:
-        novo_comercio = Comercio(nome, attributes)
+        novo_comercio = Comercio(nome, password, attributes)
         novo_comercio.save()
         result = novo_comercio.to_dict()
     except connect2db.pymongo.errors.DuplicateKeyError:
@@ -206,6 +212,15 @@ def remove_produto(comercio_nome, produto_id):
     return cardapio
 
 
+def _get_produtos_categoria(comercio_nome):
+    result = {}
+    produtos = Comercio.get_produtos(comercio_nome)
+    for produto in produtos:
+        categoria = Comercio.get_produto_categoria(produto.get("_id"))
+        result.setdefault(categoria, []).append(produto)
+    return result
+
+
 def remove_produto_destaques(comercio_nome, produto_id):
     assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comércio inválido'
     
@@ -219,3 +234,49 @@ def remove_produto_destaques(comercio_nome, produto_id):
     Comercio.remove_produto_destaques(comercio_nome, produto_id)
     cardapio = get_cardapio(comercio_nome)
     return cardapio
+
+
+def adiciona_categoria(comercio_nome, categoria):
+    assert type(categoria) is str, 'Erro: valor de categoria inválida!'
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    assert categoria not in Comercio.get_cardapio_categorias(comercio_nome), f'Erro: categoria já cadastrada nesse comércio!'
+
+    Comercio.adiciona_categoria(comercio_nome, categoria)
+
+    cardapio_atualizado = Comercio.get_cardapio(comercio_nome)
+
+    return cardapio_atualizado
+
+
+def remove_categoria(comercio_nome, categoria):
+    assert type(categoria) is str, 'Erro: valor de categoria inválida!'
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    categorias = Comercio.get_cardapio_categorias(comercio_nome)
+    assert categoria in categorias, 'Erro: categoria não faz parte do comércio'
+    
+    Comercio.remove_categoria(comercio_nome, categoria)
+
+    cardapio_atualizado = Comercio.get_cardapio(comercio_nome)
+
+    return cardapio_atualizado
+
+
+def login(comercio_nome, password, secret):
+    comercio = Comercio.get_by_name(comercio_nome)
+    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    assert Comercio.verify_password(comercio_nome, password), "Erro! Senha incorreta"
+
+    payload = {
+        'id': comercio.get("_id"),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+    }
+
+    token = jwt.encode(payload, secret, algorithm="HS256")
+    return token
+
+
+def logout(token):
+    block_token = BlockList(token)
+    block_token.save()

@@ -7,8 +7,10 @@ from flask import request
 from flask import make_response
 from flask import abort
 from . import controller
+from .authenticate import jwt_required
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret'
 started_at = time.time()
 
 def _assert(condition, status_code, message):
@@ -45,14 +47,16 @@ def status():
 def cadastra_comercio():
     req = request.get_json()
     _assert(req, 400, "Erro: json inválido!")
-    _assert("nome" in req, 400, "Erro: nome não informado!")
-    _assert("attributes" in req, 400, "Erro: atributos não informado")
+    _assert("nome" in req, 400, "Erro: campo nome não informado!")
+    _assert("password" in req, 400, "Erro: campo senha não informado!")
+    _assert("attributes" in req, 400, "Erro: campo attributes não informado!")
 
     nome = req.get("nome")
+    password = req.get("password")
     attributes = req.get("attributes")
 
     try:
-        comercio_id = controller.cadastra_comercio(nome, attributes)
+        comercio_id = controller.cadastra_comercio(nome, password, attributes)
     except SolanchesDuplicateKey as erro_chave:
         raise SolanchesDuplicateKey(erro_chave.message)
     except Exception as erro_interno:
@@ -100,6 +104,7 @@ def get_comercio_by_name(comercio_nome):
 
 
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
+#@jwt_required
 def edita_comercio(comercio_nome):
     req = request.get_json()  
     _assert(req, 400, "Erro: json inválido!")
@@ -285,6 +290,37 @@ def handle_produto_esta_no_cardapio(error):
     error.status_code = 400
     return construct_error(error), error.status_code 
 
+
+@app.route("/comercio/<comercio_nome>/categoria", methods=['POST'])
+def adiciona_categoria(comercio_nome):
+    req = request.get_json()
+    _assert(req, 400, "Erro: json inválido!")
+    categoria = req.get("categoria")
+    _assert(categoria, 400, "Erro: categoria não informada!")
+
+    try:
+        cardapio_atualizado = controller.adiciona_categoria(comercio_nome, categoria)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio_atualizado), 201
+
+
+@app.route("/comercio/<comercio_nome>/categoria", methods=['DELETE'])
+def remove_categoria(comercio_nome):
+    req = request.get_json()
+    _assert(req, 400, "Erro: json inválido!")
+    categoria = req.get("categoria")
+    _assert(categoria, 400, "Erro: categoria não informada!")
+
+    try:
+        cardapio_atualizado = controller.remove_categoria(comercio_nome, categoria)
+    except Exception as error:
+        _assert(False, 400, str(error))
+
+    return jsonify(cardapio_atualizado), 200
+    
+
 @app.errorhandler(Exception)
 def _error(error):
     data = {}
@@ -300,3 +336,40 @@ def construct_error(error):
     data["message"] = error.message
     data["status_code"] = error.status_code
     return data
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    req = request.get_json()
+    _assert(req, 400, "Erro: json inválido!")
+    _assert("nome" in req, 400, "Erro: nome não informado!")
+    _assert("password" in req, 400, "Erro: senha não informada")
+
+    nome = req.get('nome')
+    password = req.get('password')
+
+    try:
+        token = controller.login(nome, password, app.config['SECRET_KEY'])
+    except Exception as error:
+        _assert(False, 403, str(error))
+
+    return jsonify({'token': token})
+
+
+@app.route("/logout", methods=["DELETE"])
+@jwt_required
+def logout(current_user):
+    token = None
+
+    if 'authorization' in request.headers:
+        token = request.headers['authorization']
+
+    _assert(token, 401, "Error: Você não está logado.")
+    controller.logout(token)
+
+    response = {
+        "message": "Access token revoked", 
+        "status_code": 200
+    }
+
+    return jsonify(response), 200

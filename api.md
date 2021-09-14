@@ -32,7 +32,7 @@ Status: 200 OK
 
 ## Cadastra o comércio
 
-Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos nome, do tipo string, e attributes, do tipo dict, que possui o campo telefone como obrigatório. Ambos os campos, nome e attributes, são obrigatórios. 
+Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos `nome`, do tipo string, e `attributes`, do tipo dict, que possui os campos `endereco` e `horarios` como obrigatórios. Ambos os campos, `nome` e `attributes`, são obrigatórios. 
 
 ```
 POST /comercio
@@ -43,10 +43,12 @@ Exemplo
 ```
 curl \
     -d '{
-             "nome": "lanche_feliz",
-             "attributes": {
-                 "telefone": "123456"
-             }
+            "nome": "lanche_feliz",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade/UF",
+                "horarios": "Terça-feira - Domingo, 17:00 - 23:00",
+                "categoria": "lanchonete"
+            }
          }' \
     -H "Content-Type: application/json" \
     -X POST http://api/comercio
@@ -61,7 +63,9 @@ Status: 201 CREATED
 {
     "id": "3671361e6d5dc1ee674156beed67b1fd",
     "attributes": {
-         "telefone": "123456"
+        "endereco": "rua, numero - bairro - cidade/UF",
+        "horarios": "Terça-feira - Domingo, 17:00 - 23:00",
+        "categoria": "lanchonete"
     },
     "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
     "created_at": 1628721657.488885,
@@ -87,7 +91,7 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: atributos não informados",
+   "message": "Erro: campo attributes não informado!",
    "status_code" : 400
 }
 ```
@@ -745,5 +749,121 @@ Status: 400 BAD REQUEST
 {
    "message": "Erro: produto precisa fazer parte do cardápio do comércio",
    "status_code" : 400 
+}
+```
+
+## Adiciona categoria ao cardápio de um comércio
+
+Adiciona uma categoria ao comércio. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria. O retorno é um JSON do cardápio do comércio.
+
+```
+POST /comercio/<comercio_nome>/categoria
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria inovação"
+        }' \
+    -H "Content-Type: application/json" \
+    -X POST http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 201 CREATED
+```
+```
+{
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "categorias": [
+        "categoria inovação"
+    ],
+    "created_at": 1631625353.1946077,
+    "destaques": [],
+    "produtos": []
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": ""
+        }' \
+    -H "Content-Type: application/json" \
+    -X POST http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: categoria não informada!",
+    "status_code": 400
+}
+```
+
+## Remove categoria de um cardápio
+
+Remove uma categoria. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria a ser removida. O retorno é um JSON do cardápio do comércio.
+
+```
+DELETE /comercio/<comercio_nome>/categoria
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria inovação"
+        }' \
+    -H "Content-Type: application/json" \
+    -X DELETE http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "d81d37521e2ee08c5b50ac4f5c9bed652634fb95",
+    "categorias": [],
+    "created_at": 1631625353.1946077,
+    "destaques": [],
+    "produtos": []
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria que não existe"
+        }' \
+    -H "Content-Type: application/json" \
+    -X DELETE http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: categoria não faz parte do comércio",
+    "status_code": 400
 }
 ```
