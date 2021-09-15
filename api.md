@@ -1,242 +1,306 @@
-# API SoLanches 
+# **API SoLanches**
 
-API do projeto SoLanches que oferece funcionalidades CRUD de um sistema de comércios do ramo alimentício. 
+API do projeto [SoLanches](https://link_aqui) que oferece funcionalidades *CRUD* de um sistema de comércios do ramo alimentício. 
 
-## Consulta status do servidor da API
+## Consulta status do servidor da API [GET]
 
-Retorna um JSON com informações sobre o servidor.
+Retorna um *JSON* com informações sobre o servidor.
 
-```
-GET /status
-```
++ URL
 
-Exemplo
+    ```
+    GET /status
+    ```
 
-```
-curl http://api/status
-```
++ **Exemplo**
 
-Resposta
+    + Request
 
-```
-Status: 200 OK
-```
-```
-{
-    "service": "API-SoLanches",
-    "started_at": 1598458984,
-    "status": "operacional",
-    "timestamp": 1598485633
-}
-```
+        ```
+        curl http://api/status
+        ```
 
-## Cadastra o comércio
+    + Response
 
-Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos `nome`, do tipo string, e `attributes`, do tipo dict, que possui os campos `endereco` e `horarios` como obrigatórios. Ambos os campos, `nome` e `attributes`, são obrigatórios. 
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "service": "api-solanches",
+            "started_at": 1631664230.6867428,
+            "status": "operacional",
+            "timestamp": 1631664351.918028
+        }
+        ```
 
-```
-POST /comercio
-```
+## Cadastra o comércio [POST]
 
-Exemplo
+Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adicionado. A requisição deve enviar no body um *JSON* com os campos `nome` e `attributes`, o último contendo obrigatoriamente os campos `endereco` e `horarios`.
 
-```
-curl \
-    -d '{
-            "nome": "lanche_feliz",
-            "attributes": {
-                "endereco": "rua, numero - bairro - cidade/UF",
-                "horarios": "Terça-feira - Domingo, 17:00 - 23:00",
-                "categoria": "lanchonete"
-            }
-         }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio
-```
++ URL
 
-Resposta
+    ```
+    POST /comercio
+    ```
 
-```
-Status: 201 CREATED
-```
-```
-{
-    "id": "3671361e6d5dc1ee674156beed67b1fd",
-    "attributes": {
-        "endereco": "rua, numero - bairro - cidade/UF",
-        "horarios": "Terça-feira - Domingo, 17:00 - 23:00",
-        "categoria": "lanchonete"
-    },
-    "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
-    "nome": "lanche_feliz"
-}
-```
++ Body
 
-Exemplo
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `nome` | string | obrigatório | o nome do comercio.|
+    | `attributes` | dict | obrigatório | as informações de cadastro do comércio.|
+    | `endereco` | string | obrigatório | o endereço do comercio, no campo `attributes`.|
+    | `horarios` | string | obrigatório | os horários do comercio, no campo `attributes`.|
 
-```
-curl \
-    -d '{
-             "nome": "lanche_feliz"
-         }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio
-```
++ **Exemplos**
 
-Resposta
+    + Request
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-   "message": "Erro: campo attributes não informado!",
-   "status_code" : 400
-}
-```
+        ```
+        curl \
+            -d '{
+                    "nome": "lanche_feliz",
+                    "attributes": {
+                        "endereco": "rua, numero - bairro - cidade/UF",
+                        "horarios": "terça-feira - domingo, 17:00 - 23:00",
+                        "categoria": "lanchonete"
+                    }
+                }' \
+            -H "Content-Type: application/json" \
+            -X POST http://api/comercio
+        ```
 
-## Lista comércios 
+    + Response
 
-Retorna uma lista com todos os comércios cadastrados no sistema, sendo também possível o retorno de um dicionário com o agrupamento dos comércios por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de comércios.
-
-```
-GET  /comercios?categories=
-```
-
-Exemplo
-
-```
-curl http://api/comercios
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-[
-    {
-        "id": "3671361e6d5dc1ee674156beed67b1fd",
-        "attributes": {
-            "categoria": "lanchonete",
-            "telefone": "123456"
-        },
-        "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-        "created_at": 1628721657.488885,
-        "nome": "lanche_feliz"
-    }
-]
-```
-
-Exemplo
-
-```
-curl http://api/comercios?categories=true
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-{
-    "lanchonete": [
+        ```
+        Status: 201 CREATED
+        ```
+        ```
         {
             "id": "3671361e6d5dc1ee674156beed67b1fd",
             "attributes": {
-                "categoria": "lanchonete",
-                "telefone": "123456"
+                "endereco": "rua, numero - bairro - cidade/UF",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00",
+                "categoria": "lanchonete"
             },
             "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
             "created_at": 1628721657.488885,
             "nome": "lanche_feliz"
         }
-    ]
-}
-```
+        ```
 
-## Retorna comércio por id
+    + Request
 
-Recupera um comércio pelo id. O id é passado na URL e o retorno é um JSON com o comércio recuperado.
+        ```
+        curl \
+            -d '{
+                    "nome": "lanche_feliz"
+                }' \
+            -H "Content-Type: application/json" \
+            -X POST http://api/comercio
+        ```
 
-```
-GET /comercio?id=
-```
+    + Response
 
-Exemplo
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: campo attributes não informado!",
+            "status_code" : 400
+        }
+        ```
 
-```
-curl http://api/comercio?id=3671361e6d5dc1ee674156beed67b1fd
-```
+## Lista os comércios [GET]
 
-Resposta
+Retorna uma lista com todos os comércios cadastrados no sistema, sendo também possível o retorno de um dicionário com o agrupamento dos comércios por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de comércios.
 
-```
-Status: 200 OK
-```
-```
-{
-    "id": "3671361e6d5dc1ee674156beed67b1fd",
-    "attributes": {
-         "telefone": "123456"
-    },
-    "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
-    "nome": "lanche_feliz"
-}
-```
++ URL
 
-Exemplo
+    ```
+    GET  /comercios?categories=
+    ```
 
-```
-curl http://api/comercio?id=123
-```
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `categories` | string | opcional | `"true"` para agrupar os comércios por categoria, `"false"` caso o contrário.|
 
-Resposta
++ **Exemplos**
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-   "message": "Erro: comércio com id 123 não cadastrado!",
-   "status_code" : 400
-}
-```
+    + Request
 
-## Retorna comércio por nome
+        ```
+        curl http://api/comercios
+        ```
 
-Recupera um comércio a partir do nome passado na URL.
+    + Response
 
-```
-GET /comercio/<comercio_nome>
-```
+        ```
+        Status: 200 OK
+        ```
+        ```
+        [
+            {
+                "id": "3671361e6d5dc1ee674156beed67b1fd",
+                "attributes": {
+                    "endereco": "rua, numero - bairro - cidade/UF",
+                    "horarios": "terça-feira - domingo, 17:00 - 23:00",
+                    "categoria": "lanchonete"
+                },
+                "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
+                "created_at": 1628721657.488885,
+                "nome": "lanche_feliz"
+            }
+        ]
+        ```
 
-Exemplo
+    + Request
 
-```
-curl http://api/comercio/lanche_feliz
-```
+        ```
+        curl http://api/comercios?categories=true
+        ```
 
-Resposta
+    + Response
 
-```
-Status: 200 OK
-```
-```
-{
-    "id": "3671361e6d5dc1ee674156beed67b1fd",
-    "attributes": {
-         "telefone": "123456"
-    },
-    "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
-    "nome": "lanche_feliz"
-}
-```
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "lanchonete": [
+                {
+                    "id": "3671361e6d5dc1ee674156beed67b1fd",
+                    "attributes": {
+                        "endereco": "rua, numero - bairro - cidade/UF",
+                        "horarios": "terça-feira - domingo, 17:00 - 23:00",
+                        "categoria": "lanchonete"
+                    },
+                    "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
+                    "created_at": 1628721657.488885,
+                    "nome": "lanche_feliz"
+                }
+            ]
+        }
+        ```
+
+## Acessa o comércio por ID [GET]
+
+Retorna um *JSON* contendo o comércio cadastrado com o id informado na URL.
+
++ URL
+    ```
+    GET /comercio?id=
+    ```
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `id` | string | obrigatório | o id do comércio cadastrado. |
+
++ **Exemplos**
+
+    + Request
+
+        ```
+        curl http://api/comercio?id=3671361e6d5dc1ee674156beed67b1fd
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "id": "3671361e6d5dc1ee674156beed67b1fd",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade/UF",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00",
+                "categoria": "lanchonete"
+            },
+            "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
+            "created_at": 1628721657.488885,
+            "nome": "lanche_feliz"
+        }
+        ```
+
+    + Request
+
+        ```
+        curl http://api/comercio?id=0
+        ```
+
+    + Response
+
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: comércio com id 0 não cadastrado!",
+            "status_code" : 400
+        }
+        ```
+
+## Acessa o comércio por NOME [GET]
+
+Retorna um *JSON* contendo o comércio cadastrado com o nome informado na URL.
+
++ URL
+
+    ```
+    GET /comercio/<comercio_nome>
+    ```
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+
++ **Exemplos**
+
+    + Request
+
+        ```
+        curl http://api/comercio/lanche_feliz
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "id": "3671361e6d5dc1ee674156beed67b1fd",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade/UF",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00",
+                "categoria": "lanchonete"
+            },
+            "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
+            "created_at": 1628721657.488885,
+            "nome": "lanche_feliz"
+        }
+        ```
+
+    + Request
+
+        ```
+        curl http://api/comercio/so_lanche
+        ```
+
+    + Response
+
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: comércio com nome so_lanche não cadastrado!",
+            "status_code" : 400
+        }
+        ```
 
 ## Cadastra produto no cardápio de um comércio
 
