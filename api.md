@@ -1,6 +1,6 @@
 # **API SoLanches**
 
-API do projeto [SoLanches](https://link_aqui) que oferece funcionalidades *CRUD* de um sistema de comércios do ramo alimentício. 
+API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalidades *CRUD* de um sistema de comércios do ramo alimentício. 
 
 ## Consulta status do servidor da API [GET]
 
