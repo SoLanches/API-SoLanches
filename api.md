@@ -2,7 +2,7 @@
 
 API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalidades *CRUD* de um sistema de comércios do ramo alimentício. 
 
-## Consulta status do servidor da API [GET]
+## Consulta o status do servidor da API [GET]
 
 Retorna um *JSON* com informações sobre o servidor.
 
@@ -48,10 +48,10 @@ Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adic
 
     | Parameters | Type | Requirement | Description |
     |---|---|---|---|
-    | `nome` | string | obrigatório | o nome do comercio.|
-    | `attributes` | dict | obrigatório | as informações de cadastro do comércio.|
-    | `endereco` | string | obrigatório | o endereço do comercio, no campo `attributes`.|
-    | `horarios` | string | obrigatório | os horários do comercio, no campo `attributes`.|
+    | `nome` | string | obrigatório | o nome do comercio. |
+    | `attributes` | dict | obrigatório | as informações de cadastro do comércio. |
+    | `endereco` | string | obrigatório | o endereço do comercio, no campo `attributes`. |
+    | `horarios` | string | obrigatório | os horários do comercio, no campo `attributes`. |
 
 + **Exemplos**
 
@@ -110,78 +110,6 @@ Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adic
         {
             "message": "Erro: campo attributes não informado!",
             "status_code" : 400
-        }
-        ```
-
-## Lista os comércios [GET]
-
-Retorna uma lista com todos os comércios cadastrados no sistema, sendo também possível o retorno de um dicionário com o agrupamento dos comércios por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de comércios.
-
-+ URL
-
-    ```
-    GET  /comercios?categories=
-    ```
-
-    | Parameters | Type | Requirement | Description |
-    |---|---|---|---|
-    | `categories` | string | opcional | `"true"` para agrupar os comércios por categoria, `"false"` caso o contrário.|
-
-+ **Exemplos**
-
-    + Request
-
-        ```
-        curl http://api/comercios
-        ```
-
-    + Response
-
-        ```
-        Status: 200 OK
-        ```
-        ```
-        [
-            {
-                "id": "3671361e6d5dc1ee674156beed67b1fd",
-                "attributes": {
-                    "endereco": "rua, numero - bairro - cidade/UF",
-                    "horarios": "terça-feira - domingo, 17:00 - 23:00",
-                    "categoria": "lanchonete"
-                },
-                "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-                "created_at": 1628721657.488885,
-                "nome": "lanche_feliz"
-            }
-        ]
-        ```
-
-    + Request
-
-        ```
-        curl http://api/comercios?categories=true
-        ```
-
-    + Response
-
-        ```
-        Status: 200 OK
-        ```
-        ```
-        {
-            "lanchonete": [
-                {
-                    "id": "3671361e6d5dc1ee674156beed67b1fd",
-                    "attributes": {
-                        "endereco": "rua, numero - bairro - cidade/UF",
-                        "horarios": "terça-feira - domingo, 17:00 - 23:00",
-                        "categoria": "lanchonete"
-                    },
-                    "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-                    "created_at": 1628721657.488885,
-                    "nome": "lanche_feliz"
-                }
-            ]
         }
         ```
 
@@ -302,327 +230,441 @@ Retorna um *JSON* contendo o comércio cadastrado com o nome informado na URL.
         }
         ```
 
-## Cadastra produto no cardápio de um comércio
+## Lista os comércios [GET]
 
-Para realizar o cadastrado de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `nome`, que é obrigatório, e o campo `attributes`, que é opcional. O `nome` do produto deve ser uma string e os `attributes` um dict.
+Retorna uma lista com todos os comércios cadastrados no sistema, sendo também possível o retorno de um dicionário com o agrupamento dos comércios por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de comércios.
 
-```
-POST /comercio/<comercio_nome>/produto
-```
++ URL
 
-Exemplo
+    ```
+    GET  /comercios?categories=
+    ```
 
-```
-curl \
-    -d '{
-             "nome": "produto"
-         }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio/lanche_feliz/produto
-```
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `categories` | string | opcional | `"true"` para agrupar os comércios por categoria, `"false"` caso o contrário. |
 
-Resposta
++ **Exemplos**
 
-```
-Status: 201 CREATED
-```
-```
-{
-   "message": "Produto com o id c3h2foe6di3e1ee6bd3ctb4r adicionado!",
-}
-```
+    + Request
 
-Exemplo
+        ```
+        curl http://api/comercios
+        ```
 
-```
-curl \
-    -d '{
-             "nome": "produto"
-         }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio/abc_da_xuxa/produto
-```
+    + Response
 
-Resposta
+        ```
+        Status: 200 OK
+        ```
+        ```
+        [
+            {
+                "id": "3671361e6d5dc1ee674156beed67b1fd",
+                "attributes": {
+                    "endereco": "rua, numero - bairro - cidade/UF",
+                    "horarios": "terça-feira - domingo, 17:00 - 23:00",
+                    "categoria": "lanchonete"
+                },
+                "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
+                "created_at": 1628721657.488885,
+                "nome": "lanche_feliz"
+            }
+        ]
+        ```
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-   "message": "Erro: comércio com nome abc_da_xuxa não cadastrado!",
-   "status_code" : 400
-}
-```
+    + Request
 
-## Retorna produto de um comercio
+        ```
+        curl http://api/comercios?categories=true
+        ```
 
-Recupera um json do produto através do nome do comércio e o id do produto. 
+    + Response
 
-```
-GET  /comercio/<nome_comercio>/produtos/<produto_id>
-```
-
-Exemplo
-
-```
-curl http://api/comercio/lanche_feliz/produto/c666ae577afa4776148c2e09b9545320cbbbfac1
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-{
-    "_id": "c666ae577afa4776148c2e09b9545320cbbbfac1",
-    "attributes": {},
-    "created_at": 1630117957.674759,
-    "nome": "empanado_de_frango"
-}
-```
-
-Exemplo
-
-```
-curl http://api/comercio/lanche_feliz/produto/ioasjfoankfn
-```
-
-Resposta
-
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-    "message": "Erro: produto não cadastrado no sistema",
-    "status_code": 400
-}
-```
-
-Exemplo
-
-```
-curl http://api/comercio/lanche_bom/produto/c666ae577afa4776148c2e09b9545320cbbbfac1
-```
-
-Resposta
-
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-    "message": "Erro: produto não faz parte desse comércio",
-    "status_code": 400
-}
-```
-
-## Lista produtos de um comercio
-
-Retorna uma lista com todos os produtos cadastrados no comércio, sendo também possível o retorno de um dicionário com o agrupamento dos produtos por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de produtos.
-
-```
-GET  /comercio/<nome_comercio>/produtos?categories=
-```
-
-Exemplo
-
-```
-curl http://api/comercio/lanche_feliz/produtos
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-[
-    {
-        "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
-        "attributes" : {
-            "categoria" : "coxinha"
-        },
-        "created_at" : 1630631958.37054,
-        "nome" : "coxinha de frango"
-    }
-]
-```
-
-Exemplo
-
-```
-curl http://api/comercio/lanche_feliz/produtos?categories=true
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-{
-    "coxinha": [
+        ```
+        Status: 200 OK
+        ```
+        ```
         {
-            "_id" : "42685f4d9216a4f36f45876fff6323f1fe70c51e",
-            "attributes" : {
-                "categoria" : "coxinha"
-            },
-            "created_at" : 1630631958.37054, 
-            "nome" : "coxinha de frango"
+            "lanchonete": [
+                {
+                    "id": "3671361e6d5dc1ee674156beed67b1fd",
+                    "attributes": {
+                        "endereco": "rua, numero - bairro - cidade/UF",
+                        "horarios": "terça-feira - domingo, 17:00 - 23:00",
+                        "categoria": "lanchonete"
+                    },
+                    "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
+                    "created_at": 1628721657.488885,
+                    "nome": "lanche_feliz"
+                }
+            ]
         }
-    ]
-}
-```
+        ```
 
-## Lista ids dos produtos de um comercio
+## Cadastra o produto no cardápio do comércio [POST]
 
-Retorna uma lista com todos os ids dos produtos cadastrados no comércio.
+Adiciona um produto no banco de dados, referenciando-o no cardápio do comércio cadastrado com o nome informado na URL e retorna um *JSON* com o produto adicionado. A requisição deve enviar no body um *JSON* com os campos `nome` e `attributes`.
 
-```
-GET  /comercio/<nome_comercio>/produtos/ids
-```
++ URL
 
-Exemplo
+    ```
+    POST /comercio/<comercio_nome>/produto
+    ```
 
-```
-curl http://api/comercio/lanche_feliz/produtos/ids
-```
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
 
-Resposta
++ Body
 
-```
-Status: 200 OK
-```
-```
-[
-    "3d3f5f603fe10d0dc519e6fc94e4df04928cf3df",
-    "3752b85753550e2a5a691efdbbb406df97474903",
-    "9ef383839b477c683b0f58d74fbb6fa4db56628e"
-]
-```
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `nome` | string | obrigatório | o nome do produto. |
+    | `attributes` | dict | opcional | as informações de cadastro do produto. |
 
-## Edita produto no cardápio de um comércio
++ **Exemplos**
 
-Para realizar a edição de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `attributes`, opcional, contendo as informações para atualização e o campo `nome`, opcional, com o novo nome do produto. O `attributes` do produto deve ser um dict e o `nome` uma string. O nome do comércio e o id do produto são passados na URL.
+    + Request
+        ```
+        curl \
+            -d '{
+                    "nome": "produto"
+                }' \
+            -H "Content-Type: application/json" \
+            -X POST http://api/comercio/lanche_feliz/produto
+        ```
 
-```
-PATCH /comercio/<comercio_nome>/produto/<produto_id>
-```
+    + Response
 
-Exemplo
+        ```
+        Status: 201 CREATED
+        ```
+        ```
+        {
+            "message": "Produto com o id c3h2foe6di3e1ee6bd3ctb4r adicionado!",
+        }
+        ```
+    
+    + Request
+        ```
+        curl \
+            -d '{
+                    "nome": "produto",
+                    "attributes":{
+                        "categoria": "doce"
+                    }
+                }' \
+            -H "Content-Type: application/json" \
+            -X POST http://api/comercio/lanche_feliz/produto
+        ```
 
-```
-curl \
-    -d '{
+    + Response
+
+        ```
+        Status: 201 CREATED
+        ```
+        ```
+        {
+            "message": "Produto com o id 3d3f5f603fe10d0dc519e6fc adicionado!",
+        }
+        ```
+
+    + Request
+
+        ```
+        curl \
+            -d '{
+                    "nome": "produto"
+                }' \
+            -H "Content-Type: application/json" \
+            -X POST http://api/comercio/so_lanche/produto
+        ```
+
+    + Response
+
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: comércio com nome so_lanche não cadastrado!",
+            "status_code" : 400
+        }
+        ```
+
+## Acessa o produto do comércio [GET]
+
+Retorna um *JSON* contendo o produto cadastrado no comércio. O nome do comércio e o id do produto devem ser informados na URL.
+
++ URL
+
+    ```
+    GET  /comercio/<nome_comercio>/produtos/<produto_id>
+    ```
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+    | `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
+
++ **Exemplos**
+
+    + Request
+
+        ```
+        curl http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+            "created_at": 1631106735.893032,
+            "nome": "produto"
+        }
+        ```
+
+    + Request
+
+        ```
+        curl http://api/comercio/lanche_feliz/produto/0
+        ```
+
+    + Response
+
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: produto não cadastrado no sistema",
+            "status_code": 400
+        }
+        ```
+
+## Edita o produto no cardápio do comércio [PATCH]
+
+Atuliza as informaçõa do produto no cardápio de um comércio. A requisição deve enviar no body um *JSON* com o campo `nome` ou o campo `attributes`. O nome do comércio e o id do produto devem ser informados na URL.
+
++ URL
+
+    ```
+    PATCH /comercio/<comercio_nome>/produto/<produto_id>
+    ```
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+    | `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
+
++ Body
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `nome` | string | obrigatório | o novo nome do produto. |
+    | `attributes` | dict | opcional | as novas informações de cadastro do produto. |
+
++ **Exemplos**
+    
+    + Request
+
+        ```
+        curl \
+            -d '{
+                    "nome": "pastel de frango"
+                }' \
+            -H "Content-Type: application/json" \
+            -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+        ```
+
+   + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+            "created_at": 1631106735.893032,
+            "nome": "pastel de frango"
+        }
+        ```
+
+    + Request
+
+        ```
+        curl \
+            -d '{
+                    "attributes": {
+                        "categoria": "salgado"
+                    }
+                }' \
+            -H "Content-Type: application/json" \
+            -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "_id": "c3h2foe6di3e1ee6bd3ctb4r",
             "attributes": {
                 "categoria": "salgado"
-            }
-        }' \
-    -H "Content-Type: application/json" \
-    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
-```
-
-Resposta
-
-```
-Status: 200 OK
-```
-```
-{
-    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
-    "attributes": {
-        "categoria": "salgado"
-    },
-    "created_at": 1631106735.893032,
-    "nome": "produto"
-}
-```
-
-Exemplo
-
-```
-curl \
-    -d '{
+            },
+            "created_at": 1631106735.893032,
             "nome": "pastel de frango"
-        }' \
-    -H "Content-Type: application/json" \
-    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
-```
+        }
+        ```
 
-Resposta
+    + Request
 
-```
-Status: 200 OK
-```
-```
-{
-    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
-    "attributes": {
-        "categoria": "salgado"
-    },
-    "created_at": 1631106735.893032,
-    "nome": "pastel de frango"
-}
-```
+        ```
+        curl \
+            -d '{
+                    "attributes": {
+                        "valor": 5.00
+                    },
+                    "nome": "bolo no pote"
+                }' \
+            -H "Content-Type: application/json" \
+            -X PATCH http://api/comercio/lanche_feliz/produto/3d3f5f603fe10d0dc519e6fc
+        ```
 
-Exemplo
+    + Response
 
-```
-curl \
-    -d '{
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "_id": "3d3f5f603fe10d0dc519e6fc",
             "attributes": {
+                "categoria": "doce",
                 "valor": 3.00
             },
-            "nome": "pastel de frango com queijo"
-        }' \
-    -H "Content-Type: application/json" \
-    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
-```
+            "created_at": 1630117957.674759,
+            "nome": "bolo no pote"
+        }
+        ```
 
-Resposta
+    + Request
 
-```
-Status: 200 OK
-```
-```
-{
-    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
-    "attributes": {
-        "categoria": "salgado",
-        "valor": 3.00
-    },
-    "created_at": 1631106735.893032,
-    "nome": "pastel de frango com queijo"
-}
-```
+        ```
+        curl \
+            -d '{
+                    "attributes": "valor"
+                }' \
+            -H "Content-Type: application/json" \
+            -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+        ```
 
-Exemplo
+    + Response
 
-```
-curl \
-    -d '{
-            "attributes": "salgado"
-        }' \
-    -H "Content-Type: application/json" \
-    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
-```
+        ```
+        400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: attributes inválidos!",
+            "status_code": 400
+        }
+        ```
 
-Resposta
+## Lista os produtos do comércio [GET]
 
-```
-400 BAD REQUEST
-```
-```
-{
-    "message": "Erro: attributes inválidos!",
-    "status_code": 400
-}
-```
+Retorna uma lista com todos os produtos cadastrados no comércio com o nome informado na URL, sendo também possível o retorno de um dicionário com o agrupamento dos produtos por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de produtos.
 
-## Adiciona um produto aos destaques do cardápio
++ URL
+
+    ```
+    GET  /comercio/<nome_comercio>/produtos?categories=
+    ```
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+    | `categories` | string | opcional | `"true"` para agrupar os produtos por categoria, `"false"` caso o contrário. |
+
++ **Exemplos**
+
+    + Request
+
+        ```
+        curl http://api/comercio/lanche_feliz/produtos
+        ```
+
+    + Response
+        ```
+        Status: 200 OK
+        ```
+        ```
+        [
+            {
+                "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+                "attributes": {
+                    "categoria": "salgado"
+                },
+                "created_at": 1631106735.893032,
+                "nome": "pastel de frango"
+            }
+            {
+                "_id": "3d3f5f603fe10d0dc519e6fc",
+                "attributes": {
+                    "categoria": "doce",
+                    "valor": 3.00
+                },
+                "created_at": 1630117957.674759,
+                "nome": "bolo no pote"
+            }
+        ]
+        ```
+
+    + Request
+
+        ```
+        curl http://api/comercio/lanche_feliz/produtos?categories=true
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "salgado": [
+                {
+                    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+                    "attributes": {
+                        "categoria": "salgado"
+                    },
+                    "created_at": 1631106735.893032,
+                    "nome": "pastel de frango"
+                }
+            ],
+            "doce": [
+                {
+                    "_id": "3d3f5f603fe10d0dc519e6fc",
+                    "attributes": {
+                        "categoria": "doce",
+                        "valor": 3.00
+                    },
+                    "created_at": 1630117957.674759,
+                    "nome": "bolo no pote"
+                }            
+            ]
+        }
+        ```
+
+## Adiciona o produto aos destaques do cardápio
 
 Adiciona um produto aos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual os id corresponde, já deve estar cadastrado no cardápio do comércio.
 
