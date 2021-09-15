@@ -14,15 +14,6 @@ API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalid
 * [**Edição do produto**](#edita-o-produto-no-cardápio-do-comércio-patch)
 * [**Listagem dos proutos**](#lista-os-produtos-do-comércio-get)
 
-### Responses:
-
-| Code | Description |
-|---|---|
-| `200` | Requisição executada com sucesso. |
-| `201` | Requisição executada com sucesso e novo recurso criado. |
-| `400` | Erros de validação ou os campos informados não existem no sistema. |
-| `404` | Registro pesquisado não encontrado. |
-
 ## Consulta o status do servidor da API [GET]
 
 Retorna um *JSON* com informações sobre o servidor.
