@@ -2,6 +2,25 @@
 
 API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalidades *CRUD* de um sistema de comércios do ramo alimentício. 
 
+### Recursos disponíveis para acesso via API:
+* [**Status do servidor**](#reference)
+* [**Cadastro do comércio**](#reference)
+* [**Acesso ao comércio**](#reference)
+* [**Listagem dos comércios**](#reference)
+* [**Cadastro do produto**](#reference)
+* [**Acesso ao produto**](#reference)
+* [**Edição do produto**](#reference)
+* [**Lisagem dos proutos**](#reference)
+
+### Responses
+
+| Code | Description |
+|---|---|
+| `200` | Requisição executada com sucesso. |
+| `201` | Requisição executada com sucesso e novo recurso criado. |
+| `400` | Erros de validação ou os campos informados não existem no sistema. |
+| `404` | Registro pesquisado não encontrado. |
+
 ## Consulta o status do servidor da API [GET]
 
 Retorna um *JSON* com informações sobre o servidor.
