@@ -3,6 +3,7 @@
 API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalidades *CRUD* de um sistema de comércios do ramo alimentício. 
 
 ### Recursos disponíveis para acesso via API:
+
 * [**Status do servidor**](#consulta-o-status-do-servidor-da-api-get)
 * [**Cadastro do comércio**](#cadastra-o-comércio-post)
 * [**Acesso ao comércio por ID**](#acessa-o-comércio-por-id-get)
@@ -11,9 +12,9 @@ API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalid
 * [**Cadastro do produto**](#cadastra-o-produto-no-cardápio-do-comércio-post)
 * [**Acesso ao produto por ID**](#acessa-o-produto-do-comércio-get)
 * [**Edição do produto**](#edita-o-produto-no-cardápio-do-comércio-patch)
-* [**Lisagem dos proutos**](#lista-os-produtos-do-comércio-get)
+* [**Listagem dos proutos**](#lista-os-produtos-do-comércio-get)
 
-### Responses
+### Responses:
 
 | Code | Description |
 |---|---|
