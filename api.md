@@ -191,7 +191,7 @@ Adiciona um comércio no banco de dados e retorna um *JSON* contendo o comércio
     | Parameters | Type | Requirement | Description |
     |---|---|---|---|
     | `nome` | string | obrigatório | o nome do comercio. |
-    | `password` | string | obrigatório | a senha cadastrada para login no sistema. |
+    | `password` | string | obrigatório | a senha para efetuar login no sistema. |
     | `attributes` | dict | obrigatório | as informações de cadastro do comércio. |
     | `endereco` | string | obrigatório | o endereço do comercio, no campo `attributes`. |
     | `horarios` | string | obrigatório | os horários do comercio, no campo `attributes`. |
