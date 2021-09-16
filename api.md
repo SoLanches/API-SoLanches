@@ -5,14 +5,24 @@ API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalid
 ### Recursos disponíveis para acesso via API:
 
 * [**Status do servidor**](#consulta-o-status-do-servidor-da-api-get)
+* [**Login no servidor**](#references)
+* [**Logout do servidor**](#references)
 * [**Cadastro do comércio**](#cadastra-o-comércio-post)
 * [**Acesso ao comércio por ID**](#acessa-o-comércio-por-id-get)
 * [**Acesso ao comércio por nome**](#acessa-o-comércio-por-nome-get)
+* [**Edição do comércio**](#references)
 * [**Listagem dos comércios**](#lista-os-comércios-get)
+* [**Remoção do comércio**](#references)
 * [**Cadastro do produto**](#cadastra-o-produto-no-cardápio-do-comércio-post)
 * [**Acesso ao produto por ID**](#acessa-o-produto-do-comércio-get)
 * [**Edição do produto**](#edita-o-produto-no-cardápio-do-comércio-patch)
 * [**Listagem dos proutos**](#lista-os-produtos-do-comércio-get)
+* [**Remoção do produto**](#references)
+* [**Acesso ao cardápio**](#references)
+* [**Adição do produto aos destaques**](#references)
+* [**Remoção do produto dos destaques**](#references)
+* [**Adição de categoria ao cardápio**](#references)
+* [**Remoção de categoria do cardápio**](#references)
 
 ## Consulta o status do servidor da API [GET]
 
@@ -24,12 +34,12 @@ Retorna um *JSON* com informações sobre o servidor.
     GET /status
     ```
 
-+ **Exemplo**
++ **Exemplos**
 
     + Request
 
         ```
-        curl http://api/status
+        curl -L -X GET 'https://solanches.herokuapp.com/status'
         ```
 
     + Response
@@ -40,15 +50,15 @@ Retorna um *JSON* com informações sobre o servidor.
         ```
         {
             "service": "api-solanches",
-            "started_at": 1631664230.6867428,
+            "started_at": 1631743808.996303,
             "status": "operacional",
-            "timestamp": 1631664351.918028
+            "timestamp": 1631748110.637761
         }
         ```
 
 ## Cadastra o comércio [POST]
 
-Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adicionado. A requisição deve enviar no body um *JSON* com os campos `nome` e `attributes`, o último contendo obrigatoriamente os campos `endereco` e `horarios`.
+Adiciona um comércio no banco de dados e retorna um *JSON* contendo o comércio adicionado. A requisição deve enviar no body um *JSON* com os campos `nome`, `password` e `attributes`, o último contendo obrigatoriamente os campos `endereco` e `horarios`.
 
 + URL
 
@@ -61,26 +71,26 @@ Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adic
     | Parameters | Type | Requirement | Description |
     |---|---|---|---|
     | `nome` | string | obrigatório | o nome do comercio. |
+    | `password` | string | obrigatório | a senha para login no sistema. |
     | `attributes` | dict | obrigatório | as informações de cadastro do comércio. |
     | `endereco` | string | obrigatório | o endereço do comercio, no campo `attributes`. |
     | `horarios` | string | obrigatório | os horários do comercio, no campo `attributes`. |
 
 + **Exemplos**
-
+    
     + Request
 
         ```
-        curl \
-            -d '{
-                    "nome": "lanche_feliz",
-                    "attributes": {
-                        "endereco": "rua, numero - bairro - cidade/UF",
-                        "horarios": "terça-feira - domingo, 17:00 - 23:00",
-                        "categoria": "lanchonete"
-                    }
-                }' \
-            -H "Content-Type: application/json" \
-            -X POST http://api/comercio
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome": "lanche_feliz",
+            "password": "123",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade(UF)",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00"
+            }
+        }'
         ```
 
     + Response
@@ -90,14 +100,13 @@ Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adic
         ```
         ```
         {
-            "id": "3671361e6d5dc1ee674156beed67b1fd",
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
             "attributes": {
-                "endereco": "rua, numero - bairro - cidade/UF",
-                "horarios": "terça-feira - domingo, 17:00 - 23:00",
-                "categoria": "lanchonete"
+                "endereco": "rua, numero - bairro - cidade(UF)",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00"
             },
-            "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-            "created_at": 1628721657.488885,
+            "cardapio": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "created_at": 1631744493.2539248,
             "nome": "lanche_feliz"
         }
         ```
@@ -105,12 +114,50 @@ Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adic
     + Request
 
         ```
-        curl \
-            -d '{
-                    "nome": "lanche_feliz"
-                }' \
-            -H "Content-Type: application/json" \
-            -X POST http://api/comercio
+        curl -L -X POST '0.0.0.0:5000/comercio' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome": "petisqueiro",
+            "password": "123",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade(UF)",
+                "horarios": "sexta-feira - domingo, 19:00 - 23:00",
+                "categoria": "bar"
+            }
+        }'
+        ```
+
+    + Response
+
+        ```
+        Status: 201 CREATED
+        ```
+        ```
+        {
+            "_id": "56c914f159915c2e696f3ef3e52d21329c153a74",
+            "attributes": {
+                "categoria": "bar",
+                "endereco": "rua, numero - bairro - cidade(UF)",
+                "horarios": "sexta-feira - domingo, 19:00 - 23:00"
+            },
+            "cardapio": "56c914f159915c2e696f3ef3e52d21329c153a74",
+            "created_at": 1631749569.914476,
+            "nome": "petisqueiro"
+        }
+        ```
+    
+    + Request
+
+        ```
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome": "lanche_feliz",
+            "password": "123",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade(UF)"
+            }
+        }'
         ```
 
     + Response
@@ -120,8 +167,35 @@ Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adic
         ```
         ```
         {
-            "message": "Erro: campo attributes não informado!",
-            "status_code" : 400
+            "message": "Erro: campo horarios não informado!",
+            "status_code": 400
+        }
+        ```
+
+    + Request
+
+        ```
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome": "lanche_feliz",
+            "password": "123",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade(UF)",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00"
+            }
+        }'
+        ```
+
+    + Response
+
+        ```
+        Status: 409 CONFLICT
+        ```
+        ```
+        {
+            "status_code": 409,
+            "error": "Comércio já cadastrado no banco de dados!"
         }
         ```
 
@@ -130,6 +204,7 @@ Adiciona um comércio no banco de dados e retorna um *JSON* com o comércio adic
 Retorna um *JSON* contendo o comércio cadastrado com o id informado na URL.
 
 + URL
+
     ```
     GET /comercio?id=
     ```
@@ -143,7 +218,7 @@ Retorna um *JSON* contendo o comércio cadastrado com o id informado na URL.
     + Request
 
         ```
-        curl http://api/comercio?id=3671361e6d5dc1ee674156beed67b1fd
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio?id=26fbb13bb782457bfea36c43869a3b405268a7a7'
         ```
 
     + Response
@@ -153,14 +228,14 @@ Retorna um *JSON* contendo o comércio cadastrado com o id informado na URL.
         ```
         ```
         {
-            "id": "3671361e6d5dc1ee674156beed67b1fd",
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
             "attributes": {
-                "endereco": "rua, numero - bairro - cidade/UF",
-                "horarios": "terça-feira - domingo, 17:00 - 23:00",
-                "categoria": "lanchonete"
+                "categoria": "lanchonete",
+                "endereco": "rua, numero - bairro - cidade(UF)",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00"
             },
-            "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-            "created_at": 1628721657.488885,
+            "cardapio": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "created_at": 1631744493.2539248,
             "nome": "lanche_feliz"
         }
         ```
@@ -168,7 +243,7 @@ Retorna um *JSON* contendo o comércio cadastrado com o id informado na URL.
     + Request
 
         ```
-        curl http://api/comercio?id=0
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio?id=0'
         ```
 
     + Response
@@ -202,7 +277,7 @@ Retorna um *JSON* contendo o comércio cadastrado com o nome informado na URL.
     + Request
 
         ```
-        curl http://api/comercio/lanche_feliz
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio/lanche_feliz'
         ```
 
     + Response
@@ -212,14 +287,14 @@ Retorna um *JSON* contendo o comércio cadastrado com o nome informado na URL.
         ```
         ```
         {
-            "id": "3671361e6d5dc1ee674156beed67b1fd",
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
             "attributes": {
-                "endereco": "rua, numero - bairro - cidade/UF",
-                "horarios": "terça-feira - domingo, 17:00 - 23:00",
-                "categoria": "lanchonete"
+                "categoria": "lanchonete",
+                "endereco": "rua, numero - bairro - cidade(UF)",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00"
             },
-            "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-            "created_at": 1628721657.488885,
+            "cardapio": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "created_at": 1631744493.2539248,
             "nome": "lanche_feliz"
         }
         ```
@@ -227,7 +302,84 @@ Retorna um *JSON* contendo o comércio cadastrado com o nome informado na URL.
     + Request
 
         ```
-        curl http://api/comercio/so_lanche
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio/so_lanche'
+        ```
+
+    + Response
+
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: comércio com nome so_lanche não cadastrado!",
+            "status_code" : 400
+        }
+        ```
+
+## Edita o comércio [PATCH]
+
+Atualiza as informações do comércio com o nome informado na URL e retorna um *JSON* contendo o comércio atualizado. A requisição deve enviar no body um *JSON* com o campo `attributes`.
+
++ URL
+
+    ```
+    PATCH /comercio/<comercio_nome>
+    ```
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+
++ Body
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `attributes` | dict | obrigatório | as novas informações de cadastro do comércio. |
+
++ **Exemplos**
+    
+    + Request
+
+        ```
+        curl -L -X PATCH 'https://solanches.herokuapp.com/comercio/lanche_feliz' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "attributes": {
+                "categoria": "lanchonete"
+            }
+        }'
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "attributes": {
+                "categoria": "lanchonete",
+                "endereco": "rua, numero - bairro - cidade(UF)",
+                "horarios": "terça-feira - domingo, 17:00 - 23:00"
+            },
+            "cardapio": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "created_at": 1631744493.2539248,
+            "nome": "lanche_feliz"
+        }
+        ```
+
+    + Request
+    
+        ```
+        curl -L -X PATCH 'https://solanches.herokuapp.com/comercio/so_lanche' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade(UF)"
+            }
+        }'
         ```
 
     + Response
@@ -254,14 +406,14 @@ Retorna uma lista com todos os comércios cadastrados no sistema, sendo também 
 
     | Parameters | Type | Requirement | Description |
     |---|---|---|---|
-    | `categories` | string | opcional | `"true"` para agrupar os comércios por categoria, `"false"` caso o contrário. |
+    | `categories` | string | opcional | `true` para agrupar os comércios por categoria, `false` caso o contrário. |
 
 + **Exemplos**
 
     + Request
 
         ```
-        curl http://api/comercios
+        curl -L -X GET 'https://solanches.herokuapp.com/comercios'
         ```
 
     + Response
@@ -272,15 +424,26 @@ Retorna uma lista com todos os comércios cadastrados no sistema, sendo também 
         ```
         [
             {
-                "id": "3671361e6d5dc1ee674156beed67b1fd",
+                "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
                 "attributes": {
-                    "endereco": "rua, numero - bairro - cidade/UF",
-                    "horarios": "terça-feira - domingo, 17:00 - 23:00",
-                    "categoria": "lanchonete"
+                    "categoria": "lanchonete",
+                    "endereco": "rua, numero - bairro - cidade(UF)",
+                    "horarios": "terça-feira - domingo, 17:00 - 23:00"
                 },
-                "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-                "created_at": 1628721657.488885,
+                "cardapio": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+                "created_at": 1631744493.2539248,
                 "nome": "lanche_feliz"
+            },
+            {
+                "_id": "56c914f159915c2e696f3ef3e52d21329c153a74",
+                "attributes": {
+                    "categoria": "bar",
+                    "endereco": "rua, numero - bairro - cidade(UF)",
+                    "horarios": "sexta-feira - domingo, 19:00 - 23:00"
+                },
+                "cardapio": "56c914f159915c2e696f3ef3e52d21329c153a74",
+                "created_at": 1631749569.914476,
+                "nome": "petisqueiro"
             }
         ]
         ```
@@ -288,7 +451,7 @@ Retorna uma lista com todos os comércios cadastrados no sistema, sendo também 
     + Request
 
         ```
-        curl http://api/comercios?categories=true
+        curl -L -X GET 'https://solanches.herokuapp.com/comercios?categories=true'
         ```
 
     + Response
@@ -298,19 +461,83 @@ Retorna uma lista com todos os comércios cadastrados no sistema, sendo também 
         ```
         ```
         {
+            "bar": [
+                {
+                    "_id": "56c914f159915c2e696f3ef3e52d21329c153a74",
+                    "attributes": {
+                        "categoria": "bar",
+                        "endereco": "rua, numero - bairro - cidade(UF)",
+                        "horarios": "sexta-feira - domingo, 19:00 - 23:00"
+                    },
+                    "cardapio": "56c914f159915c2e696f3ef3e52d21329c153a74",
+                    "created_at": 1631749569.914476,
+                    "nome": "petisqueiro"
+                }
+            ],
             "lanchonete": [
                 {
-                    "id": "3671361e6d5dc1ee674156beed67b1fd",
+                    "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
                     "attributes": {
-                        "endereco": "rua, numero - bairro - cidade/UF",
-                        "horarios": "terça-feira - domingo, 17:00 - 23:00",
-                        "categoria": "lanchonete"
+                        "categoria": "lanchonete",
+                        "endereco": "rua, numero - bairro - cidade(UF)",
+                        "horarios": "terça-feira - domingo, 17:00 - 23:00"
                     },
-                    "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
-                    "created_at": 1628721657.488885,
+                    "cardapio": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+                    "created_at": 1631744493.2539248,
                     "nome": "lanche_feliz"
                 }
             ]
+        }
+        ```
+
+## Remove o comércio [DELETE]
+
+Deleta um comércio do banco de dados com o nome informado na URL e retorna um *JSON* contendo a mensagem de confirmação.
+
++ URL
+
+    ```
+    DELETE /comercio/<comercio_nome>
+    ```
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+
++ **Exemplos**
+
+    + Request
+
+        ```
+        curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/petisqueiro'
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "message": "comercio petisqueiro removido com sucesso."
+        }
+        ```
+
+    + Request
+
+        ```
+        curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/so_lanche'
+        ```
+
+    + Response
+
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: comércio com nome so_lanche não cadastrado!",
+            "status_code" : 400
         }
         ```
 
@@ -461,7 +688,7 @@ Retorna um *JSON* contendo o produto cadastrado no comércio. O nome do comérci
 
 ## Edita o produto no cardápio do comércio [PATCH]
 
-Atuliza as informaçõa do produto no cardápio de um comércio. A requisição deve enviar no body um *JSON* com o campo `nome` ou o campo `attributes`. O nome do comércio e o id do produto devem ser informados na URL.
+Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JSON* contendo o produto atualizado. A requisição deve enviar no body um *JSON* com o campo `nome` ou o campo `attributes`. O nome do comércio e o id do produto devem ser informados na URL.
 
 + URL
 
@@ -676,260 +903,307 @@ Retorna uma lista com todos os produtos cadastrados no comércio com o nome info
         }
         ```
 
-## Adiciona o produto aos destaques do cardápio
+## Remove o produto do comércio [DELETE]
 
-Adiciona um produto aos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual os id corresponde, já deve estar cadastrado no cardápio do comércio.
+Deleta um produto do banco de dados e suas referências no cardápio do comércio e retorna um *JSON* contendo o cardápio atualizado. O nome do comércio e o id do produto devem ser informados na URL.
 
-```
-POST /comercio/<comercio_nome>/destaques/<produto_id>
-```
++ URL
 
-Exemplo
+    ```
+    DELETE /comercio/<comercio_nome>/produto/<id_produto>
+    ```
 
-```
-curl -x POST http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
-```
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+    | `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
 
-Resposta
++ **Exemplos**
 
-```
-Status: 201 CREATED
-```
-```
-{
-    "_id": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
-    "destaques": [
-        "c3h2foe6di3e1ee6bd3ctb4r"
-    ],
-    "produtos": [
-        "c3h2foe6di3e1ee6bd3ctb4r",
-        "3d3f5f603fe10d0dc519e6fc",
-        "3752b85753550e2a5a691efd"
-    ]
-}
-```
+    + Request
 
-Exemplo
+        ```
+        curl -x DELETE http://api/comercio/lanche_feliz/produto/3d3f5f603fe10d0dc519e6fc
+        ```
 
-```
-curl -x POST http://api/comercio/lanche_feliz/destaques/7522b85753550e2a5a691abe
-```
+    + Response
 
-Resposta
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "id": "3671361e6d5dc1ee674156beed67b1fd",
+            "created_at": 1628721657.488885,
+            "destaques": [],
+            "produtos": ["c3h2foe6di3e1ee6bd3ctb4r"]
+        }
+        ```
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-    "message": "Erro: produto não faz parte do cardápio do comércio!",
-    "status_code": 400
-}
-```
+    + Request
 
-## Remove um produto dos destaques do cardápio
+        ```
+        curl -x DELETE http://api/comercio/lanche_feliz/produto/0
+        ```
 
-Remove um produto dos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual o id corresponde, já deve estar cadastrado no cardápio do comércio.
+    + Response
 
-```
-DELETE /comercio/<comercio_nome>/destaques/<produto_id>
-```
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+        "message": "Erro: produto precisa fazer parte do cardápio do comércio",
+        "status_code" : 400 
+        }
+        ```
 
-Exemplo
+## Acessa o cardápio de um comércio [GET]
 
-```
-curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
-```
+Retorna um *JSON* contendo o cardápio com as categorias, os produtos e os destaques do comércio com o nome informado na URL.
 
-Resposta
++ URL
 
-```
-Status: 200 OK
-```
-```
-{
-    "_id": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
-    "destaques": [],
-    "produtos": [
-        "c3h2foe6di3e1ee6bd3ctb4r",
-        "3d3f5f603fe10d0dc519e6fc",
-        "3752b85753550e2a5a691efd"
-    ]
-}
-```
+    ```
+    GET /comercio/<comercio_nome>/cardapio
+    ```
 
-Exemplo
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
 
-```
-curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
-```
++ **Exemplos**
 
-Resposta
+    + Request
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-    "message": "Erro: produto com id c3h2foe6di3e1ee6bd3ctb4r não está nos destaques!",
-    "status_code": 400
-}
-```
+        ```
+        curl http://api/comercio/lanche_feliz/cardapio
+        ```
 
-## Recupera o cardápio de um comércio
+    + Response
 
-Retorna o cardápio de um comércio, com os produtos e os destaques cadastrados.
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "id": "3671361e6d5dc1ee674156beed67b1fd",
+            "created_at": 1628721657.488885,
+            "categorias": [],
+            "destaques": [],
+            "produtos": [
+                "c3h2foe6di3e1ee6bd3ctb4r"
+            ]
+        }
+        ```
 
-```
-GET /comercio/<comercio_nome>/cardapio
-```
+    + Request
 
-Exemplo
+        ```
+        curl http://api/comercio/so_lanche/cardapio
+        ```
 
-```
-curl http://api/comercio/lanche_feliz/cardapio
-```
+    + Response
 
-Resposta
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: comércio com nome so_lanche não cadastrado!",
+            "status_code" : 400
+        }
+        ```
 
-```
-Status: 200 OK
-```
-```
-{
-    "id": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
-    "destaques": ["c3h2foe6di3e1ee6bd3ctb4r"],
-    "produtos": ["c3h2foe6di3e1ee6bd3ctb4r"]
-}
-```
+## Adiciona o produto aos destaques do cardápio [POST]
 
-Exemplo
+Adiciona o id do produto, cadastrado no comércio, aos destaques do cardápio e retorna um *JSON* contendo o cardápio atualizado. O nome do comércio e o id do produto devem ser informados na URL.
 
-```
-curl http://api/comercio/abc_da_xuxa/cardapio
-```
++ URL
 
-Resposta
+    ```
+    POST /comercio/<comercio_nome>/destaques/<produto_id>
+    ```
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-   "message": "Erro: comércio com nome abc_da_xuxa não cadastrado!",
-   "status_code" : 400
-}
-```
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+    | `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
 
-## Deleta produto por id
++ **Exemplos**
+    
+    + Request
 
-Deleta produto do cardápio de comércio. O nome do comércio e o id do produto são passados na URL.
+        ```
+        curl -x POST http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+        ```
 
-```
-DELETE /comercio/<comercio_nome>/produto/<id_produto>
-```
+    + Response
 
-Exemplo
+        ```
+        Status: 201 CREATED
+        ```
+        ```
+        {
+            "_id": "3671361e6d5dc1ee674156beed67b1fd",
+            "created_at": 1628721657.488885,
+            "categorias": [],
+            "destaques": [
+                "c3h2foe6di3e1ee6bd3ctb4r"
+            ],
+            "produtos": [
+                "c3h2foe6di3e1ee6bd3ctb4r"
+            ]
+        }
+        ```
 
-```
-curl -x DELETE http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
-```
+    + Request
 
-Resposta
+        ```
+        curl -x POST http://api/comercio/lanche_feliz/destaques/0
+        ```
 
-```
-Status: 200 OK
-```
-```
-{
-    "id": "3671361e6d5dc1ee674156beed67b1fd",
-    "created_at": 1628721657.488885,
-    "destaques": [],
-    "produtos": []
-}
-```
+    + Response
 
-Exemplo
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: produto não faz parte do cardápio do comércio!",
+            "status_code": 400
+        }
+        ```
 
-```
-curl -x DELETE http://api/comercio/lanche_feliz/produto/b1cef4d8hb611df8c443a1
-```
+## Remove o produto dos destaques do cardápio [DELETE]
 
-Resposta
+Deleta o id do produto contido nos destaques do cardápio do comércio e retorna um *JSON* contendo o cardápio atualizado. O nome do comércio e o id do produto são passados na URL.
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-   "message": "Erro: produto precisa fazer parte do cardápio do comércio",
-   "status_code" : 400 
-}
-```
++ URL
 
-## Adiciona categoria ao cardápio de um comércio
+    ```
+    DELETE /comercio/<comercio_nome>/destaques/<produto_id>
+    ```
 
-Adiciona uma categoria ao comércio. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria. O retorno é um JSON do cardápio do comércio.
++ **Exemplos**
 
-```
-POST /comercio/<comercio_nome>/categoria
-```
+    + Request
 
-Exemplo
+        ```
+        curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+        ```
+    
+    + Response
 
-```
-curl \
-    -d '{
-            "categoria": "categoria inovação"
-        }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio/lanche_feliz/categoria
-```
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "_id": "3671361e6d5dc1ee674156beed67b1fd",
+            "created_at": 1628721657.488885,
+            "categorias": [],
+            "destaques": [],
+            "produtos": [
+                "c3h2foe6di3e1ee6bd3ctb4r"
+            ]
+        }
+        ```
 
-Resposta
+    + Request
 
-```
-Status: 201 CREATED
-```
-```
-{
-    "_id": "3671361e6d5dc1ee674156beed67b1fd",
-    "categorias": [
-        "categoria inovação"
-    ],
-    "created_at": 1631625353.1946077,
-    "destaques": [],
-    "produtos": []
-}
-```
+        ```
+        curl -x DELETE http://api/comercio/lanche_feliz/destaques/0
+        ```
 
-Exemplo
+    + Response
 
-```
-curl \
-    -d '{
-            "categoria": ""
-        }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio/lanche_feliz/categoria
-```
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: produto com id 0 não está nos destaques!",
+            "status_code": 400
+        }
+        ```
 
-Resposta
+## Adiciona categoria ao cardápio do comércio [POST]
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-    "message": "Erro: categoria não informada!",
-    "status_code": 400
-}
-```
+Adiciona uma categoria à lista de categorias do cardápio do comércio com o nome informado na URL retorna um *JSON* contendo o cardápio atualizado. A requisição deve enviar no body um *JSON* com o campo `categoria`.
 
-## Remove categoria de um cardápio
++ URL
+
+    ```
+    POST /comercio/<comercio_nome>/categoria
+    ```
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+
++ Body
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `categoria` | string | obrigatório | o nome da categoria. |
+
+
++ **Exemplos**
+
+    + Request
+        ```
+        curl \
+            -d '{
+                    "categoria": "bebidas"
+                }' \
+            -H "Content-Type: application/json" \
+            -X POST http://api/comercio/lanche_feliz/categoria
+        ```
+
+    + Response
+
+        ```
+        Status: 201 CREATED
+        ```
+        ```
+        {
+            "_id": "3671361e6d5dc1ee674156beed67b1fd",
+            "categorias": [
+                "bebidas"
+            ],
+            "created_at": 1628721657.488885,
+            "destaques": [],
+            "produtos": [
+                "c3h2foe6di3e1ee6bd3ctb4r"
+            ]
+        }
+        ```
+
+    + Request
+
+        ```
+        curl \
+            -d '{
+                    "categoria": ""
+                }' \
+            -H "Content-Type: application/json" \
+            -X POST http://api/comercio/lanche_feliz/categoria
+        ```
+
+    + Response
+
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {
+            "message": "Erro: categoria não informada!",
+            "status_code": 400
+        }
+        ```
+
+## Remove a categoria do cardápio [DELETE]
 
 Remove uma categoria. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria a ser removida. O retorno é um JSON do cardápio do comércio.
 
@@ -957,9 +1231,11 @@ Status: 200 OK
 {
     "_id": "d81d37521e2ee08c5b50ac4f5c9bed652634fb95",
     "categorias": [],
-    "created_at": 1631625353.1946077,
+    "created_at": 1628721657.488885,
     "destaques": [],
-    "produtos": []
+    "produtos": [
+        "c3h2foe6di3e1ee6bd3ctb4r"
+    ]
 }
 ```
 
