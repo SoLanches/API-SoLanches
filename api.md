@@ -58,7 +58,7 @@ Retorna um *JSON* com informações sobre o servidor.
 
 ## Efetua login no servidor [POST]
 
-Permite acesso às rotas da API que necessitam de autenticação e retorna um *JSON* contendo o token de acesso. A requisição deve enviar no body um *JSON* contendo os campos `nome` e `password`.
+Permite o acesso às rotas da API que necessitam de autenticação e retorna um *JSON* contendo o token de acesso. A requisição deve enviar no body um *JSON* contendo os campos `nome` e `password`.
 
 + URL
 
