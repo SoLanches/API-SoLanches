@@ -5,8 +5,8 @@ API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalid
 ### Recursos disponíveis para acesso via API:
 
 * [**Status do servidor**](#consulta-o-status-do-servidor-da-api-get)
-* [**Login no servidor**](#references)
-* [**Logout no servidor**](#references)
+* [**Login no servidor**](#efetua-login-no-servidor-post)
+* [**Logout no servidor**](#efetua-logout-no-servidor-delete)
 * [**Cadastro do comércio**](#cadastra-o-comércio-post)
 * [**Acesso ao comércio por ID**](#acessa-o-comércio-por-id-get)
 * [**Acesso ao comércio por nome**](#acessa-o-comércio-por-nome-get)
