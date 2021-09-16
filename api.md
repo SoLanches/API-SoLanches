@@ -20,9 +20,9 @@ API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalid
 * [**Remoção do produto**](#remove-o-produto-do-comércio-delete)
 * [**Acesso ao cardápio**](#acessa-o-cardápio-de-um-comércio-get)
 * [**Adição do produto aos destaques**](#adiciona-o-produto-aos-destaques-do-cardápio-post)
-* [**Remoção do produto dos destaques**](#remove-o-produto-dos-destaques-do-cardápio-delete)
+* [**Remoção do produto nos destaques**](#remove-o-produto-dos-destaques-do-cardápio-delete)
 * [**Adição de categoria ao cardápio**](#adiciona-categoria-ao-cardápio-do-comércio-post)
-* [**Remoção de categoria do cardápio**](#remove-a-categoria-do-cardápio-delete)
+* [**Remoção de categoria no cardápio**](#remove-a-categoria-do-cardápio-delete)
 
 ## Consulta o status do servidor da API [GET]
 
