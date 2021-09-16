@@ -56,6 +56,126 @@ Retorna um *JSON* com informações sobre o servidor.
         }
         ```
 
+## Efetua login no servidor [POST]
+
+Permite acesso às rotas da API que necessitam de autenticação e retorna um *JSON* contendo o token de acesso. A requisição deve enviar no body um *JSON* contendo os campos `nome` e `password`.
+
++ URL
+
+    ```
+    POST /login
+    ```
+
++ Body
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `nome` | string | obrigatório | o nome do comercio. |
+    | `password` | string | obrigatório | a senha cadastrada para login no sistema. |
+
++ **Exemplos**
+    
+    + Request
+
+        ```
+        curl -L -X POST 'https://solanches.herokuapp.com/login' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome": "<comercio_nome>",
+            "password": "<senha>"
+        }'
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjI2ZmJiMTNiYjc4MjQ1N2JmZWEzNmM0Mzg2OWEzYjQwNTI2OGE3YTciLCJleHAiOjE2MzE3NTM5Mzh9.FZ05Ip4pyXi2lzrqaxR-YDIyxfhLq0Xsn5N7ROICKzc"
+        }
+        ```
+
+    + Request
+
+        ```
+        curl -L -X POST 'https://solanches.herokuapp.com/login' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome": "<comercio_nome>",
+            "password": ""
+        }'
+        ```
+
+    + Response
+
+        ```
+        Status: 403 FORBIDDEN
+        ```
+        ```
+        {
+            "message": "Erro: senha incorreta!",
+            "status_code": 403
+        }
+        ```
+
+## Efetua logout no servidor [DELETE]
+
+Encerra o acesso às rotas da API que necessitam de autenticação e retorna um *JSON* contendo a mensagem de encerramento. A requisição deve enviar no headers o campo `authorization`.
+
++ URL
+
+    ```
+    DELETE /logout
+    ```
+
++ Headers
+
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `authorization` | string | obrigatório | o token obtido ao ser feito o login. |
+
++ **Exemplos**
+    
+    + Request
+
+        ```
+        curl -L -X DELETE 'https://solanches.herokuapp.com/logout' \
+        -H 'authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjI2ZmJiMTNiYjc4MjQ1N2JmZWEzNmM0Mzg2OWEzYjQwNTI2OGE3YTciLCJleHAiOjE2MzE3NTM5Mzh9.FZ05Ip4pyXi2lzrqaxR-YDIyxfhLq0Xsn5N7ROICKzc'
+        ```
+
+    + Response
+
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "message": "Access token revoked",
+            "status_code": 200
+        }
+        ```
+
+    + Request
+
+        ```
+        curl -L -X DELETE 'https://solanches.herokuapp.com/logout' \
+        -H 'authorization: 0'
+        ```
+
+    + Response
+
+        ```
+        Status: 403 FORBIDDEN
+        ```
+        ```
+        {
+            "message": "Error: Token inválido ou expirado.",
+            "status_code": 403
+        }
+        ```
+
 ## Cadastra o comércio [POST]
 
 Adiciona um comércio no banco de dados e retorna um *JSON* contendo o comércio adicionado. A requisição deve enviar no body um *JSON* com os campos `nome`, `password` e `attributes`, o último contendo obrigatoriamente os campos `endereco` e `horarios`.
@@ -71,7 +191,7 @@ Adiciona um comércio no banco de dados e retorna um *JSON* contendo o comércio
     | Parameters | Type | Requirement | Description |
     |---|---|---|---|
     | `nome` | string | obrigatório | o nome do comercio. |
-    | `password` | string | obrigatório | a senha para login no sistema. |
+    | `password` | string | obrigatório | a senha cadastrada para login no sistema. |
     | `attributes` | dict | obrigatório | as informações de cadastro do comércio. |
     | `endereco` | string | obrigatório | o endereço do comercio, no campo `attributes`. |
     | `horarios` | string | obrigatório | os horários do comercio, no campo `attributes`. |
@@ -114,7 +234,7 @@ Adiciona um comércio no banco de dados e retorna um *JSON* contendo o comércio
     + Request
 
         ```
-        curl -L -X POST '0.0.0.0:5000/comercio' \
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio' \
         -H 'Content-Type: application/json' \
         --data-raw '{
             "nome": "petisqueiro",
