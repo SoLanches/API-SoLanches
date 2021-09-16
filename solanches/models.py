@@ -30,7 +30,7 @@ class Comercio:
     def get_by_id(id):
         query = {"_id": id}
         comercio = DB.comercio.find_one(query)
-        if "password" in comercio:
+        if comercio and "password" in comercio:
             comercio.pop("password")        
         return comercio
 
@@ -47,7 +47,7 @@ class Comercio:
     def get_by_name(name):
         query = {"nome": name}
         comercio = DB.comercio.find_one(query)
-        if "password" in comercio:
+        if comercio and "password" in comercio:
             comercio.pop("password")
         return comercio
 
@@ -62,7 +62,7 @@ class Comercio:
         comercio = Comercio.get_cardapio(nome_comercio)
         comercio_id = comercio.get("_id")
         Cardapio.add_produtos(comercio_id, produto_id)
-        return produto_id
+        return produto
 
     @staticmethod
     def get_produto(comercio_nome, produto_id):
@@ -98,8 +98,8 @@ class Comercio:
         Cardapio.add_destaque(comercio.get("cardapio"), destaque)
 
     @staticmethod
-    def update_produto(produto_id, attributes, nome):
-        Cardapio.update_produto(produto_id, attributes, nome)
+    def update_produto(produto_id, fields):
+        Cardapio.update_produto(produto_id, fields)
 
     @staticmethod
     def remove_comercio(comercio_nome):
@@ -234,8 +234,8 @@ class Cardapio:
         return cardapio.get("destaques")
 
     @staticmethod
-    def update_produto(produto_id, attributes, nome):
-        Produto.update(produto_id, attributes, nome)
+    def update_produto(produto_id, fields):
+        Produto.update(produto_id, fields)
 
     @staticmethod
     def remove_produto(cardapio_id, produto_id):
@@ -311,9 +311,8 @@ class Produto:
         return self._id
 
     @staticmethod
-    def update(produto_id, attributes, nome):
-        DB.produto.update_one({"_id": produto_id}, {"$set": attributes})
-        DB.produto.update_one({"_id": produto_id}, {"$set": nome})
+    def update(produto_id, fields):
+        DB.produto.update_one({"_id": produto_id}, {"$set": fields})
 
     @staticmethod
     def get_by_id(produto_id):

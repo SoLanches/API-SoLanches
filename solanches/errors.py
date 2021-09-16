@@ -9,24 +9,21 @@ class SolanchesException(Exception):
         return rv
 
 
-class SolanchesComercioNaoEncontrado(SolanchesException):
+class SolanchesNotFoundError(SolanchesException):
     def __init__(self, message):
         super().__init__(message)
 
 
-class SolanchesDuplicateKey(SolanchesException):
+class SolanchesBadRequestError(SolanchesException):
     def __init__(self, message):
         super().__init__(message)
 
 
-class SolanchesProdutoNaoEncontrado(SolanchesException):
+class SolanchesNotAuthorizedError(SolanchesException):
     def __init__(self, message):
         super().__init__(message)
 
-class SolanchesProdutoNaoEstaNoCardapio(SolanchesException):
-    def __init__(self, message):
-        super().__init__(message)
 
-class SolanchesProdutoEstaNosDestaques(SolanchesException):
+class SolanchesInternalServerError(SolanchesException):
     def __init__(self, message):
         super().__init__(message)
