@@ -1,10 +1,11 @@
 import datetime
 
-import jwt
-
 from . import connect2db
-from . errors import *
+import jwt
 from . models import Produto, Comercio, BlockList
+from . errors import SolanchesBadRequestError
+from . errors import SolanchesNotFoundError
+from . errors import SolanchesInternalServerError
 
 
 def _assert(condition, message, SolanchesError=SolanchesBadRequestError):
