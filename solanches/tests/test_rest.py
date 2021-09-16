@@ -2,6 +2,8 @@ from unittest import mock
 
 import pytest
 
+from solanches.errors import SolanchesNotFoundError
+
 
 @pytest.fixture
 def client(rest):
@@ -95,7 +97,7 @@ def test_get_comercios_exception_controller(mock_get_comercios, client):
     response = client.get(f'/comercios')
     response_json = response.json
 
-    assert response.status_code == 400
+    assert response.status_code == 500
     assert response_json['message'] == exception_msg
 
 
@@ -122,7 +124,7 @@ def test_get_comercio_by_name_exception_controller(mock_get_comercio_by_name, cl
     response = client.get(f'/comercio/{nome}')
     response_json = response.json
 
-    assert response.status_code == 400
+    assert response.status_code == 500
     assert response_json['message'] == exception_msg
 
 
@@ -146,7 +148,7 @@ def test_get_comercio_by_id_exception_no_controller(mock_get_comercio, client):
     response = client.get(f'/comercio?id={comercio_id}')
     response_json = response.json
 
-    assert response.status_code == 400
+    assert response.status_code == 500
     assert response_json['message'] == exception_msg
 
 
@@ -169,13 +171,13 @@ def test_remove_comercio_sucesso(mock_remove_comercio, client):
     assert responseJson['message'] == f'comercio {comercio_nome} removido com sucesso'
     
 
-@pytest.mark.skip(reason="teste está correto, mas a implementação retorna 200 quando deveria retornar 400")
 @mock.patch('solanches.rest.controller.remove_comercio')
 def test_remove_comercio_inexistente(mock_remove_comercio, client):
-    mock_remove_comercio.return_value = 0
     comercio_nome = 'comercio_teste'
+    exception_message = f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    mock_remove_comercio.side_effect = SolanchesNotFoundError(exception_message)
     url = f'/comercio/{comercio_nome}'
     response = client.delete(url)
     responseJson = response.json
-    assert response.status_code == 400
-    assert responseJson['message'] == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    assert response.status_code == 404
+    assert responseJson['message'] == exception_message
