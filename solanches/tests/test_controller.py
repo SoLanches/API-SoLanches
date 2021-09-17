@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from . data_test import COMERCIOS
+from . data_test import COMERCIOS, COMERCIO_TESTE, PRODUTO_TESTE, PRODUTOS_TESTE
 
 
 @pytest.fixture
@@ -146,3 +146,41 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     mock_remove_comercio.return_value = 1
     result = controller.remove_comercio(comercio_nome)
     assert result == 1
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Produto.get_by_id')
+@mock.patch('solanches.models.Comercio.get_produto')
+def test_recupera_produto_sucesso(mock_get_produto, mock_get_by_id, mock_get_by_name, controller):
+    comercio_nome = 'comercio2'
+    produto_id = '213123121e'
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_by_id.return_value = PRODUTO_TESTE
+    mock_get_produto.return_value = PRODUTO_TESTE
+
+    result = controller.get_produto(comercio_nome, produto_id)
+    assert result == PRODUTO_TESTE
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Produto.get_by_id')
+def test_recupera_produto_inexistente(mock_get_by_id, mock_get_by_name, controller):
+    comercio_nome = 'comercio2'
+    produto_id = '213123121e'
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_by_id.return_value = None
+    with pytest.raises(Exception) as e:
+      comercio_nome = 'comercio_sem_id'
+      controller.get_produto(comercio_nome, produto_id)
+    assert str(e.value) == f'Erro: produto não cadastrado no sistema'
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Comercio.get_produtos')
+def test_recupera_produtos(mock_get_produtos, mock_get_by_name, controller):
+    comercio_nome = 'comercio2'
+    produto_id = '213123121e'
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_produtos.return_value = PRODUTOS_TESTE
+
+    result = controller.get_produtos(comercio_nome, {})
+    assert result == PRODUTOS_TESTE
