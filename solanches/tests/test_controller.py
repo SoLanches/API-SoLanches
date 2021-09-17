@@ -178,7 +178,6 @@ def test_recupera_produto_inexistente(mock_get_by_id, mock_get_by_name, controll
 @mock.patch('solanches.models.Comercio.get_produtos')
 def test_recupera_produtos(mock_get_produtos, mock_get_by_name, controller):
     comercio_nome = 'comercio2'
-    produto_id = '213123121e'
     mock_get_by_name.return_value = COMERCIO_TESTE
     mock_get_produtos.return_value = PRODUTOS_TESTE
 
