@@ -48,6 +48,10 @@ def get_comercio_by_name(comercio_nome):
 
 
 def atualiza_comercio(attributes, comercio_nome):
+    assert comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!'
+    if attributes:
+        assert type(attributes) is dict, "Erro: campo attributes inválidos!"
+
     comercio = Comercio.get_by_name(comercio_nome)
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
 
