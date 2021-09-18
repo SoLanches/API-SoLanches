@@ -167,6 +167,7 @@ def test_adiciona_categoria_invalida(mock_get_by_name, controller):
         controller.adiciona_categoria(nome_comercio, categoria)
     assert str(excinfo.value) == f'Erro: valor de categoria inválida!'
 
+
 @mock.patch('solanches.models.Comercio.get_cardapio_categorias')
 @mock.patch('solanches.models.Comercio.get_by_name')
 def test_adiciona_categoria_existente(mock_get_by_name, mock_get_categorias, controller):

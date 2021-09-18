@@ -164,9 +164,9 @@ def test_remove_comercio_sucesso(mock_remove_comercio, client):
     mock_remove_comercio.return_value = 1
     url = f'/comercio/{comercio_nome}'
     response = client.delete(url)
-    responseJson = response.json
+    response_json = response.json
     assert response.status_code == 200
-    assert responseJson['message'] == f'comercio {comercio_nome} removido com sucesso'
+    assert response_json['message'] == f'comercio {comercio_nome} removido com sucesso'
     
 
 @pytest.mark.skip(reason="teste está correto, mas a implementação retorna 200 quando deveria retornar 400")
@@ -176,6 +176,28 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
     comercio_nome = 'comercio_teste'
     url = f'/comercio/{comercio_nome}'
     response = client.delete(url)
-    responseJson = response.json
+    response_json = response.json
     assert response.status_code == 400
-    assert responseJson['message'] == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    assert response_json['message'] == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+
+
+def test_adiciona_categoria_nao_informada(client):
+    comercio_nome = 'comercio'
+    json_sem_categoria = {"invalido": 'json sem categoria'}
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.post(url, json=json_sem_categoria)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == f'Erro: categoria não informada!'
+
+
+@mock.patch('solanches.rest.controller.adiciona_categoria')
+def test_adiciona_categoria_sucesso(mock_adiciona_categoria, client):
+    mock_adiciona_categoria.return_value = {"produtos": [], "destaques": [], "categorias": ["teste sucesso"]}
+    comercio_nome = 'comercio'
+    json_categoria = {"categoria": 'teste sucesso'}
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.post(url, json=json_categoria)
+    response_json = response.json
+    assert response.status_code == 201
+    assert response_json == {"produtos": [], "destaques": [], "categorias": ["teste sucesso"]}
