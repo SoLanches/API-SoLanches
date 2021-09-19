@@ -3,6 +3,9 @@ from unittest import mock
 import pytest
 
 from . data_test import CARDAPIO_TESTE, COMERCIO_TESTE, COMERCIOS, PRODUTO_TESTE
+from . data_test import COMERCIOS
+from solanches.errors import SolanchesNotFoundError
+from solanches.errors import SolanchesBadRequestError
 
 
 @pytest.fixture
@@ -73,17 +76,17 @@ def test_get_comercio_by_id_nao_cadastrado(mock_comercio_by_id, controller):
     id_invalido = "nao estou cadastrado" 
     mock_comercio_by_id.return_value = None
     
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
         controller.get_comercio_by_id(id_invalido)
-    assert str(excinfo.value) == f'Erro: comercio com id {id_invalido} não cadastrado!'
+    assert str(excinfo.value.message) == f'Erro: comercio com id {id_invalido} não cadastrado!'
 
 
 @mock.patch('solanches.controller.Comercio.get_by_id')
 def test_get_comercio_by_id_com_id_nao_str(mock_comercio_by_id, controller):
     id_invalido = 123
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.get_comercio_by_id(id_invalido)
-    assert str(excinfo.value) == f'Erro: comercio com id {id_invalido} inválido!'
+    assert str(excinfo.value.message) == f'Erro: comercio com id {id_invalido} inválido!'
 
 
 @mock.patch('solanches.controller.Comercio.get_by_id')
@@ -100,17 +103,17 @@ def test_get_comercio_by_name_nao_cadastrado(mock_comercio_by_name, controller):
     nome_invalido = "nao estou cadastrado" 
     mock_comercio_by_name.return_value = None
     
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
         controller.get_comercio_by_name(nome_invalido)
-    assert str(excinfo.value) == f'Erro: comercio com nome {nome_invalido} nao cadastrado!'
+    assert str(excinfo.value.message) == f'Erro: comercio com o nome {nome_invalido} não cadastrado!'
 
 
 @mock.patch('solanches.controller.Comercio.get_by_name')
 def test_get_comercio_by_name_com_nome_nao_str(mock_comercio_by_name, controller):
     nome_invalido = 123
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.get_comercio_by_name(nome_invalido)
-    assert str(excinfo.value) == f'Erro: nome de comercio inválido!'
+    assert str(excinfo.value.message) == f'Erro: nome de comercio inválido!'
 
 
 @mock.patch('solanches.controller.Comercio.get_by_name')
@@ -123,19 +126,19 @@ def test_get_comercio_by_name_valido(mock_comercio_by_name, controller, um_comer
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
-def test_remove_comercio_inexistente(mock_comercio, controller):
-    mock_comercio.return_value = None
-    with pytest.raises(Exception) as e:
+def test_remove_comercio_inexistente(mock_comercio_by_name, controller):
+    mock_comercio_by_name.return_value = None
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
       comercio_nome = 'comercio_sem_id'
       controller.remove_comercio(comercio_nome)
-    assert str(e.value) == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    assert str(excinfo.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
 
 
 def test_remove_comercio_nome_invalido(controller):
-    with pytest.raises(Exception) as e:
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
         comercio_nome_invalido = None
         controller.remove_comercio(comercio_nome_invalido)
-    assert str(e.value) == f'Erro: nome de comercio invalido'
+    assert str(excinfo.value.message) == f'Erro: nome de comercio invalido'
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
@@ -180,9 +183,9 @@ def test_remove_produto_fora_comercio(mock_get_by_name, mock_get_produtos_ids, c
     comercio_nome = 'comercio2'
     produto_id = 'idtesteproduto'
     mock_get_produtos_ids.return_value = []
-    with pytest.raises(Exception) as e:
-        controller.remove_produto(comercio_nome, produto_id)
-    assert str(e.value) == f'Erro: produto não faz parte do cardápio do comércio'
+    with pytest.raises(SolanchesNotFoundError) as e:
+        controller.remove_produto(comercio_nome, produto_id) 
+    assert str(e.value.message) == f'Erro: produto com o id {produto_id} não cadastrado no comercio!'
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
@@ -190,6 +193,6 @@ def test_remove_produto_comercio_inexistente(mock_get_by_name, controller):
     mock_get_by_name.return_value = None
     comercio_nome = 'comercio2'
     produto_id = 'idtesteproduto'
-    with pytest.raises(Exception) as e:
+    with pytest.raises(SolanchesNotFoundError) as e:
         controller.remove_produto(comercio_nome, produto_id)
-    assert str(e.value) == f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
