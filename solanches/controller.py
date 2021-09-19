@@ -203,7 +203,7 @@ def remove_produto_destaques(comercio_nome, produto_id):
 def adiciona_categoria(comercio_nome, categoria):
     assert type(categoria) is str, 'Erro: valor de categoria inválida!'
     comercio = Comercio.get_by_name(comercio_nome)
-    assert comercio, f'Erro: comercio com nome {comercio_nome} nao cadastrado!'
+    assert comercio, f'Erro: comercio com nome {comercio_nome} não cadastrado!'
     assert categoria not in Comercio.get_cardapio_categorias(comercio_nome), f'Erro: categoria já cadastrada nesse comércio!'
 
     Comercio.adiciona_categoria(comercio_nome, categoria)
