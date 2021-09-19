@@ -25,7 +25,7 @@ COMERCIO_TESTE = {
 PRODUTO_TESTE = {
      "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50", 
     "nome": "produto comercio2",
-    "attributes": {"preco": "40"}
+    "attributes": {"preco": "40"},
 }
 
 PRODUTOS_TESTE = [

@@ -170,8 +170,8 @@ def test_remove_comercio_sucesso(mock_remove_comercio, client):
     response_json = response.json
     assert response.status_code == 200
     assert response_json['message'] == f'comercio {comercio_nome} removido com sucesso'
- 
-    
+
+
 @mock.patch('solanches.rest.controller.remove_comercio')
 def test_remove_comercio_inexistente(mock_remove_comercio, client):
     comercio_nome = 'comercio_teste'
@@ -196,13 +196,12 @@ def test_recupera_produto_sucesso(mock_get_produto, client):
     assert response_json == PRODUTO_TESTE
 
 
-@pytest.mark.skip(reason="teste está correto, mas a implementação retorna 400 quando deveria retornar 404")
 @mock.patch('solanches.rest.controller.get_produto')
 def test_recupera_produto_inexistente(mock_get_produto, client):
     comercio_nome = 'comercio2'
     produto_id= '1231241'
-    message = 'Exception no controller'
-    mock_get_produto.side_effect = Exception(message)
+    message = f'Erro: produto com o id {produto_id} não cadastrado no comercio!'
+    mock_get_produto.side_effect = SolanchesNotFoundError(message)
     url = f'/comercio/{comercio_nome}/produto/{produto_id}'
     response = client.get(url)
     response_json = response.json
@@ -219,6 +218,3 @@ def test_recupera_produtos(mock_get_produtos, client):
     response_json = response.json
     assert response.status_code == 200
     assert response_json == PRODUTOS_TESTE
-    responseJson = response.json
-    assert response.status_code == 404
-    assert responseJson['message'] == exception_message
