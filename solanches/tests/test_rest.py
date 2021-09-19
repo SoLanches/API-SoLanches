@@ -201,3 +201,16 @@ def test_adiciona_categoria_sucesso(mock_adiciona_categoria, client):
     response_json = response.json
     assert response.status_code == 201
     assert response_json == {"produtos": [], "destaques": [], "categorias": ["teste sucesso"]}
+
+
+@mock.patch('solanches.rest.controller.adiciona_categoria')
+def test_adiciona_categoria_existente(mock_adiciona_categoria, client):
+    mensagem_erro = 'Erro: categoria existente'
+    mock_adiciona_categoria.side_effect = Exception(mensagem_erro)
+    comercio_nome = 'comercio'
+    json_categoria = {"categoria": 'teste falha'}
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.post(url, json=json_categoria)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == mensagem_erro
