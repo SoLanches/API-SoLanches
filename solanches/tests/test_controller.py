@@ -196,3 +196,7 @@ def test_remove_produto_comercio_inexistente(mock_get_by_name, controller):
     with pytest.raises(SolanchesNotFoundError) as e:
         controller.remove_produto(comercio_nome, produto_id)
     assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+
+

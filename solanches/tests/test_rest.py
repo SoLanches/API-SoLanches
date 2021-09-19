@@ -194,4 +194,16 @@ def test_remove_produto_sucesso(mock_remove_produto, client):
     response_json = response.json
     assert response.status_code == 200
     assert response_json == CARDAPIO_TESTE
-    responseJson = response.json
+
+
+@mock.patch('solanches.rest.controller.remove_produto')
+def test_remove_produto_comercio_inexistente(mock_remove_produto, client):
+    comercio_nome = 'comercio inexistente'
+    produto_id = 'idtesteproduto'
+    exception_message = f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    mock_remove_produto.side_effect = SolanchesNotFoundError(exception_message)
+    url = f'/comercio/{comercio_nome}/produto/{produto_id}'
+    response = client.delete(url)
+    response_json = response.json
+    assert response.status_code == 404
+    assert response_json['message'] == exception_message
