@@ -1,6 +1,6 @@
 # **API SoLanches**
 
-API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalidades *CRUD* de um sistema de comércios do ramo alimentício. 
+API do projeto [SoLanches](https://github.com/SoLanches) que oferece funcionalidades *CRUD* de um sistema para comércios do ramo alimentício.
 
 ### Recursos disponíveis para acesso via API:
 
@@ -663,7 +663,7 @@ Deleta um comércio do banco de dados com o nome informado na URL e retorna um *
 
 ## Cadastra o produto no cardápio do comércio [POST]
 
-Adiciona um produto no banco de dados, referenciando-o no cardápio do comércio cadastrado com o nome informado na URL e retorna um *JSON* com o produto adicionado. A requisição deve enviar no body um *JSON* com os campos `nome` e `attributes`.
+Adiciona um produto no banco de dados, referenciando-o no cardápio do comércio cadastrado com o nome informado na URL e retorna um *JSON* contendo o produto adicionado. A requisição deve enviar no body um *JSON* com os campos `nome` e `attributes`.
 
 + URL
 
@@ -685,13 +685,13 @@ Adiciona um produto no banco de dados, referenciando-o no cardápio do comércio
 + **Exemplos**
 
     + Request
+
         ```
-        curl \
-            -d '{
-                    "nome": "produto"
-                }' \
-            -H "Content-Type: application/json" \
-            -X POST http://api/comercio/lanche_feliz/produto
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome":"produto"
+        }'
         ```
 
     + Response
@@ -701,21 +701,24 @@ Adiciona um produto no banco de dados, referenciando-o no cardápio do comércio
         ```
         ```
         {
-            "message": "Produto com o id c3h2foe6di3e1ee6bd3ctb4r adicionado!",
+            "_id" : "b3f58d70b4085c572eb84ee4619be3e6e0005d22",
+            "nome" : "produto",
+            "attributes" : {},
+            "created_at" : 1632156256.37596
         }
         ```
     
     + Request
+
         ```
-        curl \
-            -d '{
-                    "nome": "produto",
-                    "attributes":{
-                        "categoria": "doce"
-                    }
-                }' \
-            -H "Content-Type: application/json" \
-            -X POST http://api/comercio/lanche_feliz/produto
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome":"produto",
+            "attributes":{
+                "categoria": "doce"
+            }
+        }'
         ```
 
     + Response
@@ -725,19 +728,26 @@ Adiciona um produto no banco de dados, referenciando-o no cardápio do comércio
         ```
         ```
         {
-            "message": "Produto com o id 3d3f5f603fe10d0dc519e6fc adicionado!",
+            "_id" : "df191400d15d8cb8c9459cc327b6e1fec435ae09",
+            "nome" : "produto",
+            "attributes" : {
+                "categoria" : "doce"
+            },
+            "created_at" : 1632156418.89367
         }
         ```
 
     + Request
 
         ```
-        curl \
-            -d '{
-                    "nome": "produto"
-                }' \
-            -H "Content-Type: application/json" \
-            -X POST http://api/comercio/so_lanche/produto
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio/so_lanche/produto' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome":"produto",
+            "attributes":{
+                "categoria": "doce"
+            }
+        }'
         ```
 
     + Response
@@ -759,7 +769,7 @@ Retorna um *JSON* contendo o produto cadastrado no comércio. O nome do comérci
 + URL
 
     ```
-    GET  /comercio/<nome_comercio>/produtos/<produto_id>
+    GET  /comercio/<nome_comercio>/produto/<produto_id>
     ```
 
     | Parameters | Type | Requirement | Description |
@@ -772,7 +782,7 @@ Retorna um *JSON* contendo o produto cadastrado no comércio. O nome do comérci
     + Request
 
         ```
-        curl http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/b3f58d70b4085c572eb84ee4619be3e6e0005d22'
         ```
 
     + Response
@@ -782,8 +792,9 @@ Retorna um *JSON* contendo o produto cadastrado no comércio. O nome do comérci
         ```
         ```
         {
-            "_id": "c3h2foe6di3e1ee6bd3ctb4r",
-            "created_at": 1631106735.893032,
+            "_id": "b3f58d70b4085c572eb84ee4619be3e6e0005d22",
+            "attributes": {},
+            "created_at": 1632156256.3759577,
             "nome": "produto"
         }
         ```
@@ -791,7 +802,7 @@ Retorna um *JSON* contendo o produto cadastrado no comércio. O nome do comérci
     + Request
 
         ```
-        curl http://api/comercio/lanche_feliz/produto/0
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/0'
         ```
 
     + Response
@@ -833,12 +844,11 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
     + Request
 
         ```
-        curl \
-            -d '{
-                    "nome": "pastel de frango"
-                }' \
-            -H "Content-Type: application/json" \
-            -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+        curl -L -X PATCH 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/b3f58d70b4085c572eb84ee4619be3e6e0005d22' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "nome": "pastel de frango"
+        }'
         ```
 
    + Response
@@ -848,8 +858,9 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
         ```
         ```
         {
-            "_id": "c3h2foe6di3e1ee6bd3ctb4r",
-            "created_at": 1631106735.893032,
+            "_id": "b3f58d70b4085c572eb84ee4619be3e6e0005d22",
+            "attributes": {},
+            "created_at": 1632156256.3759577,
             "nome": "pastel de frango"
         }
         ```
@@ -857,14 +868,13 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
     + Request
 
         ```
-        curl \
-            -d '{
-                    "attributes": {
-                        "categoria": "salgado"
-                    }
-                }' \
-            -H "Content-Type: application/json" \
-            -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+        curl -L -X PATCH 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/b3f58d70b4085c572eb84ee4619be3e6e0005d22' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "attributes": {
+                "categoria": "salgado"
+            }
+        }'
         ```
 
     + Response
@@ -874,11 +884,11 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
         ```
         ```
         {
-            "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+            "_id": "b3f58d70b4085c572eb84ee4619be3e6e0005d22",
             "attributes": {
                 "categoria": "salgado"
             },
-            "created_at": 1631106735.893032,
+            "created_at": 1632156256.3759577,
             "nome": "pastel de frango"
         }
         ```
@@ -886,15 +896,14 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
     + Request
 
         ```
-        curl \
-            -d '{
-                    "attributes": {
-                        "valor": 5.00
-                    },
-                    "nome": "bolo no pote"
-                }' \
-            -H "Content-Type: application/json" \
-            -X PATCH http://api/comercio/lanche_feliz/produto/3d3f5f603fe10d0dc519e6fc
+        curl -L -X PATCH 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/df191400d15d8cb8c9459cc327b6e1fec435ae09' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "attributes": {
+                "valor": 5.00
+            },
+            "nome": "bolo no pote"
+        }'
         ```
 
     + Response
@@ -904,12 +913,12 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
         ```
         ```
         {
-            "_id": "3d3f5f603fe10d0dc519e6fc",
+            "_id": "df191400d15d8cb8c9459cc327b6e1fec435ae09",
             "attributes": {
                 "categoria": "doce",
-                "valor": 3.00
+                "valor": 5.0
             },
-            "created_at": 1630117957.674759,
+            "created_at": 1632156418.893673,
             "nome": "bolo no pote"
         }
         ```
@@ -917,12 +926,11 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
     + Request
 
         ```
-        curl \
-            -d '{
-                    "attributes": "valor"
-                }' \
-            -H "Content-Type: application/json" \
-            -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+        curl -L -X PATCH 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/df191400d15d8cb8c9459cc327b6e1fec435ae09' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "attributes": "valor"
+        }'
         ```
 
     + Response
@@ -957,7 +965,7 @@ Retorna uma lista com todos os produtos cadastrados no comércio com o nome info
     + Request
 
         ```
-        curl http://api/comercio/lanche_feliz/produtos
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio/lanche_feliz/produtos'
         ```
 
     + Response
@@ -967,20 +975,20 @@ Retorna uma lista com todos os produtos cadastrados no comércio com o nome info
         ```
         [
             {
-                "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+                "_id": "b3f58d70b4085c572eb84ee4619be3e6e0005d22",
                 "attributes": {
                     "categoria": "salgado"
                 },
-                "created_at": 1631106735.893032,
+                "created_at": 1632156256.3759577,
                 "nome": "pastel de frango"
-            }
+            },
             {
-                "_id": "3d3f5f603fe10d0dc519e6fc",
+                "_id": "df191400d15d8cb8c9459cc327b6e1fec435ae09",
                 "attributes": {
                     "categoria": "doce",
-                    "valor": 3.00
+                    "valor": 5.0
                 },
-                "created_at": 1630117957.674759,
+                "created_at": 1632156418.893673,
                 "nome": "bolo no pote"
             }
         ]
@@ -989,7 +997,7 @@ Retorna uma lista com todos os produtos cadastrados no comércio com o nome info
     + Request
 
         ```
-        curl http://api/comercio/lanche_feliz/produtos?categories=true
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio/lanche_feliz/produtos?categories=true'
         ```
 
     + Response
@@ -997,28 +1005,27 @@ Retorna uma lista com todos os produtos cadastrados no comércio com o nome info
         ```
         Status: 200 OK
         ```
-        ```
         {
+            "doce": [
+                {
+                    "_id": "df191400d15d8cb8c9459cc327b6e1fec435ae09",
+                    "attributes": {
+                        "categoria": "doce",
+                        "valor": 5.0
+                    },
+                    "created_at": 1632156418.893673,
+                    "nome": "bolo no pote"
+                }
+            ],
             "salgado": [
                 {
-                    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+                    "_id": "b3f58d70b4085c572eb84ee4619be3e6e0005d22",
                     "attributes": {
                         "categoria": "salgado"
                     },
-                    "created_at": 1631106735.893032,
+                    "created_at": 1632156256.3759577,
                     "nome": "pastel de frango"
                 }
-            ],
-            "doce": [
-                {
-                    "_id": "3d3f5f603fe10d0dc519e6fc",
-                    "attributes": {
-                        "categoria": "doce",
-                        "valor": 3.00
-                    },
-                    "created_at": 1630117957.674759,
-                    "nome": "bolo no pote"
-                }            
             ]
         }
         ```
@@ -1043,7 +1050,7 @@ Deleta um produto do banco de dados e suas referências no cardápio do comérci
     + Request
 
         ```
-        curl -x DELETE http://api/comercio/lanche_feliz/produto/3d3f5f603fe10d0dc519e6fc
+        curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/df191400d15d8cb8c9459cc327b6e1fec435ae09'
         ```
 
     + Response
@@ -1053,17 +1060,20 @@ Deleta um produto do banco de dados e suas referências no cardápio do comérci
         ```
         ```
         {
-            "id": "3671361e6d5dc1ee674156beed67b1fd",
-            "created_at": 1628721657.488885,
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "categorias": [],
+            "created_at": 1631744493.2539248,
             "destaques": [],
-            "produtos": ["c3h2foe6di3e1ee6bd3ctb4r"]
+            "produtos": [
+                "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
+            ]
         }
         ```
 
     + Request
 
         ```
-        curl -x DELETE http://api/comercio/lanche_feliz/produto/0
+        curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/0'
         ```
 
     + Response
@@ -1073,8 +1083,8 @@ Deleta um produto do banco de dados e suas referências no cardápio do comérci
         ```
         ```
         {
-        "message": "Erro: produto precisa fazer parte do cardápio do comércio",
-        "status_code" : 400 
+            "message": "Erro: produto não faz parte do cardápio do comércio",
+            "status_code": 400
         }
         ```
 
@@ -1097,7 +1107,7 @@ Retorna um *JSON* contendo o cardápio com as categorias, os produtos e os desta
     + Request
 
         ```
-        curl http://api/comercio/lanche_feliz/cardapio
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio/lanche_feliz/cardapio'
         ```
 
     + Response
@@ -1107,12 +1117,15 @@ Retorna um *JSON* contendo o cardápio com as categorias, os produtos e os desta
         ```
         ```
         {
-            "id": "3671361e6d5dc1ee674156beed67b1fd",
-            "created_at": 1628721657.488885,
-            "categorias": [],
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "categorias": [
+                "doce",
+                "salgado"
+            ],
+            "created_at": 1631744493.25392,
             "destaques": [],
             "produtos": [
-                "c3h2foe6di3e1ee6bd3ctb4r"
+                "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
             ]
         }
         ```
@@ -1120,7 +1133,7 @@ Retorna um *JSON* contendo o cardápio com as categorias, os produtos e os desta
     + Request
 
         ```
-        curl http://api/comercio/so_lanche/cardapio
+        curl -L -X GET 'https://solanches.herokuapp.com/comercio/so_lanche/cardapio'
         ```
 
     + Response
@@ -1155,7 +1168,7 @@ Adiciona o id do produto, cadastrado no comércio, aos destaques do cardápio e 
     + Request
 
         ```
-        curl -x POST http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio/lanche_feliz/destaques/b3f58d70b4085c572eb84ee4619be3e6e0005d22'
         ```
 
     + Response
@@ -1165,14 +1178,17 @@ Adiciona o id do produto, cadastrado no comércio, aos destaques do cardápio e 
         ```
         ```
         {
-            "_id": "3671361e6d5dc1ee674156beed67b1fd",
-            "created_at": 1628721657.488885,
-            "categorias": [],
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "categorias": [
+                "doce",
+                "salgado"
+            ],
+            "created_at": 1631744493.25392,
             "destaques": [
-                "c3h2foe6di3e1ee6bd3ctb4r"
+                "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
             ],
             "produtos": [
-                "c3h2foe6di3e1ee6bd3ctb4r"
+                "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
             ]
         }
         ```
@@ -1180,7 +1196,7 @@ Adiciona o id do produto, cadastrado no comércio, aos destaques do cardápio e 
     + Request
 
         ```
-        curl -x POST http://api/comercio/lanche_feliz/destaques/0
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio/lanche_feliz/destaques/0'
         ```
 
     + Response
@@ -1205,12 +1221,17 @@ Deleta o id do produto contido nos destaques do cardápio do comércio e retorna
     DELETE /comercio/<comercio_nome>/destaques/<produto_id>
     ```
 
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+    | `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
+
 + **Exemplos**
 
     + Request
 
         ```
-        curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+        curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/destaques/b3f58d70b4085c572eb84ee4619be3e6e0005d22'
         ```
     
     + Response
@@ -1220,12 +1241,15 @@ Deleta o id do produto contido nos destaques do cardápio do comércio e retorna
         ```
         ```
         {
-            "_id": "3671361e6d5dc1ee674156beed67b1fd",
-            "created_at": 1628721657.488885,
-            "categorias": [],
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "categorias": [
+                "doce",
+                "salgado"
+            ],
+            "created_at": 1631744493.25392,
             "destaques": [],
             "produtos": [
-                "c3h2foe6di3e1ee6bd3ctb4r"
+                "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
             ]
         }
         ```
@@ -1233,7 +1257,7 @@ Deleta o id do produto contido nos destaques do cardápio do comércio e retorna
     + Request
 
         ```
-        curl -x DELETE http://api/comercio/lanche_feliz/destaques/0
+        curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/destaques/0'
         ```
 
     + Response
@@ -1243,14 +1267,14 @@ Deleta o id do produto contido nos destaques do cardápio do comércio e retorna
         ```
         ```
         {
-            "message": "Erro: produto com id 0 não está nos destaques!",
+            "message": "Erro: produto não faz parte do cardápio do comércio!",
             "status_code": 400
         }
         ```
 
 ## Adiciona categoria ao cardápio do comércio [POST]
 
-Adiciona uma categoria à lista de categorias do cardápio do comércio com o nome informado na URL retorna um *JSON* contendo o cardápio atualizado. A requisição deve enviar no body um *JSON* com o campo `categoria`.
+Adiciona uma categoria à lista de categorias do cardápio do comércio com o nome informado na URL e retorna um *JSON* contendo o cardápio atualizado. A requisição deve enviar no body um *JSON* com o campo `categoria`.
 
 + URL
 
@@ -1273,12 +1297,11 @@ Adiciona uma categoria à lista de categorias do cardápio do comércio com o no
 
     + Request
         ```
-        curl \
-            -d '{
-                    "categoria": "bebidas"
-                }' \
-            -H "Content-Type: application/json" \
-            -X POST http://api/comercio/lanche_feliz/categoria
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio/lanche_feliz/categoria' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "categoria": "bebidas"
+        }'
         ```
 
     + Response
@@ -1288,14 +1311,16 @@ Adiciona uma categoria à lista de categorias do cardápio do comércio com o no
         ```
         ```
         {
-            "_id": "3671361e6d5dc1ee674156beed67b1fd",
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
             "categorias": [
+                "doce",
+                "salgado",
                 "bebidas"
             ],
-            "created_at": 1628721657.488885,
+            "created_at": 1631744493.25392,
             "destaques": [],
             "produtos": [
-                "c3h2foe6di3e1ee6bd3ctb4r"
+                "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
             ]
         }
         ```
@@ -1303,12 +1328,11 @@ Adiciona uma categoria à lista de categorias do cardápio do comércio com o no
     + Request
 
         ```
-        curl \
-            -d '{
-                    "categoria": ""
-                }' \
-            -H "Content-Type: application/json" \
-            -X POST http://api/comercio/lanche_feliz/categoria
+        curl -L -X POST 'https://solanches.herokuapp.com/comercio/lanche_feliz/categoria' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "categoria": "doce"
+        }'
         ```
 
     + Response
@@ -1318,66 +1342,81 @@ Adiciona uma categoria à lista de categorias do cardápio do comércio com o no
         ```
         ```
         {
-            "message": "Erro: categoria não informada!",
+            "message": "Erro: categoria já cadastrada nesse comércio!",
             "status_code": 400
         }
         ```
 
 ## Remove a categoria do cardápio [DELETE]
 
-Remove uma categoria. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria a ser removida. O retorno é um JSON do cardápio do comércio.
+Deleta uma categoria da lista de categorias do cardápio do comercio com o nome informado na URL e retorna um *JSON* contendo o cardápio atualizado.
 
-```
-DELETE /comercio/<comercio_nome>/categoria
-```
++ URL
 
-Exemplo
+    ```
+    DELETE /comercio/<comercio_nome>/categoria
+    ```
 
-```
-curl \
-    -d '{
-            "categoria": "categoria inovação"
-        }' \
-    -H "Content-Type: application/json" \
-    -X DELETE http://api/comercio/lanche_feliz/categoria
-```
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
 
-Resposta
++ Body
 
-```
-Status: 200 OK
-```
-```
-{
-    "_id": "d81d37521e2ee08c5b50ac4f5c9bed652634fb95",
-    "categorias": [],
-    "created_at": 1628721657.488885,
-    "destaques": [],
-    "produtos": [
-        "c3h2foe6di3e1ee6bd3ctb4r"
-    ]
-}
-```
+    | Parameters | Type | Requirement | Description |
+    |---|---|---|---|
+    | `categoria` | string | obrigatório | o nome da categoria. |
 
-Exemplo
++ **Exemplos**
 
-```
-curl \
-    -d '{
-            "categoria": "categoria que não existe"
-        }' \
-    -H "Content-Type: application/json" \
-    -X DELETE http://api/comercio/lanche_feliz/categoria
-```
+    + Request
 
-Resposta
+    ```
+    curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/categoria' \
+    -H 'Content-Type: application/json' \
+    --data-raw '{
+        "categoria": "bebidas"
+    }'
+    ```
 
-```
-Status: 400 BAD REQUEST
-```
-```
-{
-    "message": "Erro: categoria não faz parte do comércio",
-    "status_code": 400
-}
-```
+    + Response
+
+    ```
+    Status: 200 OK
+    ```
+    ```
+    {
+        "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+        "categorias": [
+            "doce",
+            "salgado"
+        ],
+        "created_at": 1631744493.25392,
+        "destaques": [],
+        "produtos": [
+            "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
+        ]
+    }
+    ```
+
+    + Request
+
+    ```
+    curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/categoria' \
+    -H 'Content-Type: application/json' \
+    --data-raw '{
+        "categoria": "sucos"
+    }'
+    ```
+
+    + Response
+
+    ```
+    Status: 400 BAD REQUEST
+    ```
+    ```
+    {
+        "message": "Erro: categoria não faz parte do comércio",
+        "status_code": 400
+    }
+    ```
