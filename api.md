@@ -111,12 +111,13 @@ Permite o acesso às rotas da API que necessitam de autenticação e retorna um 
     + Response
 
         ```
-        Status: 403 FORBIDDEN
+        Status:  400 BAD REQUEST
         ```
         ```
         {
-            "message": "Erro: senha incorreta!",
-            "status_code": 403
+            "error": "SolanchesBadRequestError",
+            "message": "Erro! Senha incorreta",
+            "status_code": 400
         }
         ```
 
@@ -152,7 +153,7 @@ Encerra o acesso às rotas da API que necessitam de autenticação e retorna um 
         ```
         ```
         {
-            "message": "Access token revoked",
+            "message": "Logout feito com sucesso",
             "status_code": 200
         }
         ```
@@ -167,12 +168,32 @@ Encerra o acesso às rotas da API que necessitam de autenticação e retorna um 
     + Response
 
         ```
-        Status: 403 FORBIDDEN
+        Status: 400 BAD REQUEST
         ```
         ```
         {
+            "error": "SolanchesBadRequestError",
             "message": "Error: Token inválido ou expirado.",
-            "status_code": 403
+            "status_code": 400
+        }
+        ```
+
+    + Request
+
+        ```
+        curl -L -X DELETE 'https://solanches.herokuapp.com/logout'
+        ```
+
+    + Response
+
+        ```
+        Status: 401 UNAUTHORIZED
+        ```
+        ```
+        {
+            "error": "SolanchesNotAuthorizedError",
+            "message": "Error: Você não tem permissão para acessar essa rota.",
+            "status_code": 401
         }
         ```
 
@@ -287,7 +308,8 @@ Adiciona um comércio no banco de dados e retorna um *JSON* contendo o comércio
         ```
         ```
         {
-            "message": "Erro: campo horarios não informado!",
+            "error": "SolanchesBadRequestError",
+            "message": "Erro: campo horarios não informados!",
             "status_code": 400
         }
         ```
@@ -310,12 +332,13 @@ Adiciona um comércio no banco de dados e retorna um *JSON* contendo o comércio
     + Response
 
         ```
-        Status: 409 CONFLICT
+        Status: 400 BAD REQUEST
         ```
         ```
         {
-            "status_code": 409,
-            "error": "Comércio já cadastrado no banco de dados!"
+            "error": "SolanchesBadRequestError",
+            "message": "Erro: comercio com nome Test já cadastrado!",
+            "status_code": 400
         }
         ```
 
@@ -369,12 +392,13 @@ Retorna um *JSON* contendo o comércio cadastrado com o id informado na URL.
     + Response
 
         ```
-        Status: 400 BAD REQUEST
+        Status: 404 NOT FOUND
         ```
         ```
         {
-            "message": "Erro: comércio com id 0 não cadastrado!",
-            "status_code" : 400
+            "error": "SolanchesNotFoundError",
+            "message": "Erro: comercio com o nome 0 não cadastrado!",
+            "status_code": 404
         }
         ```
 
@@ -428,12 +452,13 @@ Retorna um *JSON* contendo o comércio cadastrado com o nome informado na URL.
     + Response
 
         ```
-        Status: 400 BAD REQUEST
+        Status: 404 NOT FOUND
         ```
         ```
-        {
+        {   
+            "error": "SolanchesNotFoundError",
             "message": "Erro: comércio com nome so_lanche não cadastrado!",
-            "status_code" : 400
+            "status_code" : 404
         }
         ```
 
@@ -505,12 +530,37 @@ Atualiza as informações do comércio com o nome informado na URL e retorna um 
     + Response
 
         ```
+        Status: 404 NOT FOUND
+        ```
+        ```
+        {   
+            "error": "SolanchesNotFoundError",
+            "message": "Erro: comércio com nome so_lanche não cadastrado!",
+            "status_code" : 400
+        }
+        ```
+
+    + Request
+    
+        ```
+        curl -L -X PATCH 'https://solanches.herokuapp.com/comercio/so_lanche' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "attributes": {
+            }
+        }'
+        ```
+
+    + Response
+
+        ```
         Status: 400 BAD REQUEST
         ```
         ```
         {
-            "message": "Erro: comércio com nome so_lanche não cadastrado!",
-            "status_code" : 400
+            "error": "SolanchesBadRequestError",
+            "message": "Erro: attributes inválidos",
+            "status_code": 400
         }
         ```
 
@@ -652,12 +702,13 @@ Deleta um comércio do banco de dados com o nome informado na URL e retorna um *
     + Response
 
         ```
-        Status: 400 BAD REQUEST
+        Status: 404 NOT FOUND
         ```
         ```
         {
+            "error": "SolanchesNotFoundError",
             "message": "Erro: comércio com nome so_lanche não cadastrado!",
-            "status_code" : 400
+            "status_code" : 404
         }
         ```
 
@@ -757,6 +808,7 @@ Adiciona um produto no banco de dados, referenciando-o no cardápio do comércio
         ```
         ```
         {
+            "error": "SolanchesBadRequestError",
             "message": "Erro: comércio com nome so_lanche não cadastrado!",
             "status_code" : 400
         }
@@ -811,7 +863,8 @@ Retorna um *JSON* contendo o produto cadastrado no comércio. O nome do comérci
         Status: 400 BAD REQUEST
         ```
         ```
-        {
+        {   
+            "error": "SolanchesBadRequestError",
             "message": "Erro: produto não cadastrado no sistema",
             "status_code": 400
         }
@@ -939,7 +992,8 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
         400 BAD REQUEST
         ```
         ```
-        {
+        {   
+            "error": "SolanchesBadRequestError",
             "message": "Erro: attributes inválidos!",
             "status_code": 400
         }
@@ -1083,6 +1137,7 @@ Deleta um produto do banco de dados e suas referências no cardápio do comérci
         ```
         ```
         {
+            "error": "SolanchesBadRequestError",
             "message": "Erro: produto não faz parte do cardápio do comércio",
             "status_code": 400
         }
@@ -1143,6 +1198,7 @@ Retorna um *JSON* contendo o cardápio com as categorias, os produtos e os desta
         ```
         ```
         {
+            "error": "SolanchesBadRequestError",
             "message": "Erro: comércio com nome so_lanche não cadastrado!",
             "status_code" : 400
         }
@@ -1205,7 +1261,8 @@ Adiciona o id do produto, cadastrado no comércio, aos destaques do cardápio e 
         Status: 400 BAD REQUEST
         ```
         ```
-        {
+        {   
+            "error": "SolanchesBadRequestError",
             "message": "Erro: produto não faz parte do cardápio do comércio!",
             "status_code": 400
         }
@@ -1266,7 +1323,8 @@ Deleta o id do produto contido nos destaques do cardápio do comércio e retorna
         Status: 400 BAD REQUEST
         ```
         ```
-        {
+        {   
+            "error": "SolanchesBadRequestError",
             "message": "Erro: produto não faz parte do cardápio do comércio!",
             "status_code": 400
         }
@@ -1341,7 +1399,8 @@ Adiciona uma categoria à lista de categorias do cardápio do comércio com o no
         Status: 400 BAD REQUEST
         ```
         ```
-        {
+        {   
+            "error": "SolanchesBadRequestError",
             "message": "Erro: categoria já cadastrada nesse comércio!",
             "status_code": 400
         }
@@ -1415,7 +1474,8 @@ Deleta uma categoria da lista de categorias do cardápio do comercio com o nome 
     Status: 400 BAD REQUEST
     ```
     ```
-    {
+    {   
+        "error": "SolanchesBadRequestError",
         "message": "Erro: categoria não faz parte do comércio",
         "status_code": 400
     }
