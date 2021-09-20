@@ -860,13 +860,13 @@ Retorna um *JSON* contendo o produto cadastrado no comércio. O nome do comérci
     + Response
 
         ```
-        Status: 400 BAD REQUEST
+        Status: 404 NOT FOUND
         ```
         ```
-        {   
-            "error": "SolanchesBadRequestError",
-            "message": "Erro: produto não cadastrado no sistema",
-            "status_code": 400
+        {
+            "error": "SolanchesNotFoundError",
+            "message": "Erro: produto com o id 0 não cadastrado no comercio!",
+            "status_code": 404
         }
         ```
 
@@ -996,6 +996,30 @@ Atuliza as informaçõa do produto no cardápio de um comércio e retrona um *JS
             "error": "SolanchesBadRequestError",
             "message": "Erro: attributes inválidos!",
             "status_code": 400
+        }
+        ```
+
+    + Request
+
+        ```
+        curl -L -X PATCH 'https://solanches.herokuapp.com/comercio/lanche_feliz/produto/0' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "attributes": {
+            }
+        }'
+        ```
+
+    + Response
+
+        ```
+        Status: 404 NOT FOUND
+        ```
+        ```
+        {
+            "error": "SolanchesNotFoundError",
+            "message": "Erro: produto com o id 0 não cadastrado no comercio!",
+            "status_code": 404
         }
         ```
 
@@ -1133,13 +1157,13 @@ Deleta um produto do banco de dados e suas referências no cardápio do comérci
     + Response
 
         ```
-        Status: 400 BAD REQUEST
+        Status: 404 NOT FOUND
         ```
         ```
         {
-            "error": "SolanchesBadRequestError",
-            "message": "Erro: produto não faz parte do cardápio do comércio",
-            "status_code": 400
+            "error": "SolanchesNotFoundError",
+            "message": "Erro: produto com o id 0 não cadastrado no comercio!",
+            "status_code": 404
         }
         ```
 
@@ -1194,13 +1218,13 @@ Retorna um *JSON* contendo o cardápio com as categorias, os produtos e os desta
     + Response
 
         ```
-        Status: 400 BAD REQUEST
+        Status: 404 NOT FOUND
         ```
         ```
         {
-            "error": "SolanchesBadRequestError",
+            "error": "SolanchesNotFoundError",
             "message": "Erro: comércio com nome so_lanche não cadastrado!",
-            "status_code" : 400
+            "status_code" : 404
         }
         ```
 
@@ -1258,13 +1282,13 @@ Adiciona o id do produto, cadastrado no comércio, aos destaques do cardápio e 
     + Response
 
         ```
-        Status: 400 BAD REQUEST
+        Status: 404 NOT FOUND
         ```
         ```
-        {   
-            "error": "SolanchesBadRequestError",
-            "message": "Erro: produto não faz parte do cardápio do comércio!",
-            "status_code": 400
+        {
+            "error": "SolanchesNotFoundError",
+            "message": "Erro: produto com o id 0 não cadastrado no comercio!",
+            "status_code": 404
         }
         ```
 
@@ -1320,13 +1344,13 @@ Deleta o id do produto contido nos destaques do cardápio do comércio e retorna
     + Response
 
         ```
-        Status: 400 BAD REQUEST
+        Status: 404 NOT FOUND
         ```
         ```
-        {   
-            "error": "SolanchesBadRequestError",
-            "message": "Erro: produto não faz parte do cardápio do comércio!",
-            "status_code": 400
+        {
+            "error": "SolanchesNotFoundError",
+            "message": "Erro: produto com o id 0 não cadastrado no comercio!",
+            "status_code": 404
         }
         ```
 
@@ -1430,53 +1454,53 @@ Deleta uma categoria da lista de categorias do cardápio do comercio com o nome 
 
     + Request
 
-    ```
-    curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/categoria' \
-    -H 'Content-Type: application/json' \
-    --data-raw '{
-        "categoria": "bebidas"
-    }'
-    ```
+        ```
+        curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/categoria' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "categoria": "bebidas"
+        }'
+        ```
 
     + Response
 
-    ```
-    Status: 200 OK
-    ```
-    ```
-    {
-        "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
-        "categorias": [
-            "doce",
-            "salgado"
-        ],
-        "created_at": 1631744493.25392,
-        "destaques": [],
-        "produtos": [
-            "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
-        ]
-    }
-    ```
+        ```
+        Status: 200 OK
+        ```
+        ```
+        {
+            "_id": "26fbb13bb782457bfea36c43869a3b405268a7a7",
+            "categorias": [
+                "doce",
+                "salgado"
+            ],
+            "created_at": 1631744493.25392,
+            "destaques": [],
+            "produtos": [
+                "b3f58d70b4085c572eb84ee4619be3e6e0005d22"
+            ]
+        }
+        ```
 
     + Request
 
-    ```
-    curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/categoria' \
-    -H 'Content-Type: application/json' \
-    --data-raw '{
-        "categoria": "sucos"
-    }'
-    ```
+        ```
+        curl -L -X DELETE 'https://solanches.herokuapp.com/comercio/lanche_feliz/categoria' \
+        -H 'Content-Type: application/json' \
+        --data-raw '{
+            "categoria": "sucos"
+        }'
+        ```
 
     + Response
 
-    ```
-    Status: 400 BAD REQUEST
-    ```
-    ```
-    {   
-        "error": "SolanchesBadRequestError",
-        "message": "Erro: categoria não faz parte do comércio",
-        "status_code": 400
-    }
-    ```
+        ```
+        Status: 400 BAD REQUEST
+        ```
+        ```
+        {   
+            "error": "SolanchesBadRequestError",
+            "message": "Erro: categoria não faz parte do comércio",
+            "status_code": 400
+        }
+        ```
