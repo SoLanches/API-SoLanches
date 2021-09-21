@@ -70,8 +70,8 @@ POST /login
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `nome` | string | obrigatório | o nome do comercio. |
-| `password` | string | obrigatório | a senha cadastrada para login no sistema. |
+| `nome` | String | obrigatório | o nome do comercio. |
+| `password` | String | obrigatório | a senha cadastrada para login no sistema. |
 
 **Exemplos**
 
@@ -135,7 +135,7 @@ DELETE /logout
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `authorization` | string | obrigatório | o token obtido ao ser feito o login. |
+| `authorization` | String | obrigatório | o token obtido ao ser feito o login. |
 
 **Exemplos**
 
@@ -211,11 +211,11 @@ POST /comercio
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `nome` | string | obrigatório | o nome do comercio. |
-| `password` | string | obrigatório | a senha para efetuar login no sistema. |
+| `nome` | String | obrigatório | o nome do comercio. |
+| `password` | String | obrigatório | a senha para efetuar login no sistema. |
 | `attributes` | dict | obrigatório | as informações de cadastro do comércio. |
-| `endereco` | string | obrigatório | o endereço do comercio, no campo `attributes`. |
-| `horarios` | string | obrigatório | os horários do comercio, no campo `attributes`. |
+| `endereco` | String | obrigatório | o endereço do comercio, no campo `attributes`. |
+| `horarios` | String | obrigatório | os horários do comercio, no campo `attributes`. |
 
 **Exemplos**
 
@@ -354,7 +354,7 @@ GET /comercio?id=
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `id` | string | obrigatório | o id do comércio cadastrado. |
+| `id` | String | obrigatório | o id do comércio cadastrado. |
 
 **Exemplos**
 
@@ -414,7 +414,7 @@ GET /comercio/<comercio_nome>
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
 
 **Exemplos**
 
@@ -474,7 +474,7 @@ PATCH /comercio/<comercio_nome>
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
 
 + Body
 
@@ -576,7 +576,7 @@ GET  /comercios?categories=
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `categories` | string | opcional | `true` para agrupar os comércios por categoria, `false` caso contrário. |
+| `categories` | String | opcional | `true` para agrupar os comércios por categoria, `false` caso contrário. |
 
 **Exemplos**
 
@@ -672,7 +672,7 @@ DELETE /comercio/<comercio_nome>
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
 
 **Exemplos**
 
@@ -724,13 +724,13 @@ POST /comercio/<comercio_nome>/produto
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
 
 + Body
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `nome` | string | obrigatório | o nome do produto. |
+| `nome` | String | obrigatório | o nome do produto. |
 | `attributes` | dict | opcional | as informações de cadastro do produto. |
 
 **Exemplos**
@@ -826,8 +826,8 @@ GET  /comercio/<nome_comercio>/produto/<produto_id>
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
-| `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
+| `produto_id` | String | obrigatório | o id do produto cadastrado no comércio. |
 
 **Exemplos**
 
@@ -882,14 +882,14 @@ PATCH /comercio/<comercio_nome>/produto/<produto_id>
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
-| `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
+| `produto_id` | String | obrigatório | o id do produto cadastrado no comércio. |
 
 + Body
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `nome` | string | opcional | o novo nome do produto. |
+| `nome` | String | opcional | o novo nome do produto. |
 | `attributes` | dict | opcional | as novas informações de cadastro do produto. |
 
 **Exemplos**
@@ -1035,8 +1035,8 @@ GET  /comercio/<nome_comercio>/produtos?categories=
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
-| `categories` | string | opcional | `"true"` para agrupar os produtos por categoria, `"false"` caso o contrário. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
+| `categories` | String | opcional | `"true"` para agrupar os produtos por categoria, `"false"` caso o contrário. |
 
 **Exemplos**
 
@@ -1121,8 +1121,8 @@ DELETE /comercio/<comercio_nome>/produto/<id_produto>
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
-| `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
+| `produto_id` | String | obrigatório | o id do produto cadastrado no comércio. |
 
 **Exemplos**
 
@@ -1180,7 +1180,7 @@ GET /comercio/<comercio_nome>/cardapio
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
 
 **Exemplos**
 
@@ -1241,8 +1241,8 @@ POST /comercio/<comercio_nome>/destaques/<produto_id>
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
-| `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
+| `produto_id` | String | obrigatório | o id do produto cadastrado no comércio. |
 
 **Exemplos**
 
@@ -1305,8 +1305,8 @@ DELETE /comercio/<comercio_nome>/destaques/<produto_id>
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
-| `produto_id` | string | obrigatório | o id do produto cadastrado no comércio. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
+| `produto_id` | String | obrigatório | o id do produto cadastrado no comércio. |
 
 **Exemplos**
 
@@ -1367,13 +1367,13 @@ POST /comercio/<comercio_nome>/categoria
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
 
 + Body
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `categoria` | string | obrigatório | o nome da categoria. |
+| `categoria` | String | obrigatório | o nome da categoria. |
 
 **Exemplos**
 
@@ -1442,13 +1442,13 @@ DELETE /comercio/<comercio_nome>/categoria
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `comercio_nome` | string | obrigatório | o nome do comércio cadastrado. |
+| `comercio_nome` | String | obrigatório | o nome do comércio cadastrado. |
 
 + Body
 
 | Parameters | Type | Requirement | Description |
 |---|---|---|---|
-| `categoria` | string | obrigatório | o nome da categoria. |
+| `categoria` | String | obrigatório | o nome da categoria. |
 
 **Exemplos**
 
