@@ -22,6 +22,17 @@ def comercio_cadastrado():
     return comercio_json
 
 
+@pytest.fixture
+def cardapio_cadastrado():
+    cardapio_json = {
+        "_id": "idTest",
+        "created_at": 1631415578.674395,
+        "destaques": [],
+        "produtos": ["d763e108f053ad2354ff9285b70c48cfc770d9f7"]   
+    }
+    return cardapio_json
+
+
 def test_status(client):
     expected_keys = ["status", "timestamp", "started_at", "service"]
     response = client.get('/status')
@@ -181,3 +192,41 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
     responseJson = response.json
     assert response.status_code == 404
     assert responseJson['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.edita_produto')
+@mock.patch('solanches.rest.controller.get_cardapio')
+def test_edita_produto(mock_get_cardapio, mock_atualiza_comercio, client, comercio_cadastrado):
+    updated_base = {
+        "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
+        "attributes": {
+            "categoria": "sa",
+            "descricao": "descrição do produto de teste1",
+            "imagem": "link de imagem",
+            "preco": 20.5
+        },
+        "created_at": 1631415611.4404533,
+        "nome": "comercio6"
+    }
+    
+    mock_get_cardapio.return_value = comercio_cadastrado
+    mock_atualiza_comercio.return_value = updated_base
+    response = client.patch("/comercio/solanches/produto/d763e108f053ad2354ff9285b70c48cfc770d9f7", json=updated_base)
+
+    response_json = response.json
+    assert response_json == updated_base
+    assert response.status_code == 200
+
+
+@mock.patch('solanches.rest.controller.get_cardapio')
+def test_edita_produto_com_json_invalido(mock_get_cardapio, client, cardapio_cadastrado):
+    comercio_json_invalido = 0
+
+    mock_get_cardapio.return_value = [cardapio_cadastrado]
+    url = '/comercio/solanches/produto/d763e108f053ad2354ff9285b70c48cfc770d9f7'
+    response = client.patch(url, data=comercio_json_invalido)
+
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == "Erro: json inválido!"
+
