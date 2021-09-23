@@ -15,8 +15,8 @@ def client(rest):
 def comercio_cadastrado():
     comercio_json = {
         "_id": "idTest",
-        "nome": "SoLanches Comercio", 
-        "attributes": { "telefone": "99988-5678", "email": "solanches@test.com"},
+        "nome": "SoLanches Comercio",
+        "attributes": {"telefone": "99988-5678", "email": "solanches@test.com"},
         "created_at": 21345324.3456
     }
     return comercio_json
@@ -73,7 +73,7 @@ def test_get_comercios_categories_true(mock_get_comercios, client):
     assert response.status_code == 200
     assert isinstance(response_json, dict)
     assert response_json == expected_return
-    
+
 
 @mock.patch('solanches.rest.controller.get_comercios')
 def test_get_comercios_sucesso(mock_get_comercios, comercio_cadastrado, client):
@@ -83,7 +83,7 @@ def test_get_comercios_sucesso(mock_get_comercios, comercio_cadastrado, client):
 
     response = client.get('/comercios')
     response_json = response.json
-    
+
     assert response.status_code == 200
     assert response_json == expected_return
 
@@ -169,7 +169,7 @@ def test_remove_comercio_sucesso(mock_remove_comercio, client):
     responseJson = response.json
     assert response.status_code == 200
     assert responseJson['message'] == f'comercio {comercio_nome} removido com sucesso'
-    
+
 
 @mock.patch('solanches.rest.controller.remove_comercio')
 def test_remove_comercio_inexistente(mock_remove_comercio, client):

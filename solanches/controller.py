@@ -9,7 +9,8 @@ from . errors import SolanchesInternalServerError
 
 
 def _assert(condition, message, SolanchesError=SolanchesBadRequestError):
-    if condition: return
+    if condition:
+        return
     raise SolanchesError(message)
 
 
@@ -32,7 +33,7 @@ def cadastra_comercio(nome, password, attributes):
 def get_comercios(has_categories=False):
     comercios = _get_comercios_categoria() if has_categories else Comercio.get_all()
     return comercios
-    
+
 
 def _get_comercios_categoria():
     result = {}
@@ -120,7 +121,7 @@ def _get_produtos_categoria(comercio_nome):
         result.setdefault(categoria, []).append(produto)
     return result
 
-  
+
 def get_produtos_ids(comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
@@ -138,12 +139,12 @@ def edita_produto(produto_id, comercio_nome, attributes, nome):
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     produto = Comercio.get_produto(comercio_nome, produto_id)
     _assert(produto, f'Erro: produto com o id {produto_id} não cadastrado no comercio!', SolanchesNotFoundError)
-    
+
     set_fields = {f'attributes.{field}': value for field, value in attributes.items()} if attributes else {}
     set_fields["nome"] = nome if nome else None
 
     set_fields_filtered = {key:value for key, value in set_fields.items() if value}
-    
+
     Comercio.update_produto(produto_id, set_fields_filtered)
     produto = Comercio.get_produto(comercio_nome, produto_id)
     return produto
@@ -152,7 +153,7 @@ def edita_produto(produto_id, comercio_nome, attributes, nome):
 def remove_produto(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
-    produto_no_comercio =  produto_id in Comercio.get_produtos_ids(comercio_nome)
+    produto_no_comercio = produto_id in Comercio.get_produtos_ids(comercio_nome)
     _assert(produto_no_comercio, f'Erro: produto com o id {produto_id} não cadastrado no comercio!', SolanchesNotFoundError)
     Comercio.remove_produto(comercio_nome, produto_id)
     cardapio = get_cardapio(comercio_nome)
@@ -165,7 +166,7 @@ def adiciona_destaque(comercio_nome, produto_id):
 
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
-    produto_no_comercio =  produto_id in Comercio.get_produtos_ids(comercio_nome)
+    produto_no_comercio = produto_id in Comercio.get_produtos_ids(comercio_nome)
     _assert(produto_no_comercio, f'Erro: produto com o id {produto_id} não cadastrado no comercio!', SolanchesNotFoundError)
     produto_nos_destaques = produto_id in Comercio.get_destaques(comercio_nome)
     _assert(not produto_nos_destaques, f'Erro: produto já está nos destaques!')
@@ -180,7 +181,7 @@ def remove_produto_destaques(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     _assert(produto_id and type(produto_id) is str, 'Erro: produto com id inválido!')
-    produto_no_comercio =  produto_id in Comercio.get_produtos_ids(comercio_nome)
+    produto_no_comercio = produto_id in Comercio.get_produtos_ids(comercio_nome)
     _assert(produto_no_comercio, f'Erro: produto com o id {produto_id} não cadastrado no comercio!', SolanchesNotFoundError)
     produto_nos_destaques = produto_id in Comercio.get_destaques(comercio_nome)
     _assert(produto_nos_destaques, f'Erro: produto com id {produto_id} não está nos destaques!')
@@ -207,7 +208,7 @@ def remove_categoria(comercio_nome, categoria):
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     categorias = Comercio.get_cardapio_categorias(comercio_nome)
     _assert(categoria in categorias, 'Erro: categoria não faz parte do comércio')
-    
+
     Comercio.remove_categoria(comercio_nome, categoria)
     cardapio_atualizado = Comercio.get_cardapio(comercio_nome)
     return cardapio_atualizado

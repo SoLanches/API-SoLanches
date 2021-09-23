@@ -31,7 +31,7 @@ class Comercio:
         query = {"_id": id}
         comercio = DB.comercio.find_one(query)
         if comercio and "password" in comercio:
-            comercio.pop("password")        
+            comercio.pop("password")
         return comercio
 
     @staticmethod
@@ -108,7 +108,7 @@ class Comercio:
         query = {"nome": comercio_nome}
         comercio_deletado = DB.comercio.delete_one(query)
         return comercio_deletado.deleted_count
-    
+
     @staticmethod
     def verify_password(comercio_nome, password):
         query = {"nome": comercio_nome}
@@ -197,7 +197,7 @@ class Cardapio:
     def remove_cardapio(cardapio_id):
         produtos = Cardapio.get_produtos(cardapio_id)
         query = {"_id": cardapio_id}
-        DB.cardapio.remove(query) 
+        DB.cardapio.remove(query)
         Produto.remove_produtos(produtos)
 
     @staticmethod
@@ -248,7 +248,7 @@ class Cardapio:
         new_values = {"$set": {"destaques": new_destaques, "produtos": new_produtos}}
         DB.cardapio.update_one(query, new_values)
         Produto.remove(produto_id)
-        
+
     @staticmethod
     def remove_produto_destaques(cardapio_id, produto_id):
         query = {"_id": cardapio_id}
@@ -257,7 +257,7 @@ class Cardapio:
         destaques.remove(produto_id) if produto_id in destaques else destaques
         new_destaques = {"$set": {"destaques": destaques}}
         DB.cardapio.update_one(query, new_destaques)
-    
+
     @staticmethod
     def get_produto_categoria(produto_id):
         categoria = Produto.get_categoria(produto_id)
@@ -302,7 +302,7 @@ class Produto:
     def id(nome, timestamp):
         id_fields = {"nome": nome, "timestamp": timestamp}
         serial_arq = json.dumps(id_fields, separators=(',', ':'), sort_keys=True, ensure_ascii=False)
-        return hashlib.sha1(serial_arq.encode('utf-8')).hexdigest()  
+        return hashlib.sha1(serial_arq.encode('utf-8')).hexdigest()
 
     def save(self):
         self.created_at = time.time()
@@ -322,9 +322,9 @@ class Produto:
 
     @staticmethod
     def remove_produtos(produtos):
-        query = {"_id": { "$in": produtos}}
-        DB.produto.remove(query) 
-  
+        query = {"_id": {"$in": produtos}}
+        DB.produto.remove(query)
+
     @staticmethod
     def get_all():
         produtos = DB.produto.find()
@@ -334,7 +334,7 @@ class Produto:
     def remove(produto_id):
         query = {"_id": produto_id}
         DB.produto.remove(query)
-    
+
     @staticmethod
     def get_categoria(produto_id):
         produto = Produto.get_by_id(produto_id)
@@ -351,7 +351,7 @@ class BlockList:
 
     def __init__(self, token):
         self._id = token
-    
+
     def save(self):
         self.date = datetime.utcnow()
         DB.block_list.insert_one(vars(self))

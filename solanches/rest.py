@@ -17,7 +17,8 @@ started_at = time.time()
 
 
 def _assert(condition, message, SolanchesError=SolanchesBadRequestError):
-    if condition: return
+    if condition:
+        return
     raise SolanchesError(message)
 
 
@@ -86,7 +87,7 @@ def get_comercio_by_name(comercio_nome):
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
 #@jwt_required
 def edita_comercio(comercio_nome):
-    req = request.get_json()  
+    req = request.get_json()
     _assert(req, "Erro: json inválido!")
     _assert("attributes" in req, "Erro: campo attributes inválido")
     attributes = req.get("attributes")
@@ -185,7 +186,7 @@ def remove_categoria(comercio_nome):
     _assert(req, "Erro: json inválido!")
     categoria = req.get("categoria")
     _assert(categoria, "Erro: categoria não informada!")
-    
+
     cardapio_atualizado = controller.remove_categoria(comercio_nome, categoria)
     return jsonify(cardapio_atualizado), 200
 
@@ -215,7 +216,7 @@ def logout(current_user):
     controller.logout(token)
 
     response = {
-        "message": "Logout feito com sucesso", 
+        "message": "Logout feito com sucesso",
         "status_code": 200
     }
     return jsonify(response), 200
@@ -223,7 +224,7 @@ def logout(current_user):
 
 
 def _construct_error(error):
-    data ={}
+    data = {}
     data["error"] = error.__class__.__name__
     data["message"] = error.message
     data["status_code"] = error.status_code
@@ -233,7 +234,7 @@ def _construct_error(error):
 @app.errorhandler(Exception)
 def _error(error):
     data = {}
-    data["error"]  = error.__class__.__name__
+    data["error"] = error.__class__.__name__
     data["message"] = str(error)
     data["status_code"] = 500
     return data, data["status_code"]
