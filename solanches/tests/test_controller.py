@@ -3,8 +3,8 @@ from . data_test import COMERCIO_EDITADO, COMERCIOS
 import pytest
 
 @pytest.fixture
-def comercios():
-    return COMERCIOS
+def comercio_editado():
+    return COMERCIO_EDITADO
 
 
 @pytest.fixture
@@ -29,12 +29,14 @@ def test_edita_comercio_nome_invalido(controller):
     assert str(excinfo.value) == 'Erro: nome de comercio inválido!'
 
 
-def test_edita_comercio_sem_atributos(controller):
+@mock.patch('solanches.controller.Comercio.get_by_name')
+def test_edita_comercio_sem_atributos(mock_get_by_name, controller, um_comercio, comercio_editado):
     comercio_nome = "comercio1"
+    mock_get_by_name.return_value = um_comercio
     with pytest.raises(AssertionError) as excinfo:
-        response = controller.atualiza_comercio({"nome": "comercio1"}, comercio_nome)
+        response = controller.atualiza_comercio({}, comercio_nome)
     assert str(excinfo.value) == "Erro: campo attributes inválidos!"
-    assert isinstance(response.json , dict)
+    assert response == comercio_editado
 
 
 @mock.patch('solanches.controller.Comercio.get_by_name')
