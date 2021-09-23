@@ -163,76 +163,54 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     assert result == 1
 
 
-@mock.patch('solanches.controller.Comercio.get_produto')
-@mock.patch('solanches.controller.Comercio.get_cardapio')
-def test_edita_produto_comercio_invalido(mock_get_cardapio, mock_get_produto, controller, um_cardapio, um_produto):
-    comercio_nome = ""
+def test_edita_produto_comercio_invalido(controller):
+    comercio_nome = 0
     produto_id = "d763e108f053ad2354ff9285b70c48cfc770d9f7"
-    mock_get_cardapio.return_value = um_cardapio
-    mock_get_produto.return_value = um_produto
     with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.edita_produto(produto_id, comercio_nome, {'sabor': "morango"}, "")
     assert str(excinfo.value.message) == "Erro: nome de comércio inválido"
 
 
-@mock.patch('solanches.controller.Comercio.get_produto')
-def test_get_produto_by_id_invalido(mock_get_produto, controller):
+def test_edita_produto_by_id_invalido(controller):
     id_invalido = 0 
     nome_comercio = "comercio1"
     attributes = {"endereco": "jhjhdjhd"}
-    mock_get_produto.return_value = None
-    
-    with pytest.raises(SolanchesNotFoundError) as excinfo:
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.edita_produto(id_invalido, nome_comercio, attributes, "")
     assert str(excinfo.value.message) == "Erro: produto com id inválido!"
 
 
-@mock.patch('solanches.controller.Comercio.get_produto')
-def test_get_produto_by_atributos_invalidos(mock_get_produto, controller, um_produto):
+def test_edita_produto_by_atributos_invalidos(controller):
     id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
     nome_comercio = "comercio1"
-    attributes = None
-    mock_get_produto.return_value = um_produto
-    
-    with pytest.raises(SolanchesNotFoundError) as excinfo:
+    attributes = "oioi"
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.edita_produto(id_valido, nome_comercio, attributes, "")
     assert str(excinfo.value.message) == "Erro: attributes inválidos!"
 
 
-@mock.patch('solanches.controller.Comercio.get_produto')
-def test_get_produto_by_nome_invalido(mock_get_produto, controller, um_produto):
+def test_edita_produto_by_nome_invalido(controller):
     id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
     nome_comercio = "comercio1"
     attributes = {"descricao": "uhu"}
-    mock_get_produto.return_value = um_produto
-    
-    with pytest.raises(SolanchesNotFoundError) as excinfo:
-        controller.edita_produto(id_valido, nome_comercio, attributes, 0)
-    assert str(excinfo.value.message) == "Erro: attributes inválidos!"
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.edita_produto(id_valido, nome_comercio, attributes, 7838383)
+    assert str(excinfo.value.message) == "Erro: nome inválido!"
 
 
+@mock.patch('solanches.controller.Comercio.get_by_name')
 @mock.patch('solanches.controller.Comercio.get_produto')
-def test_edita_produto_sucesso(mock_get_produto, controller, um_produto):
+def test_edita_produto_sucesso(mock_get_produto, mock_get_by_name, controller, um_produto, um_comercio):
 
-    update_base = {
-
-         "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
-        "attributes": {
-            "categoria": "okok",
-            "descricao": "descrição do produto de teste1",
-            "imagem": "link de imagem",
-            "preco": 20.5
-        },
-        "created_at": 1631415611.4404533,
-        "nome": "produto"
-    }
     attributes = {"categoria": "okok"}
     nome_comercio = "comercio1"
     produto_id = "d763e108f053ad2354ff9285b70c48cfc770d9f7"
     mock_get_produto.return_value = um_produto
+    mock_get_by_name.return_value = um_comercio
 
     result = controller.edita_produto(produto_id, nome_comercio, attributes, "produto")
 
     assert "attributes" in result
-    assert result == update_base
+    assert isinstance(result, object)
+   
     
