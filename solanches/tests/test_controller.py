@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from . data_test import COMERCIOS
+from . data_test import COMERCIO_TESTE, COMERCIOS
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
 
@@ -148,3 +148,73 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     mock_remove_comercio.return_value = 1
     result = controller.remove_comercio(comercio_nome)
     assert result == 1
+
+
+def test_adiciona_destaque_nome_comercio_invalido(controller):
+    with pytest.raises(SolanchesBadRequestError) as e:
+        comercio_nome = ''
+        produto_id = 'produtoteste1' 
+        controller.adiciona_destaque(comercio_nome, produto_id)
+    assert str(e.value.message) == 'Erro: nome de comércio inválido'
+
+
+def test_adiciona_destaque_produto_id_invalido(controller):
+    with pytest.raises(SolanchesBadRequestError) as e:
+        comercio_nome = 'comercio 1'
+        produto_id = 3 
+        controller.adiciona_destaque(comercio_nome, produto_id)
+    assert str(e.value.message) == 'Erro: produto com id inválido!'
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_adiciona_destaque_comercio_inexistente(mock_get_by_name, controller):
+    mock_get_by_name.return_value = None
+    with pytest.raises(SolanchesNotFoundError) as e:
+        comercio_nome = 'comercio 1'
+        produto_id = 'produto teste'
+        controller.adiciona_destaque(comercio_nome, produto_id)
+    assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_adiciona_destaque_produto_fora_comercio(mock_get_by_name, mock_get_produtos, controller):
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_produtos.return_value = []
+    with pytest.raises(SolanchesNotFoundError) as e:
+        comercio_nome = 'comercio 1'
+        produto_id = 'produto teste'
+        controller.adiciona_destaque(comercio_nome, produto_id)
+    assert str(e.value.message) == f'Erro: produto com o id {produto_id} não cadastrado no comercio!'
+
+
+@mock.patch('solanches.models.Comercio.get_destaques')
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_adiciona_destaque_produto_ja_destacado(mock_get_by_name, mock_get_produtos, mock_get_destaques, controller):
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_produtos.return_value = ['produto teste']
+    mock_get_destaques.return_value = ['produto teste']
+    with pytest.raises(SolanchesBadRequestError) as e:
+        comercio_nome = 'comercio 1'
+        produto_id = 'produto teste'
+        controller.adiciona_destaque(comercio_nome, produto_id)
+    assert str(e.value.message) == f'Erro: produto já está nos destaques!'
+
+
+@mock.patch('solanches.models.Cardapio.get_by_id')
+@mock.patch('solanches.models.Comercio.get_destaques')
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_adiciona_destaque_produto_sucesso(mock_get_by_name, mock_get_produtos, mock_get_destaques, mock_get_cardapio, controller):
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_produtos.return_value = ['produto teste']
+    mock_get_destaques.return_value = []
+    cardapio_desatualizado = {'produtos': [], 'destaques': ['produto aleatorio'], 'categorias': []}
+    mock_get_cardapio.return_value = cardapio_desatualizado
+    comercio_nome = 'comercio 1'
+    produto_id = 'produto teste'
+    resultado = controller.adiciona_destaque(comercio_nome, produto_id)
+    cardapio_esperado = {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
+    assert resultado == cardapio_esperado
