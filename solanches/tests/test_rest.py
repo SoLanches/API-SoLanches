@@ -1,12 +1,7 @@
 from unittest import mock
-
+from solanches.errors import SolanchesNotFoundError
 import pytest
 
-<<<<<<< HEAD
-=======
-from solanches.errors import SolanchesNotFoundError
-
->>>>>>> master
 
 @pytest.fixture
 def client(rest):
@@ -39,7 +34,6 @@ def test_status(client):
     assert status['service'] == 'api-solanches'
 
 
-<<<<<<< HEAD
 @mock.patch('solanches.rest.controller.cadastra_comercio')
 def test_cadastra_comercio(mock_cadastra_comercio, client):
     expected_return = {
@@ -105,7 +99,6 @@ def test_cadastra_comercio_exception_controller(mock_cadastra_comercio, client):
     response_json = response.json
     assert response.status_code == 400
     assert response_json['message'] == exception_msg
-=======
 @mock.patch('solanches.rest.controller.get_comercios')
 def test_get_comercios_vazio(mock_get_comercios, client):
     expected_return = []
@@ -251,4 +244,3 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
     responseJson = response.json
     assert response.status_code == 404
     assert responseJson['message'] == exception_message
->>>>>>> master
