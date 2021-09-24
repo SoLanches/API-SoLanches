@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from solanches.errors import SolanchesNotFoundError
+from solanches.errors import SolanchesBadRequestError, SolanchesNotFoundError
 
 
 @pytest.fixture
@@ -166,9 +166,9 @@ def test_remove_comercio_sucesso(mock_remove_comercio, client):
     mock_remove_comercio.return_value = 1
     url = f'/comercio/{comercio_nome}'
     response = client.delete(url)
-    responseJson = response.json
+    response_json = response.json
     assert response.status_code == 200
-    assert responseJson['message'] == f'comercio {comercio_nome} removido com sucesso'
+    assert response_json['message'] == f'comercio {comercio_nome} removido com sucesso'
     
 
 @mock.patch('solanches.rest.controller.remove_comercio')
@@ -178,6 +178,47 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
     mock_remove_comercio.side_effect = SolanchesNotFoundError(exception_message)
     url = f'/comercio/{comercio_nome}'
     response = client.delete(url)
-    responseJson = response.json
+    response_json = response.json
     assert response.status_code == 404
-    assert responseJson['message'] == exception_message
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_bad_request(mock_adiciona_destaque, client):
+    exception_message = f'Erro: bad request'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.side_effect = SolanchesBadRequestError(exception_message)
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_not_found(mock_adiciona_destaque, client):
+    exception_message = f'Erro: not found'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.side_effect = SolanchesNotFoundError(exception_message)
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 404
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_sucesso(mock_adiciona_destaque, client):
+    exception_message = f'Erro: not found'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.return_value = {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 201
+    assert response_json == {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
+
+
