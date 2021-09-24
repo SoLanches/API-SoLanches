@@ -32,7 +32,7 @@ Status: 200 OK
 
 ## Cadastra o comércio
 
-Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos nome, do tipo string, e attributes, do tipo dict, que possui o campo telefone como obrigatório. Ambos os campos, nome e attributes, são obrigatórios. 
+Cadastra um comércio no banco de dados. Um comércio é formado por um JSON com os campos `nome`, do tipo string, e `attributes`, do tipo dict, que possui os campos `endereco` e `horarios` como obrigatórios. Ambos os campos, `nome` e `attributes`, são obrigatórios. 
 
 ```
 POST /comercio
@@ -43,10 +43,12 @@ Exemplo
 ```
 curl \
     -d '{
-             "nome": "lanche_feliz",
-             "attributes": {
-                 "telefone": "123456"
-             }
+            "nome": "lanche_feliz",
+            "attributes": {
+                "endereco": "rua, numero - bairro - cidade/UF",
+                "horarios": "Terça-feira - Domingo, 17:00 - 23:00",
+                "categoria": "lanchonete"
+            }
          }' \
     -H "Content-Type: application/json" \
     -X POST http://api/comercio
@@ -61,7 +63,9 @@ Status: 201 CREATED
 {
     "id": "3671361e6d5dc1ee674156beed67b1fd",
     "attributes": {
-         "telefone": "123456"
+        "endereco": "rua, numero - bairro - cidade/UF",
+        "horarios": "Terça-feira - Domingo, 17:00 - 23:00",
+        "categoria": "lanchonete"
     },
     "cardápio": "3671361e6d5dc1ee674156beed67b1fd",
     "created_at": 1628721657.488885,
@@ -87,7 +91,7 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: atributos não informados",
+   "message": "Erro: campo attributes não informado!",
    "status_code" : 400
 }
 ```
@@ -287,6 +291,70 @@ Status: 400 BAD REQUEST
 }
 ```
 
+## Retorna produto de um comercio
+
+Recupera um json do produto através do nome do comércio e o id do produto. 
+
+```
+GET  /comercio/<nome_comercio>/produtos/<produto_id>
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produto/c666ae577afa4776148c2e09b9545320cbbbfac1
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "c666ae577afa4776148c2e09b9545320cbbbfac1",
+    "attributes": {},
+    "created_at": 1630117957.674759,
+    "nome": "empanado_de_frango"
+}
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_feliz/produto/ioasjfoankfn
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: produto não cadastrado no sistema",
+    "status_code": 400
+}
+```
+
+Exemplo
+
+```
+curl http://api/comercio/lanche_bom/produto/c666ae577afa4776148c2e09b9545320cbbbfac1
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: produto não faz parte desse comércio",
+    "status_code": 400
+}
+```
+
 ## Lista produtos de um comercio
 
 Retorna uma lista com todos os produtos cadastrados no comércio, sendo também possível o retorno de um dicionário com o agrupamento dos produtos por categoria, onde as chaves do dicionário são as categorias e os valores são uma lista de produtos.
@@ -374,7 +442,7 @@ Status: 200 OK
 
 ## Edita produto no cardápio de um comércio
 
-Para realizar a edição de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `attributes` contendo as informações para atualização. O `attributes` do produto deve ser um dict. O nome do comércio e o id do produto são passados na URL.
+Para realizar a edição de um produto no cardápio de um comércio, a requisição deve enviar no body um JSON com o campo `attributes`, opcional, contendo as informações para atualização e o campo `nome`, opcional, com o novo nome do produto. O `attributes` do produto deve ser um dict e o `nome` uma string. O nome do comércio e o id do produto são passados na URL.
 
 ```
 PATCH /comercio/<comercio_nome>/produto/<produto_id>
@@ -402,7 +470,7 @@ Status: 200 OK
 {
     "_id": "c3h2foe6di3e1ee6bd3ctb4r",
     "attributes": {
-        "categoria": "salgado",
+        "categoria": "salgado"
     },
     "created_at": 1631106735.893032,
     "nome": "produto"
@@ -414,32 +482,26 @@ Exemplo
 ```
 curl \
     -d '{
-            "attributes": {
-                "categoria": "salgado"
-            }
+            "nome": "pastel de frango"
         }' \
     -H "Content-Type: application/json" \
-    -X PATCH http://api/comercio/lanche_feliz/produto/68519638f502cb9a39801d5499c
+    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
 ```
 
 Resposta
 
 ```
-Status: 400 BAD REQUEST
+Status: 200 OK
 ```
 ```
 {
-    "message": "Erro: produto com id não cadastrado!",
-    "status_code": 400
+    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+    "attributes": {
+        "categoria": "salgado"
+    },
+    "created_at": 1631106735.893032,
+    "nome": "pastel de frango"
 }
-```
-
-## Adiciona um produto aos destaques do cardápio
-
-Para adicionar um produto aos destaques, a requisição deve enviar no body um JSON com o campo obrigatório `destaques`, que corresponde à uma lista de ids de produtos. Além disso, os produtos, aos quais os ids correspondem, já devem estar cadastrados no cardápio do comércio.
-
-```
-POST /comercio/<comercio_nome>/destaques
 ```
 
 Exemplo
@@ -447,10 +509,67 @@ Exemplo
 ```
 curl \
     -d '{
-             "destaques": ["c3h2foe6di3e1ee6bd3ctb4r"]
-         }' \
+            "attributes": {
+                "valor": 3.00
+            },
+            "nome": "pastel de frango com queijo"
+        }' \
     -H "Content-Type: application/json" \
-    -X POST http://api/comercio/lanche_feliz/destaques
+    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "c3h2foe6di3e1ee6bd3ctb4r",
+    "attributes": {
+        "categoria": "salgado",
+        "valor": 3.00
+    },
+    "created_at": 1631106735.893032,
+    "nome": "pastel de frango com queijo"
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "attributes": "salgado"
+        }' \
+    -H "Content-Type: application/json" \
+    -X PATCH http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: attributes inválidos!",
+    "status_code": 400
+}
+```
+
+## Adiciona um produto aos destaques do cardápio
+
+Adiciona um produto aos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual os id corresponde, já deve estar cadastrado no cardápio do comércio.
+
+```
+POST /comercio/<comercio_nome>/destaques/<produto_id>
+```
+
+Exemplo
+
+```
+curl -x POST http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
 ```
 
 Resposta
@@ -460,19 +579,23 @@ Status: 201 CREATED
 ```
 ```
 {
-   "message": "destaques adicionados!",
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "created_at": 1628721657.488885,
+    "destaques": [
+        "c3h2foe6di3e1ee6bd3ctb4r"
+    ],
+    "produtos": [
+        "c3h2foe6di3e1ee6bd3ctb4r",
+        "3d3f5f603fe10d0dc519e6fc",
+        "3752b85753550e2a5a691efd"
+    ]
 }
 ```
 
 Exemplo
 
 ```
-curl \
-    -d '{
-             "destaques": ["1234"]
-         }' \
-    -H "Content-Type: application/json" \
-    -X POST http://api/comercio/lanche_feliz/destaques
+curl -x POST http://api/comercio/lanche_feliz/destaques/7522b85753550e2a5a691abe
 ```
 
 Resposta
@@ -482,8 +605,58 @@ Status: 400 BAD REQUEST
 ```
 ```
 {
-   "message": "Erro: produto precisa fazer parte do cardápio do comércio",
-   "status_code" : 400
+    "message": "Erro: produto não faz parte do cardápio do comércio!",
+    "status_code": 400
+}
+```
+
+## Remove um produto dos destaques do cardápio
+
+Remove um produto dos destaques do cardapio de um comércio e retorna o cardapio atualizado. O nome do comércio e o id do produto são passados na URL. O produto, ao qual o id corresponde, já deve estar cadastrado no cardápio do comércio.
+
+```
+DELETE /comercio/<comercio_nome>/destaques/<produto_id>
+```
+
+Exemplo
+
+```
+curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "created_at": 1628721657.488885,
+    "destaques": [],
+    "produtos": [
+        "c3h2foe6di3e1ee6bd3ctb4r",
+        "3d3f5f603fe10d0dc519e6fc",
+        "3752b85753550e2a5a691efd"
+    ]
+}
+```
+
+Exemplo
+
+```
+curl -x DELETE http://api/comercio/lanche_feliz/destaques/c3h2foe6di3e1ee6bd3ctb4r
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: produto com id c3h2foe6di3e1ee6bd3ctb4r não está nos destaques!",
+    "status_code": 400
 }
 ```
 
@@ -544,7 +717,7 @@ DELETE /comercio/<comercio_nome>/produto/<id_produto>
 Exemplo
 
 ```
-curl http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
+curl -x DELETE http://api/comercio/lanche_feliz/produto/c3h2foe6di3e1ee6bd3ctb4r
 ```
 
 Resposta
@@ -564,7 +737,7 @@ Status: 200 OK
 Exemplo
 
 ```
-curl http://api/comercio/lanche_feliz/produto/b1cef4d8hb611df8c443a1
+curl -x DELETE http://api/comercio/lanche_feliz/produto/b1cef4d8hb611df8c443a1
 ```
 
 Resposta
@@ -576,5 +749,121 @@ Status: 400 BAD REQUEST
 {
    "message": "Erro: produto precisa fazer parte do cardápio do comércio",
    "status_code" : 400 
+}
+```
+
+## Adiciona categoria ao cardápio de um comércio
+
+Adiciona uma categoria ao comércio. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria. O retorno é um JSON do cardápio do comércio.
+
+```
+POST /comercio/<comercio_nome>/categoria
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria inovação"
+        }' \
+    -H "Content-Type: application/json" \
+    -X POST http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 201 CREATED
+```
+```
+{
+    "_id": "3671361e6d5dc1ee674156beed67b1fd",
+    "categorias": [
+        "categoria inovação"
+    ],
+    "created_at": 1631625353.1946077,
+    "destaques": [],
+    "produtos": []
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": ""
+        }' \
+    -H "Content-Type: application/json" \
+    -X POST http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: categoria não informada!",
+    "status_code": 400
+}
+```
+
+## Remove categoria de um cardápio
+
+Remove uma categoria. O nome do comércio deve ser passado na URL. O campo `categoria` é obrigatório e deve conter uma string com o nome da categoria a ser removida. O retorno é um JSON do cardápio do comércio.
+
+```
+DELETE /comercio/<comercio_nome>/categoria
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria inovação"
+        }' \
+    -H "Content-Type: application/json" \
+    -X DELETE http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 200 OK
+```
+```
+{
+    "_id": "d81d37521e2ee08c5b50ac4f5c9bed652634fb95",
+    "categorias": [],
+    "created_at": 1631625353.1946077,
+    "destaques": [],
+    "produtos": []
+}
+```
+
+Exemplo
+
+```
+curl \
+    -d '{
+            "categoria": "categoria que não existe"
+        }' \
+    -H "Content-Type: application/json" \
+    -X DELETE http://api/comercio/lanche_feliz/categoria
+```
+
+Resposta
+
+```
+Status: 400 BAD REQUEST
+```
+```
+{
+    "message": "Erro: categoria não faz parte do comércio",
+    "status_code": 400
 }
 ```
