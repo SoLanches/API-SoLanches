@@ -1,8 +1,4 @@
 from unittest import mock
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 import pytest
 
 from solanches.errors import SolanchesNotFoundError
@@ -37,6 +33,7 @@ def test_status(client):
     assert type(status['service']) is str
     assert status['status'] == 'operacional'
     assert status['service'] == 'api-solanches'
+
 
 @mock.patch('solanches.rest.controller.get_comercios')
 def test_get_comercios_vazio(mock_get_comercios, client):

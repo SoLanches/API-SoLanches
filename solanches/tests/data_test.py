@@ -1,10 +1,12 @@
-<<<<<<< HEAD
 PRODUTOS_COMERCIO = [
     {
          "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50", 
         "nome": "comercio_test1",
         "attributes": {}
-=======
+    }
+
+]
+
 COMERCIOS = [
     {
         "_id": "1d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48", 
@@ -20,6 +22,5 @@ COMERCIOS = [
         "_id": "3d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48", 
         "nome": "comercio3",
         "attributes": {"telefone": "39", "categoria":"3"}
->>>>>>> master
     }
 ]
