@@ -169,9 +169,9 @@ def test_get_cardapio_sucesso(mock_get_cardapio, mock_comercio_by_name,controlle
 
 def test_get_cardapio_by_nome_comercio_invalido(controller):
     nome_invalido = 123
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.get_cardapio(nome_invalido)
-    assert str(excinfo.value) == 'Erro: nome de comercio inválido!'
+    assert str(excinfo.value.message) == 'Erro: nome de comercio inválido!'
 
 
 @mock.patch('solanches.controller.Comercio.get_by_name')
@@ -193,7 +193,6 @@ def test_get_cardapio_by_nome_comercio_valido(mock_get_cardapio, mock_comercio_b
 def test_get_cardapio_nao_encontrado(mock_get_cardapio, controller):
     mock_get_cardapio.return_value = None
     nome = 'TEXAS'
-
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
          controller.get_cardapio(nome)
-    assert str(excinfo.value) == 'Erro: comercio com nome TEXAS não cadastrado!'
+    assert str(excinfo.value.message) == 'Erro: comercio com o nome TEXAS não cadastrado!'
