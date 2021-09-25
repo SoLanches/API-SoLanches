@@ -105,7 +105,6 @@ def test_get_comercio_by_name_nao_cadastrado(mock_comercio_by_name, controller):
     assert str(excinfo.value.message) == f'Erro: comercio com o nome {nome_invalido} não cadastrado!'
 
 
-@mock.patch('solanches.controller.Comercio.get_by_name')
 def test_get_comercio_by_name_com_nome_nao_str(controller):
     nome_invalido = 123
     with pytest.raises(SolanchesBadRequestError) as excinfo:
@@ -148,7 +147,6 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     assert result == 1
 
 
-
 @pytest.mark.skip(reason="TODO")
 @mock.patch('solanches.models.Comercio.get_produtos')
 def test_cadastra_produto(mock_get_produtos, controller):
@@ -178,29 +176,18 @@ def test_cadastra_produto_nome_invalido(controller):
       "descricao": "descricao do produto",
       "preco": 20.50
     }
-    with pytest.raises(AssertionError) as exinfo:
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
         controller.cadastra_produto(nome_comercio, nome_produto, attributes)
-    assert str(exinfo.value) == "Erro: nome inválido!"
+    assert str(exinfo.value.message) == "Erro: nome inválido!"
 
 
-def test_cadastra_produto_sem_atributos(controller):
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_cadastra_produto_sem_atributos(mock_get_by_name, controller, um_comercio):
     nome_produto = "nome_produto"
     nome_comercio = "nome_comercio"
-    comercio_attributes = None
-    with pytest.raises(AssertionError) as exinfo:
-      controller.cadastra_produto(nome_comercio, nome_produto, comercio_attributes)
-    assert str(exinfo.value) == "Erro: campo attributes inválidos!"
-
-
-def test_cadastra_produto_com_comercio_nao_cadastrado(controller):
-    nome_produto = {'nome': "nome_produto"}
-    nome_comercio = {'nome': "nome_comercio"}
-    attributes = {
-      "descricao": "descricao do produto",
-      "preco": 20.50
-    }
-    with pytest.raises(AssertionError) as exinfo:
-      controller.cadastra_produto(nome_comercio, nome_produto, attributes)
-    assert str(exinfo.value) == "Erro: nome inválido!"
-from unittest import mock
+    comercio_attributes = 3763737
+    mock_get_by_name.return_value = um_comercio
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_produto(nome_comercio, nome_produto, comercio_attributes)
+    assert str(exinfo.value.message) == "Erro: campo attributes inválidos!"
 
