@@ -132,8 +132,8 @@ def test_get_comercio_by_name_exception_controller(mock_get_comercio_by_name, cl
 def test_get_comercio_by_id_com_sucesso(mock_get_comercio, client, comercio_cadastrado):
     expected_return = comercio_cadastrado
     mock_get_comercio.return_value = expected_return
-    id = expected_return['_id']
-    response = client.get(f'/comercio?id={id}')
+    id_comercio = expected_return['_id']
+    response = client.get(f'/comercio?id={id_comercio}')
     assert response.status_code == 200
     assert response.json == expected_return
 
@@ -166,9 +166,9 @@ def test_remove_comercio_sucesso(mock_remove_comercio, client):
     mock_remove_comercio.return_value = 1
     url = f'/comercio/{comercio_nome}'
     response = client.delete(url)
-    responseJson = response.json
+    response_json = response.json
     assert response.status_code == 200
-    assert responseJson['message'] == f'comercio {comercio_nome} removido com sucesso'
+    assert response_json['message'] == f'comercio {comercio_nome} removido com sucesso'
 
 
 @mock.patch('solanches.rest.controller.remove_comercio')
@@ -178,6 +178,6 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
     mock_remove_comercio.side_effect = SolanchesNotFoundError(exception_message)
     url = f'/comercio/{comercio_nome}'
     response = client.delete(url)
-    responseJson = response.json
+    response_json = response.json
     assert response.status_code == 404
-    assert responseJson['message'] == exception_message
+    assert response_json['message'] == exception_message

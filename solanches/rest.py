@@ -5,11 +5,11 @@ from flask import jsonify
 from flask import request
 
 from . import controller
-from .authenticate import jwt_required
 from . errors import SolanchesBadRequestError
 from . errors import SolanchesNotFoundError
 from . errors import SolanchesInternalServerError
 from . errors import SolanchesNotAuthorizedError
+from . authenticate import jwt_required
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
@@ -207,7 +207,7 @@ def login():
 
 @app.route("/logout", methods=["DELETE"])
 @jwt_required
-def logout(current_user):
+def logout():
     token = None
     if 'authorization' in request.headers:
         token = request.headers['authorization']

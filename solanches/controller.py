@@ -1,7 +1,7 @@
 import datetime
+import jwt
 
 from . import connect2db
-import jwt
 from . models import Produto, Comercio, BlockList
 from . errors import SolanchesBadRequestError
 from . errors import SolanchesNotFoundError
