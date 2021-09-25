@@ -14,7 +14,6 @@ COMERCIOS = [
         "nome": "comercio3",
         "attributes": {"telefone": "39", "categoria":"3"}
     }
-<<<<<<< HEAD
 ]
 
 COMERCIO_EDITADO = [
@@ -23,6 +22,4 @@ COMERCIO_EDITADO = [
         "nome": "comercio1",
         "attributes": {"telefone": "37", "categoria":"1", "endereco": "rua floriano"}
     }
-=======
->>>>>>> master
 ]

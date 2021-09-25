@@ -170,16 +170,6 @@ def test_edita_comercio_nome_invalido(controller):
 
 
 @mock.patch('solanches.controller.Comercio.get_by_name')
-def test_edita_comercio_sem_atributos(mock_get_by_name, controller, um_comercio, comercio_editado):
-    comercio_nome = "comercio1"
-    mock_get_by_name.return_value = um_comercio
-    with pytest.raises(AssertionError) as excinfo:
-        response = controller.atualiza_comercio({}, comercio_nome)
-    assert str(excinfo.value) == "Erro: campo attributes inválidos!"
-    assert response == comercio_editado
-
-
-@mock.patch('solanches.controller.Comercio.get_by_name')
 def test_edita_comercio_com_atributos(mock_get_by_name, controller, um_comercio):
     attributes = {"endereco": "2344222"}
     nome_comercio = "comercio1"

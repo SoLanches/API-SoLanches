@@ -183,8 +183,8 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
 
 
 @mock.patch('solanches.rest.controller.atualiza_comercio')
-@mock.patch('solanches.rest.controller.get_comercio')
-def test_edita_comercio(mock_get_comercio, mock_atualiza_comercio, client):
+@mock.patch('solanches.rest.controller.get_comercio_by_name')
+def test_edita_comercio(mock_get_comercio_by_name, mock_atualiza_comercio, client):
     updated_base = {
         "_id": "id_mockado",
         "nome": "solanches", 
@@ -192,9 +192,9 @@ def test_edita_comercio(mock_get_comercio, mock_atualiza_comercio, client):
         "created_at": 87443324.6475
     }
     
-    mock_get_comercio.return_value = comercio_cadastrado
+    mock_get_comercio_by_name.return_value = comercio_cadastrado
     mock_atualiza_comercio.return_value = updated_base
-    response = client.patch("/comercio/solanches", json={"endereco": "rua floriano peixoto"})
+    response = client.patch("/comercio/solanches", json=updated_base)
 
     response_json = response.json
     assert response_json == updated_base
@@ -221,6 +221,45 @@ def test_edita_comercio_sem_atributos(mock_get_comercio, client):
         "nome": "comercio_teste1"
     }
     mock_get_comercio.return_value = [comercio_cadastrado]
+    url = '/comercio/solanches'
+    response = client.patch(url, json=comercio_sem_atributos)
+    response_json = response.json
+
+    assert response.status_code == 400
+    assert isinstance(response_json, dict)
+@mock.patch('solanches.rest.controller.atualiza_comercio')
+def test_edita_comercio(mock_get_comercio, mock_atualiza_comercio, client):
+    updated_base = {
+        "_id": "id_mockado",
+        "nome": "solanches", 
+        "attributes": { "telefone": "4002-8922", "email": "solanches@solania.com", "endereco": "rua floriano peixoto"},
+        "created_at": 87443324.6475
+    }
+    
+    mock_get_comercio.return_value = comercio_cadastrado
+    mock_atualiza_comercio.return_value = updated_base
+    response = client.patch("/comercio/solanches", json={"endereco": "rua floriano peixoto"})
+
+    response_json = response.json
+    assert response_json == updated_base
+    assert response.status_code == 200
+
+
+def test_edita_comercio_com_json_invalido(client):
+    comercio_json_invalido = 0
+    url = '/comercio/solanches'
+    response = client.patch(url, data=comercio_json_invalido)
+
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == "Erro: json inválido!"
+
+
+def test_edita_comercio_sem_atributos(client):
+    
+    comercio_sem_atributos = {
+        "nome": "comercio_teste1"
+    }
     url = '/comercio/solanches'
     response = client.patch(url, json=comercio_sem_atributos)
     response_json = response.json
