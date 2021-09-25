@@ -189,7 +189,7 @@ def test_edita_comercio(mock_get_comercio_by_name, mock_atualiza_comercio, clien
         "_id": "id_mockado",
         "nome": "solanches", 
         "attributes": { "telefone": "4002-8922", "email": "solanches@solania.com", "endereco": "rua floriano peixoto"},
-        "created_at": 87443324.6475
+        "created_at": 21345324.3456
     }
     
     mock_get_comercio_by_name.return_value = comercio_cadastrado
@@ -227,18 +227,21 @@ def test_edita_comercio_sem_atributos(mock_get_comercio, client):
 
     assert response.status_code == 400
     assert isinstance(response_json, dict)
+
+
 @mock.patch('solanches.rest.controller.atualiza_comercio')
-def test_edita_comercio(mock_get_comercio, mock_atualiza_comercio, client):
+@mock.patch('solanches.rest.controller.get_comercio_by_name')
+def test_edita_comercio(mock_get_comercio_by_name, mock_atualiza_comercio, client):
     updated_base = {
-        "_id": "id_mockado",
-        "nome": "solanches", 
+        "_id": "idTest",
+        "nome": "SoLanches Comercio", 
         "attributes": { "telefone": "4002-8922", "email": "solanches@solania.com", "endereco": "rua floriano peixoto"},
         "created_at": 87443324.6475
     }
     
-    mock_get_comercio.return_value = comercio_cadastrado
+    mock_get_comercio_by_name.return_value = comercio_cadastrado
     mock_atualiza_comercio.return_value = updated_base
-    response = client.patch("/comercio/solanches", json={"endereco": "rua floriano peixoto"})
+    response = client.patch("/comercio/solanches", json=updated_base)
 
     response_json = response.json
     assert response_json == updated_base
