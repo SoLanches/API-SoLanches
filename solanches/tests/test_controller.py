@@ -32,25 +32,17 @@ def test_cadastra_produto_nome_invalido(controller):
       "descricao": "descricao do produto",
       "preco": 20.50
     }
-    comercio_attributes = {
-          'endereco': 'rua floriano peixoto'
-    }
-    controller.cadastra_comercio(nome_comercio, comercio_attributes)
     with pytest.raises(AssertionError) as exinfo:
-      controller.cadastra_produto(nome_comercio, nome_produto, attributes)
+        controller.cadastra_produto(nome_comercio, nome_produto, attributes)
     assert str(exinfo.value) == "Erro: nome inválido!"
 
 
 def test_cadastra_produto_sem_atributos(controller):
-    nome_produto = {'nome': "nome_produto"}
-    nome_comercio = {'nome': "nome_comercio"}
-    attributes = 0
-    comercio_attributes = {
-          'endereco': 'rua floriano peixoto'
-    }
-    controller.cadastra_comercio(nome_comercio, comercio_attributes)
+    nome_produto = "nome_produto"
+    nome_comercio = "nome_comercio"
+    comercio_attributes = None
     with pytest.raises(AssertionError) as exinfo:
-      controller.cadastra_produto(nome_comercio, nome_produto, attributes)
+      controller.cadastra_produto(nome_comercio, nome_produto, comercio_attributes)
     assert str(exinfo.value) == "Erro: campo attributes inválidos!"
 
 
@@ -63,4 +55,4 @@ def test_cadastra_produto_com_comercio_nao_cadastrado(controller):
     }
     with pytest.raises(AssertionError) as exinfo:
       controller.cadastra_produto(nome_comercio, nome_produto, attributes)
-    assert str(exinfo.value) == "Erro: comércio com nome nome_comercio não cadastrado"
+    assert str(exinfo.value) == "Erro: nome inválido!"
