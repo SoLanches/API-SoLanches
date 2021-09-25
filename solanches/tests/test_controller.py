@@ -160,13 +160,6 @@ def test_cadastra_comercio(mock_get_by_name, mock_get_by_id, controller):
     result = controller.cadastra_comercio(comercio_nome, comercio_attributes)
     mock_get_by_id.return_value = {'produtos': []}
     mock_get_by_name.return_value = {'nome': 'comercio_teste1', 'attributes': {"telefone": "12234"}}
-   
-    expectativa_return = {
-        "nome": "comercio_teste1",
-        "attributes": {
-            "telefone": "123"
-        }
-    }
 
     expected_fields = ["nome", "attributes", "created_at"]
     result_fields = result.keys()
@@ -174,39 +167,70 @@ def test_cadastra_comercio(mock_get_by_name, mock_get_by_id, controller):
 
 
 def test_cadastra_comercio_sem_nome(controller):
+    comercio_nome = 90992727
+    password = "849439030"
     comercio_attributes = {
-          'telefone': '83999999999'
+        "endereco": "ruaa",
+        "horarios": "21h-24h"
     }
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password,  comercio_attributes)
+    assert str(exinfo.value.message) == 'Erro: campo nome inválido!'
 
-    with pytest.raises(AssertionError) as exinfo:
-      controller.cadastra_comercio(None, comercio_attributes)
-    assert str(exinfo.value) == "Erro: nome inválido!"
 
-
-def test_cadastra_comercio_sem_telefone(controller):
-    comercio_nome = 'comercio_test2'
+def test_cadastra_comercio_sem_senha(controller):
+    comercio_nome = "comercio1"
+    password = 0
     comercio_attributes = {
-          'endereco': 'rua floriano peixoto'
+        "endereco": "ruaa",
+        "horarios": "21h-24h"
     }
-    with pytest.raises(AssertionError) as exinfo:
-      controller.cadastra_comercio(comercio_nome, comercio_attributes)
-    assert str(exinfo.value) == "Erro: Telefone não informado"
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password,  comercio_attributes)
+    assert str(exinfo.value.message) == "Erro: Senha não informada!"
 
 
 def test_cadastra_comercio_atributos_invalidos(controller):
     comercio_nome = 'comercio_test4'
-    comercio_attributes = 2
-    with pytest.raises(AssertionError) as exinfo:
-      controller.cadastra_comercio(comercio_nome, comercio_attributes)
-    assert str(exinfo.value) == "Erro: campo attributes inválidos!"
+    password = "873838383"
+    comercio_attributes = 48488448
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
+    assert str(exinfo.value.message) == 'Erro: campo attributes inválidos!'
 
 
-def test_cadastra_comercio_ja_cadastrado(controller):
-    comercio_nome = 'comercio_test'
+def test_cadastra_comercio_sem_horarios(controller):
+    comercio_nome = 'comercio_test2'
+    password = "3838383"
     comercio_attributes = {
           'endereco': 'rua floriano peixoto'
     }
-    controller.cadastra_comercio(comercio_nome, comercio_attributes)
-    with pytest.raises(DuplicateKeyError) as exinfo:
-      controller.cadastra_comercio(comercio_nome, comercio_attributes)
-    assert dict(exinfo.value) == {"error":  "Comércio já cadastrado no banco de dados", "code": 409}
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
+    assert str(exinfo.value.message) == 'Erro: campo horarios não informados!'
+
+
+def test_cadastra_comercio_sem_endereco(controller):
+    comercio_nome = 'comercio_test2'
+    password = "3838383"
+    comercio_attributes = {
+          'horarios': '21h-23h'
+    }
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
+    assert str(exinfo.value.message) == 'Erro: campo endereco não informado!'
+
+
+# @mock.patch('solanches.models.Comercio.get_by_name')
+# def test_cadastra_comercio_ja_cadastrado(mock_get_by_name, controller, um_comercio):
+#     comercio_nome = 'comercio1'
+#     password = "763738383"
+#     comercio_attributes = {
+#           'endereco': 'rua floriano peixoto',
+#           "horarios": "21h-24h"
+#     }
+#     mock_get_by_name.return_value = um_comercio
+#     with pytest.raises(DuplicateKeyError):
+#         result = controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
+#     assert isinstance(result, dict)
+
