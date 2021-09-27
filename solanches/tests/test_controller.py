@@ -1,21 +1,25 @@
+from . data_test import CARDAPIO, COMERCIO, COMERCIOS
+from solanches.errors import SolanchesNotFoundError
+from solanches.errors import SolanchesBadRequestError
 from unittest import mock
 
 import pytest
 
-from . data_test import COMERCIOS
-from solanches.errors import SolanchesNotFoundError
-from solanches.errors import SolanchesBadRequestError
+
+@pytest.fixture
+def um_cardapio():
+    cardapio = CARDAPIO
+    return cardapio
+
+@pytest.fixture
+def um_comercio():
+    comercio = COMERCIO
+    return comercio
 
 
 @pytest.fixture
 def comercios():
     return COMERCIOS
-
-
-@pytest.fixture
-def um_comercio():
-    comercio = COMERCIOS[0]
-    return comercio
 
 
 @mock.patch('solanches.controller.Comercio.get_all')
@@ -148,3 +152,47 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     mock_remove_comercio.return_value = 1
     result = controller.remove_comercio(comercio_nome)
     assert result == 1
+
+
+@mock.patch('solanches.controller.Comercio.get_by_name')
+@mock.patch('solanches.controller.Comercio.get_cardapio')
+def test_get_cardapio_sucesso(mock_get_cardapio, mock_comercio_by_name,controller, um_cardapio):
+    mock_get_cardapio.return_value = um_cardapio
+    mock_comercio_by_name.return_value = um_comercio
+    
+    nome_comercio = 'solanches'
+
+    result = controller.get_cardapio(nome_comercio)
+    assert result == CARDAPIO
+    assert isinstance(result, dict)
+
+
+def test_get_cardapio_by_nome_comercio_invalido(controller):
+    nome_invalido = 123
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.get_cardapio(nome_invalido)
+    assert str(excinfo.value.message) == 'Erro: nome de comercio inválido!'
+
+
+@mock.patch('solanches.controller.Comercio.get_by_name')
+@mock.patch('solanches.controller.Comercio.get_cardapio')
+def test_get_cardapio_by_nome_comercio_valido(mock_get_cardapio, mock_comercio_by_name, controller, um_cardapio, um_comercio):
+
+    
+    mock_get_cardapio.return_value = um_cardapio
+    mock_comercio_by_name.return_value = um_comercio
+    nome = 'solanches'
+
+    result = controller.get_cardapio(nome)
+    
+    assert result == um_cardapio
+    assert isinstance(result, dict)
+
+
+@mock.patch('solanches.controller.Comercio.get_cardapio')
+def test_get_cardapio_nao_encontrado(mock_get_cardapio, controller):
+    mock_get_cardapio.return_value = None
+    nome = 'TEXAS'
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
+         controller.get_cardapio(nome)
+    assert str(excinfo.value.message) == 'Erro: comercio com o nome TEXAS não cadastrado!'
