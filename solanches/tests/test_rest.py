@@ -1,8 +1,8 @@
 from solanches.tests.data_test import CARDAPIO_TESTE
 from unittest import mock
-
 import pytest
 
+from solanches.tests.data_test import PRODUTO_TESTE, PRODUTOS_TESTE
 from solanches.errors import SolanchesNotFoundError
 
 
@@ -10,6 +10,17 @@ from solanches.errors import SolanchesNotFoundError
 def client(rest):
     client = rest.app.test_client()
     return client
+
+
+@pytest.fixture
+def cardapio_cadastrado():
+    cardapio_json = {
+        "_id": "6b6aae29176271992b0278509f15a63900f1f1a9",
+        "created_at": 1631415578.674395,
+        "destaques": [],
+        "produtos": []
+    }
+    return cardapio_json
 
 
 @pytest.fixture
@@ -74,7 +85,7 @@ def test_get_comercios_categories_true(mock_get_comercios, client):
     assert response.status_code == 200
     assert isinstance(response_json, dict)
     assert response_json == expected_return
-    
+
 
 @mock.patch('solanches.rest.controller.get_comercios')
 def test_get_comercios_sucesso(mock_get_comercios, comercio_cadastrado, client):
@@ -172,6 +183,7 @@ def test_remove_comercio_sucesso(mock_remove_comercio, client):
     assert response_json['message'] == f'comercio {comercio_nome} removido com sucesso'
     
 
+
 @mock.patch('solanches.rest.controller.remove_comercio')
 def test_remove_comercio_inexistente(mock_remove_comercio, client):
     comercio_nome = 'comercio_teste'
@@ -207,3 +219,62 @@ def test_remove_produto_comercio_inexistente(mock_remove_produto, client):
     response_json = response.json
     assert response.status_code == 404
     assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.get_cardapio')
+def test_get_cardapio_sucesso(mock_get_cardapio, client, cardapio_cadastrado):
+    expected_return = cardapio_cadastrado
+    mock_get_cardapio.return_value = expected_return
+    response = client.get('/comercio/solanches/cardapio')
+    response_json = response.json
+    assert response.status_code == 200
+    assert isinstance(response_json, dict)
+    assert response_json == expected_return
+
+
+@mock.patch('solanches.rest.controller.get_cardapio')
+def test_get_cardapio_exception_controller(mock_get_cardapio, client):
+    exception_msg = 'Exception no controller'
+    expected_error = Exception(exception_msg)
+    mock_get_cardapio.side_effect = expected_error
+
+    response = client.get('/comercio/solanches/cardapio')
+    response_json = response.json
+    assert response.status_code == 500
+    assert response_json['message'] == exception_msg
+
+
+@mock.patch('solanches.rest.controller.get_produto')
+def test_get_produto_by_id_sucesso(mock_get_produto, client):
+    comercio_nome = 'comercio2'
+    produto_id = '1231241'
+    mock_get_produto.return_value = PRODUTO_TESTE
+    url = f'/comercio/{comercio_nome}/produto/{produto_id}'
+    response = client.get(url)
+    response_json = response.json
+    assert response.status_code == 200
+    assert response_json == PRODUTO_TESTE
+
+
+@mock.patch('solanches.rest.controller.get_produto')
+def test_get_produto_by_id_inexistente(mock_get_produto, client):
+    comercio_nome = 'comercio2'
+    produto_id= '1231241'
+    message = f'Erro: produto com o id {produto_id} não cadastrado no comercio!'
+    mock_get_produto.side_effect = SolanchesNotFoundError(message)
+    url = f'/comercio/{comercio_nome}/produto/{produto_id}'
+    response = client.get(url)
+    response_json = response.json
+    assert response.status_code == 404
+    assert response_json['message'] == message
+
+
+@mock.patch('solanches.rest.controller.get_produtos')
+def test_get_produtos(mock_get_produtos, client):
+    comercio_nome = 'comercio2'
+    mock_get_produtos.return_value = PRODUTOS_TESTE
+    url = f'/comercio/{comercio_nome}/produtos'
+    response = client.get(url)
+    response_json = response.json
+    assert response.status_code == 200
+    assert response_json == PRODUTOS_TESTE
