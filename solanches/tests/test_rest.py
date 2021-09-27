@@ -1,5 +1,4 @@
 from unittest import mock
-
 import pytest
 
 from solanches.errors import SolanchesNotFoundError
@@ -9,6 +8,17 @@ from solanches.errors import SolanchesNotFoundError
 def client(rest):
     client = rest.app.test_client()
     return client
+
+
+@pytest.fixture
+def cardapio_cadastrado():
+    cardapio_json = {
+    "_id": "6b6aae29176271992b0278509f15a63900f1f1a9",
+    "created_at": 1631415578.674395,
+    "destaques": [],
+    "produtos": []
+    }
+    return cardapio_json
 
 
 @pytest.fixture
@@ -73,7 +83,7 @@ def test_get_comercios_categories_true(mock_get_comercios, client):
     assert response.status_code == 200
     assert isinstance(response_json, dict)
     assert response_json == expected_return
-    
+
 
 @mock.patch('solanches.rest.controller.get_comercios')
 def test_get_comercios_sucesso(mock_get_comercios, comercio_cadastrado, client):
@@ -181,3 +191,26 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
     responseJson = response.json
     assert response.status_code == 404
     assert responseJson['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.get_cardapio')
+def test_get_cardapio_sucesso(mock_get_cardapio, client, cardapio_cadastrado):
+    expected_return = cardapio_cadastrado
+    mock_get_cardapio.return_value = expected_return
+    response = client.get('/comercio/solanches/cardapio')
+    response_json = response.json
+    assert response.status_code == 200
+    assert isinstance(response_json, dict)
+    assert response_json == expected_return
+
+
+@mock.patch('solanches.rest.controller.get_cardapio')
+def test_get_cardapio_exception_controller(mock_get_cardapio, client):
+    exception_msg = 'Exception no controller'
+    expected_error = Exception(exception_msg)
+    mock_get_cardapio.side_effect = expected_error
+
+    response = client.get('/comercio/solanches/cardapio')
+    response_json = response.json
+    assert response.status_code == 500
+    assert response_json['message'] == exception_msg
