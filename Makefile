@@ -37,7 +37,7 @@ $(TESTS-REQS-INSTALLED): tests-requirements.txt
 	touch $(TESTS-REQS-INSTALLED)
 
 test-cov: venv $(TESTS-REQS-INSTALLED)
-	pytest -v --cov=solanches
+	$(VENV)/bin/pytest -v --cov=solanches
 
 deploy:
 	./bin/make_deploy
