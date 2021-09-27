@@ -1,9 +1,9 @@
+from unittest import mock
+import pytest
+
 from . data_test import CARDAPIO, COMERCIO, COMERCIOS
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
-from unittest import mock
-
-import pytest
 
 
 @pytest.fixture
@@ -177,8 +177,6 @@ def test_get_cardapio_by_nome_comercio_invalido(controller):
 @mock.patch('solanches.controller.Comercio.get_by_name')
 @mock.patch('solanches.controller.Comercio.get_cardapio')
 def test_get_cardapio_by_nome_comercio_valido(mock_get_cardapio, mock_comercio_by_name, controller, um_cardapio, um_comercio):
-
-    
     mock_get_cardapio.return_value = um_cardapio
     mock_comercio_by_name.return_value = um_comercio
     nome = 'solanches'
