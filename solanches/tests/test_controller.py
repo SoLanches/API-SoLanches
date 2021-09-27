@@ -1,7 +1,7 @@
 from unittest import mock
 import pytest
 
-from . data_test import CARDAPIO, COMERCIO, COMERCIOS, COMERCIO_TESTE, PRODUTO_TESTE, PRODUTOS_TESTE
+from . data_test import CARDAPIO, COMERCIO, COMERCIOS, COMERCIO_TESTE, PRODUTO_TESTE, PRODUTOS_TESTE, CARDAPIO_TESTE
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
 
@@ -145,16 +145,6 @@ def test_remove_comercio_nome_invalido(controller):
     assert str(excinfo.value.message) == f'Erro: nome de comercio invalido'
 
 
-@mock.patch('solanches.models.Comercio.get_by_name')
-@mock.patch('solanches.models.Comercio.remove_comercio')
-def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  controller):
-    comercio_nome = 'comercio_test'
-    mock_get_by_name.return_value = {'produtos': []}
-    mock_remove_comercio.return_value = 1
-    result = controller.remove_comercio(comercio_nome)
-    assert result == 1
-
-
 @mock.patch('solanches.controller.Comercio.get_by_name')
 @mock.patch('solanches.controller.Comercio.get_cardapio')
 def test_get_cardapio_sucesso(mock_get_cardapio, mock_comercio_by_name,controller, um_cardapio):
@@ -240,7 +230,6 @@ def test_get_produto_by_id_inexistente(mock_get_produto, mock_get_by_name, contr
     with pytest.raises(SolanchesNotFoundError) as e:
       comercio_nome = 'comercio_sem_id'
       controller.get_produto(comercio_nome, produto_id)
-    assert str(e.value.message) == f'Erro: produto com o id {produto_id} não cadastrado no comercio!'
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
@@ -275,5 +264,51 @@ def test_get_produtos_comercio_inexistente(mock_get_produto, mock_get_by_name, c
     comercio_nome = 'nome qualquer'
     mock_get_by_name.return_value = None
     with pytest.raises(SolanchesNotFoundError) as e:
-      controller.get_produtos(comercio_nome)
+        controller.get_produtos(comercio_nome)
+    assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Comercio.remove_comercio')
+def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  controller):
+    comercio_nome = 'comercio_test'
+    mock_get_by_name.return_value = {'produtos': []}
+    mock_remove_comercio.return_value = 1
+    result = controller.remove_comercio(comercio_nome)
+    assert result == 1
+
+
+@mock.patch('solanches.controller.get_cardapio')
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Comercio.remove_produto')
+def test_remove_produto_sucesso(mock_remove_produto, mock_get_by_name, mock_get_produtos_ids, mock_get_cardapio, controller):
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    comercio_nome = 'comercio2'
+    produto_id = 'idtesteproduto'
+    mock_get_produtos_ids.return_value = [PRODUTO_TESTE['_id']]
+    mock_get_cardapio.return_value = CARDAPIO_TESTE
+    result = controller.remove_produto(comercio_nome, produto_id)
+    assert CARDAPIO_TESTE == result
+
+
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_produto_fora_comercio(mock_get_by_name, mock_get_produtos_ids, controller):
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    comercio_nome = 'comercio2'
+    produto_id = 'idtesteproduto'
+    mock_get_produtos_ids.return_value = []
+    with pytest.raises(SolanchesNotFoundError) as e:
+        controller.remove_produto(comercio_nome, produto_id)
+    assert str(e.value.message) == f'Erro: produto com o id {produto_id} não cadastrado no comercio!'
+ 
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_produto_comercio_inexistente(mock_get_by_name, controller):
+    mock_get_by_name.return_value = None
+    comercio_nome = 'comercio2'
+    produto_id = 'idtesteproduto'
+    with pytest.raises(SolanchesNotFoundError) as e:
+        controller.remove_produto(comercio_nome, produto_id)
     assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'

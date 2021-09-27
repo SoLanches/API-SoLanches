@@ -40,14 +40,16 @@ COMERCIOS = [
     }
 ]
 
+
 COMERCIO_TESTE = {
-    "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50", 
+    "_id": "idtestecomercio", 
     "nome": "comercio2",
     "attributes": {"telefone": "40", "categoria":"4"}
 }
 
+
 PRODUTO_TESTE = {
-     "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50", 
+     "_id": "idtesteproduto", 
     "nome": "produto comercio2",
     "attributes": {"preco": "40"},
 }
@@ -69,3 +71,11 @@ PRODUTOS_TESTE = [
         "attributes": {"preco": "45"}
    }
 ]
+
+
+CARDAPIO_TESTE = {
+    "_id": "idteste",
+    "produtos": [],
+    "destaques": [],
+    "categorias": []
+}
