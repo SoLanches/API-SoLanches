@@ -151,29 +151,18 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     assert result == 1
 
 
-@mock.patch('solanches.models.Cardapio.get_by_id')
+@mock.patch('solanches.controller.get_cardapio')
 @mock.patch('solanches.models.Comercio.get_produtos_ids')
 @mock.patch('solanches.models.Comercio.get_by_name')
-def test_remove_produto_sucesso(mock_get_by_name, mock_get_produtos_ids, mock_get_by_id, controller):
+@mock.patch('solanches.models.Comercio.remove_produto')
+def test_remove_produto_sucesso(mock_remove_produto, mock_get_by_name, mock_get_produtos_ids, mock_get_cardapio, controller):
     mock_get_by_name.return_value = COMERCIO_TESTE
     comercio_nome = 'comercio2'
     produto_id = 'idtesteproduto'
     mock_get_produtos_ids.return_value = [PRODUTO_TESTE['_id']]
-    mock_get_by_id.return_value = CARDAPIO_TESTE
+    mock_get_cardapio.return_value = CARDAPIO_TESTE
     result = controller.remove_produto(comercio_nome, produto_id)
     assert CARDAPIO_TESTE == result
-
-
-@mock.patch('solanches.models.Comercio.get_produtos_ids')
-@mock.patch('solanches.models.Comercio.get_by_name')
-def test_remove_produto_fora_comercio(mock_get_by_name, mock_get_produtos_ids, controller):
-    mock_get_by_name.return_value = COMERCIO_TESTE
-    comercio_nome = 'comercio2'
-    produto_id = 'idtesteproduto'
-    mock_get_produtos_ids.return_value = []
-    with pytest.raises(Exception) as e:
-        controller.remove_produto(comercio_nome, produto_id)
-    assert str(e.value) == f'Erro: produto não faz parte do cardápio do comércio'
 
 
 @mock.patch('solanches.models.Comercio.get_produtos_ids')
@@ -196,7 +185,3 @@ def test_remove_produto_comercio_inexistente(mock_get_by_name, controller):
     with pytest.raises(SolanchesNotFoundError) as e:
         controller.remove_produto(comercio_nome, produto_id)
     assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
-
-
-
-
