@@ -84,7 +84,7 @@ def get_comercio_by_name(comercio_nome):
 
 
 @app.route("/comercio/<comercio_nome>", methods=['PATCH'])
-#@jwt_required
+@jwt_required
 def edita_comercio(comercio_nome):
     req = request.get_json()  
     _assert(req, "Erro: json inválido!")
@@ -96,6 +96,7 @@ def edita_comercio(comercio_nome):
 
 
 @app.route("/comercio/<comercio_nome>", methods=['DELETE'])
+@jwt_required
 def remove_comercio(comercio_nome):
     controller.remove_comercio(comercio_nome)
     msg = {"message": f"comercio {comercio_nome} removido com sucesso"}
@@ -109,6 +110,7 @@ def get_cardapio(comercio_nome):
 
 
 @app.route("/comercio/<comercio_nome>/produto", methods=['POST'])
+@jwt_required
 def cadastra_produto(comercio_nome):
     req = request.get_json()
     _assert(req, "Erro: json inválido!")
@@ -141,6 +143,7 @@ def get_produtos_ids(comercio_nome):
 
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['PATCH'])
+@jwt_required
 def edita_produto(comercio_nome, produto_id):
     req = request.get_json()
     _assert(req, "Erro: json inválido!")
@@ -151,24 +154,28 @@ def edita_produto(comercio_nome, produto_id):
 
 
 @app.route("/comercio/<comercio_nome>/produto/<produto_id>", methods=['DELETE'])
+@jwt_required
 def remove_produto(comercio_nome, produto_id):
     cardapio = controller.remove_produto(comercio_nome, produto_id)
     return jsonify(cardapio), 200
 
 
 @app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['POST'])
+@jwt_required
 def adiciona_destaque(comercio_nome, produto_id):
     cardapio = controller.adiciona_destaque(comercio_nome, produto_id)
     return jsonify(cardapio), 201
 
 
 @app.route("/comercio/<comercio_nome>/destaques/<produto_id>", methods=['DELETE'])
+@jwt_required
 def remove_produto_destaques(comercio_nome, produto_id):
     cardapio = controller.remove_produto_destaques(comercio_nome, produto_id)
     return jsonify(cardapio), 200
 
 
 @app.route("/comercio/<comercio_nome>/categoria", methods=['POST'])
+@jwt_required
 def adiciona_categoria(comercio_nome):
     req = request.get_json()
     _assert(req, "Erro: json inválido!")
@@ -180,6 +187,7 @@ def adiciona_categoria(comercio_nome):
 
 
 @app.route("/comercio/<comercio_nome>/categoria", methods=['DELETE'])
+@jwt_required
 def remove_categoria(comercio_nome):
     req = request.get_json()
     _assert(req, "Erro: json inválido!")
@@ -206,7 +214,7 @@ def login():
 
 @app.route("/logout", methods=["DELETE"])
 @jwt_required
-def logout(current_user):
+def logout():
     token = None
     if 'authorization' in request.headers:
         token = request.headers['authorization']

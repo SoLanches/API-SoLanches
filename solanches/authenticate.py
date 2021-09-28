@@ -1,15 +1,12 @@
 from functools import wraps
-from solanches.errors import *
 
 import jwt
-from flask import jsonify
 from flask import request
-from flask import abort
 from flask import current_app
-from flask import make_response
 
 from . import controller
 from .models import BlockList
+from solanches.errors import SolanchesBadRequestError, SolanchesNotAuthorizedError
 
 
 def _assert(condition, message, SolanchesError=SolanchesBadRequestError):
@@ -28,13 +25,16 @@ def jwt_required(function):
         token_in_block_list = BlockList.contains(token)
 
         _assert(token and not token_in_block_list, "Error: Você não tem permissão para acessar essa rota.", SolanchesNotAuthorizedError)
-        
+
         try:
             decoded = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = controller.get_comercio_by_id(decoded.get("id"))
+            current_user = controller.get_comercio_by_id(decoded.get("id")).get("nome")
+            comercio_nome = kwargs.get("comercio_nome")
         except:
             _assert(False, "Error: Token inválido ou expirado.", SolanchesNotAuthorizedError)    
         
-        return function(current_user=current_user, *args, **kwargs)
+        _assert(current_user == comercio_nome, "Error: Token não referente a esse usuário.", SolanchesNotAuthorizedError)
+        
+        return function(*args, **kwargs)
 
     return wrapper
