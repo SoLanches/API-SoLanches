@@ -182,15 +182,16 @@ def test_adiciona_categoria_existente(mock_get_by_name, mock_get_categorias, con
     assert str(excinfo.value.message) == f'Erro: categoria já cadastrada nesse comércio!'
 
 
-@mock.patch('solanches.models.Cardapio.get_by_id')
+@mock.patch('solanches.models.Comercio.adiciona_categoria')
+@mock.patch('solanches.models.Comercio.get_cardapio')
 @mock.patch('solanches.models.Comercio.get_cardapio_categorias')
 @mock.patch('solanches.models.Comercio.get_by_name')
-def test_adiciona_categoria_sucesso(mock_get_by_name, mock_get_categorias, mock_get_cardapio, controller):
+def test_adiciona_categoria_sucesso(mock_get_by_name, mock_get_categorias, mock_get_cardapio, mock_add_categoria, controller):
     nome_comercio = "comercio"
     categoria = 'salgados'
+    expected_updated_menu = {'produtos': 'Cardápio exemplo','destaques': [], 'categorias': ['lanches', 'salgados']}
     mock_get_by_name.return_value = COMERCIO_TESTE
     mock_get_categorias.return_value = []
-    mock_get_cardapio.return_value = {'produtos': 'Cardápio exemplo','destaques': [], 'categorias': ['lanches']}
+    mock_get_cardapio.return_value = expected_updated_menu
     result = controller.adiciona_categoria(nome_comercio, categoria)
-    expected_updated_menu = {'produtos': 'Cardápio exemplo','destaques': [], 'categorias': ['lanches', 'salgados']}
     assert result == expected_updated_menu

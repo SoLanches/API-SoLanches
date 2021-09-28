@@ -195,24 +195,12 @@ def test_adiciona_categoria_nao_informada(client):
 
 @mock.patch('solanches.rest.controller.adiciona_categoria')
 def test_adiciona_categoria_sucesso(mock_adiciona_categoria, client):
-    mock_adiciona_categoria.return_value = {"produtos": [], "destaques": [], "categorias": ["teste sucesso"]}
+    expected_result = {"produtos": [], "destaques": [], "categorias": ["teste sucesso"]}
+    mock_adiciona_categoria.return_value = expected_result
     comercio_nome = 'comercio'
     json_categoria = {"categoria": 'teste sucesso'}
     url = f'/comercio/{comercio_nome}/categoria'
     response = client.post(url, json=json_categoria)
     response_json = response.json
     assert response.status_code == 201
-    assert response_json == {"produtos": [], "destaques": [], "categorias": ["teste sucesso"]}
-
-
-@mock.patch('solanches.rest.controller.adiciona_categoria')
-def test_adiciona_categoria_existente(mock_adiciona_categoria, client):
-    mensagem_erro = f'Erro: categoria já cadastrada nesse comércio!'
-    mock_adiciona_categoria.side_effect = SolanchesBadRequestError(mensagem_erro)
-    comercio_nome = 'comercio'
-    json_categoria = {"categoria": 'teste falha'}
-    url = f'/comercio/{comercio_nome}/categoria'
-    response = client.post(url, json=json_categoria)
-    response_json = response.json
-    assert response.status_code == 400
-    assert response_json['message'] == mensagem_erro
+    assert response_json == expected_result
