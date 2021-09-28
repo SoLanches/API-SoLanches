@@ -29,10 +29,11 @@ def jwt_required(function):
         try:
             decoded = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = controller.get_comercio_by_id(decoded.get("id")).get("nome")
-            comercio_nome = kwargs.get("comercio_nome")
         except:
             _assert(False, "Error: Token inválido ou expirado.", SolanchesNotAuthorizedError)    
-        
+
+        _assert("comercio_nome" in kwargs, "Error: Nome do comércio não informado!")
+        comercio_nome = kwargs.get("comercio_nome")
         _assert(current_user == comercio_nome, "Error: Token não referente a esse usuário.", SolanchesNotAuthorizedError)
         
         return function(*args, **kwargs)
