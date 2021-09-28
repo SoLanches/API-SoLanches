@@ -312,3 +312,47 @@ def test_remove_produto_comercio_inexistente(mock_get_by_name, controller):
     with pytest.raises(SolanchesNotFoundError) as e:
         controller.remove_produto(comercio_nome, produto_id)
     assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+def test_remove_categoria_invalida(controller):
+    categoria = None
+    comercio_nome = 'nome teste'
+    with pytest.raises(SolanchesBadRequestError) as e:
+        controller.remove_categoria(comercio_nome, categoria)
+    assert str(e.value.message) == f'Erro: valor de categoria inválida!'
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_categoria_comercio_invalido(mock_get_by_name, controller):
+    mock_get_by_name.return_value = None
+    categoria = 'salgados'
+    comercio_nome = 'nome teste'
+    with pytest.raises(SolanchesNotFoundError) as e:
+        controller.remove_categoria(comercio_nome, categoria)
+    assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+@mock.patch('solanches.models.Comercio.get_cardapio_categorias')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_categoria_fora_comercio(mock_get_by_name, mock_get_categorias, controller):
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_categorias.return_value = []
+    categoria = 'salgados'
+    comercio_nome = 'comercio2'
+    with pytest.raises(SolanchesBadRequestError) as e:
+        controller.remove_categoria(comercio_nome, categoria)
+    assert str(e.value.message) == f'Erro: categoria não faz parte do comércio'
+
+
+@mock.patch('solanches.models.Cardapio.get_by_id')
+@mock.patch('solanches.models.Comercio.get_cardapio_categorias')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_categoria_sucesso(mock_get_by_name, mock_get_categorias, mock_get_cardapio, controller):
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_categorias.return_value = ['salgados', 'doces']
+    mock_get_cardapio.return_value = CARDAPIO_TESTE
+    categoria = 'salgados'
+    comercio_nome = 'comercio2'
+    result = controller.remove_categoria(comercio_nome, categoria)
+    assert result == {'_id': 'idteste', 'produtos': [], 'destaques': [], 'categorias': ['doces']}
+    
