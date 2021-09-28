@@ -278,6 +278,53 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     assert result == 1
 
 
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_adiciona_categoria_comercio_inexistente(mock_get_by_name, controller):
+    nome_invalido = "comercioinvalido"
+    categoria = "lanches"
+    mock_get_by_name.return_value = None
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
+        controller.adiciona_categoria(nome_invalido, categoria)
+    assert str(excinfo.value.message) == f'Erro: comercio com o nome {nome_invalido} não cadastrado!'
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_adiciona_categoria_invalida(mock_get_by_name, controller):
+    nome_comercio = 'comercio'
+    categoria = None
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.adiciona_categoria(nome_comercio, categoria)
+    assert str(excinfo.value.message) == f'Erro: valor de categoria inválida!'
+
+
+@mock.patch('solanches.models.Comercio.get_cardapio_categorias')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_adiciona_categoria_existente(mock_get_by_name, mock_get_categorias, controller):
+    nome_invalido = 'comercio'
+    categoria = 'salgados'
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_categorias.return_value = ['lanches', 'salgados']
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.adiciona_categoria(nome_invalido, categoria)
+    assert str(excinfo.value.message) == f'Erro: categoria já cadastrada nesse comércio!'
+
+
+@mock.patch('solanches.models.Comercio.adiciona_categoria')
+@mock.patch('solanches.models.Comercio.get_cardapio')
+@mock.patch('solanches.models.Comercio.get_cardapio_categorias')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_adiciona_categoria_sucesso(mock_get_by_name, mock_get_categorias, mock_get_cardapio, mock_add_categoria, controller):
+    nome_comercio = "comercio"
+    categoria = 'salgados'
+    expected_updated_menu = {'produtos': 'Cardápio exemplo','destaques': [], 'categorias': ['lanches', 'salgados']}
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_categorias.return_value = []
+    mock_get_cardapio.return_value = expected_updated_menu
+    result = controller.adiciona_categoria(nome_comercio, categoria)
+    assert result == expected_updated_menu
+
+
 @mock.patch('solanches.controller.get_cardapio')
 @mock.patch('solanches.models.Comercio.get_produtos_ids')
 @mock.patch('solanches.models.Comercio.get_by_name')
