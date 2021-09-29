@@ -195,8 +195,7 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
 
 
 @mock.patch('solanches.rest.controller.edita_produto')
-@mock.patch('solanches.rest.controller.get_cardapio')
-def test_edita_produto(mock_get_cardapio, mock_atualiza_comercio, client, comercio_cadastrado):
+def test_edita_produto(mock_atualiza_comercio, client):
     updated_base = {
         "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
         "attributes": {
@@ -208,8 +207,6 @@ def test_edita_produto(mock_get_cardapio, mock_atualiza_comercio, client, comerc
         "created_at": 1631415611.4404533,
         "nome": "comercio6"
     }
-    
-    mock_get_cardapio.return_value = comercio_cadastrado
     mock_atualiza_comercio.return_value = updated_base
     response = client.patch("/comercio/solanches/produto/d763e108f053ad2354ff9285b70c48cfc770d9f7", json=updated_base)
 

@@ -1,9 +1,7 @@
 from unittest import mock
-from attr import attributes
-
 import pytest
 
-from . data_test import CARDAPIO, COMERCIOS, PRODUTO
+from . data_test import CARDAPIO, COMERCIOS, PRODUTO, PRODUTO_EDITADO
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
 
@@ -23,6 +21,12 @@ def um_comercio():
 def um_produto():
     produto = PRODUTO
     return produto
+
+
+@pytest.fixture
+def um_produto_editado():
+    produto_editado = PRODUTO_EDITADO
+    return produto_editado
 
 
 @pytest.fixture
@@ -189,28 +193,36 @@ def test_edita_produto_by_atributos_invalidos(controller):
     assert str(excinfo.value.message) == "Erro: attributes inválidos!"
 
 
-def test_edita_produto_by_nome_produto_invalido(controller):
+def test_edita_produto_by_nome_invalido(controller):
     id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
     nome_comercio = "comercio1"
     attributes = {"descricao": "uhu"}
-    nome_produto = 7838383
     with pytest.raises(SolanchesBadRequestError) as excinfo:
-        controller.edita_produto(id_valido, nome_comercio, attributes, nome_produto)
-    assert str(excinfo.value.message) == "Erro: nome inválido!"
+        controller.edita_produto(id_valido, nome_comercio, attributes, 7838383)
+    assert str(excinfo.value.message) == "Erro: nome do produto inválido!"
 
 
+@mock.patch('solanches.controller.Comercio.get_produtos')
+@mock.patch('solanches.controller.Comercio.update_produto')
 @mock.patch('solanches.controller.Comercio.get_by_name')
 @mock.patch('solanches.controller.Comercio.get_produto')
-def test_edita_produto_sucesso(mock_get_produto, mock_get_by_name, controller, um_produto, um_comercio):
-    attributes = {"categoria": "okok"}
+def test_edita_produto_sucesso(mock_get_produto, mock_get_by_name, mock_update_produto, mock_get_produtos, controller, um_comercio, um_produto_editado):
+
+    attributes =  {
+            "categoria": "sa",
+            "descricao": "descrição atualizada",
+            "imagem": "link de imagem",
+            "preco": 20.5
+    }
     nome_comercio = "comercio1"
     produto_id = "d763e108f053ad2354ff9285b70c48cfc770d9f7"
-    mock_get_produto.return_value = um_produto
     mock_get_by_name.return_value = um_comercio
+    mock_update_produto.return_value = um_produto_editado
+    mock_get_produto.return_value = um_produto_editado
+    mock_get_produtos.return_value = [um_produto_editado]
 
     result = controller.edita_produto(produto_id, nome_comercio, attributes, "produto")
-
-    assert "attributes" in result
     assert isinstance(result, object)
+    assert result == um_produto_editado
    
     

@@ -132,7 +132,7 @@ def edita_produto(produto_id, comercio_nome, attributes, nome):
     _assert(comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido")
     _assert(produto_id and type(produto_id) is str, "Erro: produto com id inválido!")
     _assert(attributes and type(attributes) is dict if attributes else True, "Erro: attributes inválidos!")
-    _assert(nome and type(nome) is str if nome else True, "Erro: nome inválido!")
+    _assert(nome and type(nome) is str if nome else True, "Erro: nome do produto inválido!")
 
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)

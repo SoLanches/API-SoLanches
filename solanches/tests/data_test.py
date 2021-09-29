@@ -38,3 +38,15 @@ CARDAPIO = {
         "d763e108f053ad2354ff9285b70c48cfc770d9f7"
     ]
 }
+
+PRODUTO_EDITADO = {
+        "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
+        "attributes": {
+            "categoria": "sa",
+            "descricao": "descrição atualizada",
+            "imagem": "link de imagem",
+            "preco": 20.5
+        },
+        "created_at": 1631415611.4404533,
+        "nome": "produto"
+}
