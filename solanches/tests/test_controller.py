@@ -193,8 +193,9 @@ def test_edita_produto_by_nome_invalido(controller):
     id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
     nome_comercio = "comercio1"
     attributes = {"descricao": "uhu"}
+    nome_produto = 7838383
     with pytest.raises(SolanchesBadRequestError) as excinfo:
-        controller.edita_produto(id_valido, nome_comercio, attributes, 7838383)
+        controller.edita_produto(id_valido, nome_comercio, attributes, nome_produto)
     assert str(excinfo.value.message) == "Erro: nome inválido!"
 
 
