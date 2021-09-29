@@ -202,7 +202,6 @@ def test_edita_produto_by_nome_produto_invalido(controller):
 @mock.patch('solanches.controller.Comercio.get_by_name')
 @mock.patch('solanches.controller.Comercio.get_produto')
 def test_edita_produto_sucesso(mock_get_produto, mock_get_by_name, controller, um_produto, um_comercio):
-
     attributes = {"categoria": "okok"}
     nome_comercio = "comercio1"
     produto_id = "d763e108f053ad2354ff9285b70c48cfc770d9f7"
