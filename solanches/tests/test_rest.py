@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 
 from solanches.tests.data_test import PRODUTO_TESTE, PRODUTOS_TESTE
-from solanches.errors import SolanchesNotFoundError
+from solanches.errors import SolanchesBadRequestError, SolanchesNotFoundError
 
 
 @pytest.fixture
@@ -278,3 +278,30 @@ def test_get_produtos(mock_get_produtos, client):
     response_json = response.json
     assert response.status_code == 200
     assert response_json == PRODUTOS_TESTE
+
+
+@mock.patch('solanches.rest.controller.remove_categoria')
+def test_remove_categoria_erro(mock_remove_categoria, client):
+    mensagem = f'Erro: no controller'
+    mock_remove_categoria.side_effect= SolanchesBadRequestError(mensagem)
+    comercio_nome = 'comercio1'
+    categoria = {'categoria': 'salgados'}
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.delete(url, json = categoria)
+    response_json = response.json
+
+    assert response.status_code == 400
+    assert response_json['message'] == mensagem
+
+
+@mock.patch('solanches.rest.controller.remove_categoria')
+def test_remove_categoria_sucesso(mock_remove_categoria, client):
+    mock_remove_categoria.return_value = CARDAPIO_TESTE
+    comercio_nome = 'comercio1'
+    categoria = {'categoria': 'salgados'}
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.delete(url, json = categoria)
+    response_json = response.json
+
+    assert response.status_code == 200
+    assert response_json == CARDAPIO_TESTE
