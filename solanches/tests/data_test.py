@@ -47,7 +47,6 @@ COMERCIO_TESTE = {
     "attributes": {"telefone": "40", "categoria":"4"}
 }
 
-
 PRODUTO_TESTE = {
      "_id": "idtesteproduto", 
     "nome": "produto comercio2",
