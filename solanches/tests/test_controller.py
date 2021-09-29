@@ -189,7 +189,7 @@ def test_edita_produto_by_atributos_invalidos(controller):
     assert str(excinfo.value.message) == "Erro: attributes inválidos!"
 
 
-def test_edita_produto_by_nome_invalido(controller):
+def test_edita_produto_by_nome_produto_invalido(controller):
     id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
     nome_comercio = "comercio1"
     attributes = {"descricao": "uhu"}
