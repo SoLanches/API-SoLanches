@@ -2,8 +2,8 @@ from unittest import mock
 
 import pytest
 
-from solanches.errors import SolanchesNotFoundError
-from solanches.tests.data_test import PRODUTO_TESTE, PRODUTOS_TESTE, CARDAPIO_TESTE
+from solanches.errors import *
+from solanches.tests.data_test import *
 
 
 @pytest.fixture
@@ -280,7 +280,47 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
     response = client.delete(url)
     response_json = response.json
     assert response.status_code == 404
-    assert response_json['message'] == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_bad_request(mock_adiciona_destaque, client):
+    exception_message = f'Erro: bad request'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.side_effect = SolanchesBadRequestError(exception_message)
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_not_found(mock_adiciona_destaque, client):
+    exception_message = f'Erro: not found'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.side_effect = SolanchesNotFoundError(exception_message)
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 404
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_sucesso(mock_adiciona_destaque, client):
+    exception_message = f'Erro: not found'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.return_value = {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 201
+    assert response_json == {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
+
 
 
 @mock.patch('solanches.rest.controller.get_cardapio')
