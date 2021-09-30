@@ -157,17 +157,17 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     assert result == 1
 
 
-@mock.patch('solanches.models.Comercio.get_by_name')
-def test_cadastra_comercio(mock_get_by_name, controller, comercio_cadastrado):
+@mock.patch('solanches.models.Comercio.to_dict')
+@mock.patch('solanches.models.Comercio.save')
+def test_cadastra_comercio(mock_comercio_save, mock_comercio_to_dict, controller, comercio_cadastrado):
     comercio_nome = 'lanche_feliz'
     password = "3671361e6d5dc1ee674156beed67b1fd"
     comercio_attributes = {
          "endereco": "orestes fialho",
          "horarios": "11h-22h"
     }
-    mock_get_by_name.return_value = comercio_cadastrado
+    mock_comercio_to_dict.return_value = comercio_cadastrado
     result = controller.cadastra_comercio(comercio_nome,password, comercio_attributes)
-    
 
     expected_fields = ["nome", "attributes", "created_at"]
     result_fields = result.keys()
