@@ -2,7 +2,7 @@ import datetime
 
 from . import connect2db
 import jwt
-from . models import Produto, Comercio, BlockList
+from . models import Comercio, BlockList
 from . errors import SolanchesBadRequestError
 from . errors import SolanchesNotFoundError
 from . errors import SolanchesInternalServerError
@@ -90,8 +90,8 @@ def cadastra_produto(comercio_nome, nome_produto, attributes):
     _assert(type(attributes) is dict if attributes else True, "Erro: campo attributes inválidos!")
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
-    novo_produto = Produto(nome_produto, attributes)
-    produto_cadastrado = Comercio.add_produto(novo_produto, comercio_nome)
+    produto_data = {"nome": nome_produto, "attributes": attributes}
+    produto_cadastrado = Comercio.add_produto(comercio_nome, produto_data)
     result = produto_cadastrado.to_dict()
     return result
 
