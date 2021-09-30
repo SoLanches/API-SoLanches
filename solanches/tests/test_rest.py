@@ -2,9 +2,8 @@ from unittest import mock
 
 import pytest
 
-
-from solanches.errors import SolanchesBadRequestError, SolanchesNotFoundError
-from solanches.tests.data_test import PRODUTO_TESTE, PRODUTOS_TESTE, CARDAPIO_TESTE
+from solanches.errors import *
+from solanches.tests.data_test import *
 
 
 @pytest.fixture
@@ -47,6 +46,94 @@ def test_status(client):
     assert type(status['service']) is str
     assert status['status'] == 'operacional'
     assert status['service'] == 'api-solanches'
+
+
+@mock.patch('solanches.rest.controller.cadastra_comercio')
+def test_cadastra_comercio(mock_cadastra_comercio, client):
+    expected_return = {
+        "nome": "comercio_teste1",
+        "attributes": {
+            "telefone": "123",
+            "endereco": "rua",
+            "horarios": "21h-23h"
+        },
+        "password": "6747838dd"
+    }
+    comercio_json = expected_return
+    mock_cadastra_comercio.return_value = expected_return
+    response = client.post("/comercio", json=comercio_json)
+
+    response_json = response.json
+    assert response.status_code == 201
+    assert response_json == expected_return
+
+
+def test_cadastra_comercio_sem_nome(client):
+    comercio_sem_nome = {
+        "attributes": {
+            "telefone": "123"
+        }
+    }
+    url = '/comercio'
+    response = client.post(url, json=comercio_sem_nome)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == "Erro: campo nome não informado!"
+
+
+def test_cadastra_comercio_sem_senha(client):
+    comercio_sem_nome = {
+        "nome": "comercio_teste1",
+        "attributes": {
+            "telefone": "123",
+            "endereco": "rua",
+            "horarios": "21h-23h"
+        }
+    }
+    url = '/comercio'
+    response = client.post(url, json=comercio_sem_nome)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] ==  "Erro: campo senha não informado!"
+
+
+def test_cadastra_comercio_sem_atributos(client):
+    comercio_sem_atributos = {
+        "nome": "comercio_teste1",
+        "password": "6747838dd"
+    }
+    url = '/comercio'
+    response = client.post(url, json=comercio_sem_atributos)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == 'Erro: campo attributes não informado!'
+
+
+def test_cadastra_comercio_com_json_invalido(client):
+    comercio_json_invalido = "nao sou um json válido"
+    url = '/comercio'
+    response = client.post(url, data=comercio_json_invalido)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == "Erro: json inválido!"
+
+
+@mock.patch('solanches.rest.controller.cadastra_comercio')
+def test_cadastra_comercio_exception_controller(mock_cadastra_comercio, client):
+    exception_msg = "uma exceção ocorreu"
+    mock_cadastra_comercio.side_effect = Exception(exception_msg)
+    comercio = {
+        "nome": "comercio_teste1",
+        "password": "7373733",
+        "attributes": {
+            "endereco": "rua da lua"
+        }
+    }
+    url = '/comercio'
+    response = client.post(url, json=comercio)
+    response_json = response.json
+    assert response.status_code == 500
+    assert response_json['message'] == exception_msg
 
 
 @mock.patch('solanches.rest.controller.get_comercios')
@@ -193,7 +280,47 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
     response = client.delete(url)
     response_json = response.json
     assert response.status_code == 404
-    assert response_json['message'] == f'Erro: comercio com nome {comercio_nome} não cadastrado!'
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_bad_request(mock_adiciona_destaque, client):
+    exception_message = f'Erro: bad request'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.side_effect = SolanchesBadRequestError(exception_message)
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_not_found(mock_adiciona_destaque, client):
+    exception_message = f'Erro: not found'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.side_effect = SolanchesNotFoundError(exception_message)
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 404
+    assert response_json['message'] == exception_message
+
+
+@mock.patch('solanches.rest.controller.adiciona_destaque')
+def test_adiciona_destaque_sucesso(mock_adiciona_destaque, client):
+    exception_message = f'Erro: not found'
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_adiciona_destaque.return_value = {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.post(url)
+    response_json = response.json
+    assert response.status_code == 201
+    assert response_json == {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
+
 
 
 @mock.patch('solanches.rest.controller.get_cardapio')
