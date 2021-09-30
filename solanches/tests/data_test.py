@@ -15,3 +15,15 @@ COMERCIOS = [
         "attributes": {"telefone": "39", "categoria":"3"}
     }
 ]
+
+
+COMERCIO = {
+    "id": "3671361e6d5dc1ee674156beed67b1fd",
+    "attributes": {
+         "endereco": "orestes fialho",
+         "horarios": "11h-22h"
+    },
+    "password": "3671361e6d5dc1ee674156beed67b1fd",
+    "created_at": 1628721657.488885,
+    "nome": "lanche_feliz"
+}
