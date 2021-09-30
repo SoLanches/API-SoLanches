@@ -203,18 +203,18 @@ def test_adiciona_destaque_produto_ja_destacado(mock_get_by_name, mock_get_produ
     assert str(e.value.message) == f'Erro: produto já está nos destaques!'
 
 
-@mock.patch('solanches.models.Cardapio.get_by_id')
+@mock.patch('solanches.models.Comercio.get_cardapio')
+@mock.patch('solanches.models.Comercio.add_destaque')
 @mock.patch('solanches.models.Comercio.get_destaques')
 @mock.patch('solanches.models.Comercio.get_produtos_ids')
 @mock.patch('solanches.models.Comercio.get_by_name')
-def test_adiciona_destaque_produto_sucesso(mock_get_by_name, mock_get_produtos, mock_get_destaques, mock_get_cardapio, controller):
+def test_adiciona_destaque_produto_sucesso(mock_get_by_name, mock_get_produtos, mock_get_destaques, mock_add_destaque, mock_get_cardapio, controller):
     mock_get_by_name.return_value = COMERCIO_TESTE
     mock_get_produtos.return_value = ['produto teste']
     mock_get_destaques.return_value = []
-    cardapio_desatualizado = {'produtos': [], 'destaques': ['produto aleatorio'], 'categorias': []}
-    mock_get_cardapio.return_value = cardapio_desatualizado
+    cardapio_esperado = {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
+    mock_get_cardapio.return_value = cardapio_esperado
     comercio_nome = 'comercio 1'
     produto_id = 'produto teste'
     resultado = controller.adiciona_destaque(comercio_nome, produto_id)
-    cardapio_esperado = {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
     assert resultado == cardapio_esperado
