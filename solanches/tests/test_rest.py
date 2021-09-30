@@ -301,7 +301,6 @@ def test_remove_categoria_sucesso(mock_remove_categoria, client):
     url = f'/comercio/{comercio_nome}/categoria'
     response = client.delete(url, json = categoria)
     response_json = response.json
-
     assert response.status_code == 200
     assert response_json == CARDAPIO_TESTE
     

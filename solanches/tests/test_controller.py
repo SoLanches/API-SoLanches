@@ -391,15 +391,15 @@ def test_remove_categoria_fora_comercio(mock_get_by_name, mock_get_categorias, c
     assert str(e.value.message) == f'Erro: categoria não faz parte do comércio'
 
 
-@mock.patch('solanches.models.Cardapio.get_by_id')
+@mock.patch('solanches.models.Comercio.remove_categoria')
+@mock.patch('solanches.models.Comercio.get_cardapio')
 @mock.patch('solanches.models.Comercio.get_cardapio_categorias')
 @mock.patch('solanches.models.Comercio.get_by_name')
-def test_remove_categoria_sucesso(mock_get_by_name, mock_get_categorias, mock_get_cardapio, controller):
+def test_remove_categoria_sucesso(mock_get_by_name, mock_get_categorias, mock_get_cardapio, mock_remove_categoria, controller):
     mock_get_by_name.return_value = COMERCIO_TESTE
     mock_get_categorias.return_value = ['salgados', 'doces']
     mock_get_cardapio.return_value = CARDAPIO_TESTE
     categoria = 'salgados'
     comercio_nome = 'comercio2'
     result = controller.remove_categoria(comercio_nome, categoria)
-    assert result == {'_id': 'idteste', 'produtos': [], 'destaques': [], 'categorias': ['doces']}
-    
+    assert result == CARDAPIO_TESTE
