@@ -6,6 +6,7 @@ from flask import request
 
 from . import controller
 from .authenticate import jwt_required
+from .authenticate import revoke_token
 from . errors import SolanchesBadRequestError
 from . errors import SolanchesNotFoundError
 from . errors import SolanchesInternalServerError
@@ -213,7 +214,7 @@ def login():
 
 
 @app.route("/logout", methods=["DELETE"])
-@jwt_required
+@revoke_token
 def logout():
     token = None
     if 'authorization' in request.headers:

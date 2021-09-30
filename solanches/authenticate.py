@@ -34,7 +34,23 @@ def jwt_required(function):
         except:
             _assert(False, "Error: Token inválido ou expirado.", SolanchesNotAuthorizedError)    
 
-        _assert(not comercio_nome or current_user == comercio_nome, "Error: Token não referente a esse usuário.", SolanchesNotAuthorizedError)
+        _assert(current_user == comercio_nome, "Error: Token não referente a esse usuário.", SolanchesNotAuthorizedError)
+        
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def revoke_token(function):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        token = None
+
+        if 'authorization' in request.headers:
+            token = request.headers['authorization']
+
+        token_in_block_list = BlockList.contains(token)
+    
+        _assert(token and not token_in_block_list, "Error: Você não tem permissão para acessar essa rota.", SolanchesNotAuthorizedError)
         
         return function(*args, **kwargs)
 
