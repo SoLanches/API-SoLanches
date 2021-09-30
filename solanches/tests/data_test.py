@@ -86,5 +86,5 @@ CARDAPIO_TESTE = {
     "_id": "idteste",
     "produtos": [],
     "destaques": [],
-    "categorias": []
+    "categorias": ['salgados', 'doces']
 }
