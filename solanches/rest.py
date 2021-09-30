@@ -221,7 +221,6 @@ def logout(current_user):
     return jsonify(response), 200
 
 
-
 def _construct_error(error):
     data ={}
     data["error"] = error.__class__.__name__
