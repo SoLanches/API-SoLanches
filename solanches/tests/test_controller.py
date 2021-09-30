@@ -1,10 +1,11 @@
 from unittest import mock
+
+from pymongo import errors
+import pytest
+
 from . data_test import COMERCIO, COMERCIOS
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
-
-from pymongo.errors import DuplicateKeyError
-import pytest
 
 
 @pytest.fixture
@@ -227,17 +228,16 @@ def test_cadastra_comercio_attributes_sem_endereco(controller):
         controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
     assert str(exinfo.value.message) == 'Erro: campo endereco não informado!'
 
-#  AINDA TEM QUE FAZER
-@mock.patch('solanches.models.Comercio.get_by_name')
-def test_cadastra_comercio_ja_cadastrado(mock_get_by_name, controller, um_comercio):
-    comercio_nome = 'comercio1'
+
+@mock.patch('solanches.models.Comercio.save')
+def test_cadastra_comercio_ja_cadastrado(mock_comercio_save, controller, um_comercio):
+    comercio_nome = 'já estou cadastrado'
     password = "763738383"
     comercio_attributes = {
           'endereco': 'rua floriano peixoto',
           "horarios": "21h-24h"
     }
-    mock_get_by_name.return_value = um_comercio
-    with pytest.raises(SolanchesBadRequestError):
-        result = controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
-    assert isinstance(result, dict)
-
+    mock_comercio_save.side_effect = errors.DuplicateKeyError("chave duplicada")
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
+    assert str(exinfo.value.message) ==f'Erro: comercio com nome {comercio_nome} já cadastrado!'

@@ -1,6 +1,8 @@
 from unittest import mock
-from solanches.errors import SolanchesNotFoundError
+
 import pytest
+
+from solanches.errors import SolanchesNotFoundError
 
 
 @pytest.fixture
