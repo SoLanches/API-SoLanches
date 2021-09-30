@@ -92,8 +92,7 @@ def cadastra_produto(comercio_nome, nome_produto, attributes):
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     novo_produto = Produto(nome_produto, attributes)
     produto_cadastrado = Comercio.add_produto(novo_produto, comercio_nome)
-    result = produto_cadastrado.to_dict()
-    return result
+    return produto_cadastrado
 
 
 def get_produto(comercio_nome, produto_id):

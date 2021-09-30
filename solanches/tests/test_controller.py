@@ -1,4 +1,4 @@
-from solanches.tests.data_test import PRODUTOS_COMERCIO, COMERCIOS
+from solanches.tests.data_test import PRODUTO, PRODUTOS_COMERCIO, COMERCIOS
 from unittest import mock
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
@@ -14,6 +14,12 @@ def comercios():
 def um_comercio():
     comercio = COMERCIOS[0]
     return comercio
+
+
+@pytest.fixture
+def um_produto():
+    produto = PRODUTO
+    return produto
 
 
 @mock.patch('solanches.controller.Comercio.get_all')
@@ -147,26 +153,27 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     assert result == 1
 
 
-@pytest.mark.skip(reason="TODO")
-@mock.patch('solanches.models.Comercio.get_produtos')
-def test_cadastra_produto(mock_get_produtos, controller):
-    produto_nome = 'produto_test1'
+@mock.patch('solanches.models.Comercio.add_produto')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_cadastra_produto(mock_get_by_name, mock_add_produto, controller, um_comercio, um_produto):
+    produto_nome = "produto teste7"
     comercio_nome = 'comercio_test1'
     attributes = {
-            "marca": "kibom"
+        "descricao": "descrição do produto de teste1",
+        "imagem": "link de imagem",
+        "preco": 20.50,
+        "categoria": "salgados"
     }
 
-    comercio_attributes = {
-          "endereco": "rua floriano peixoto"
-    }
-    controller.cadastra_comercio(comercio_nome, comercio_attributes)
+    mock_get_by_name.return_value = um_comercio
+    mock_add_produto.return_value = um_produto
+
     result = controller.cadastra_produto(comercio_nome, produto_nome, attributes)
-    mock_get_produtos.return_value = PRODUTOS_COMERCIO
-
+    
     expected_fields = ["nome", "attributes"]
     result_fields = result.keys()
     assert all(field in result_fields for field in expected_fields)
-    assert result == PRODUTOS_COMERCIO
+    assert result == PRODUTO
 
 
 def test_cadastra_produto_nome_invalido(controller):
@@ -182,7 +189,7 @@ def test_cadastra_produto_nome_invalido(controller):
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
-def test_cadastra_produto_sem_atributos(mock_get_by_name, controller, um_comercio):
+def test_cadastra_produto_atributos_invalidos(mock_get_by_name, controller, um_comercio):
     nome_produto = "nome_produto"
     nome_comercio = "nome_comercio"
     comercio_attributes = 3763737

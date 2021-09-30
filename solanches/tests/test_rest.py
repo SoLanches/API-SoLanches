@@ -184,7 +184,6 @@ def test_remove_comercio_inexistente(mock_remove_comercio, client):
 
 @mock.patch('solanches.rest.controller.cadastra_produto')
 def test_cadastra_produto(mock_cadastra_produto, client):
-    
     expected_return = {
         "nome": "produto teste7",
         "attributes":{

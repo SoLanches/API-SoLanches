@@ -24,3 +24,13 @@ COMERCIOS = [
         "attributes": {"telefone": "39", "categoria":"3"}
     }
 ]
+
+PRODUTO = {
+    "nome": "produto teste7",
+    "attributes": {
+        "descricao": "descrição do produto de teste1",
+        "imagem": "link de imagem",
+        "preco": 20.50,
+        "categoria": "salgados"
+    }
+}
