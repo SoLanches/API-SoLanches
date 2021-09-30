@@ -120,7 +120,7 @@ def _get_produtos_categoria(comercio_nome):
         result.setdefault(categoria, []).append(produto)
     return result
 
-  
+
 def get_produtos_ids(comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)

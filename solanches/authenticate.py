@@ -33,7 +33,7 @@ def jwt_required(function):
             decoded = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = controller.get_comercio_by_id(decoded.get("id"))
         except:
-            _assert(False, "Error: Token inválido ou expirado.")    
+            _assert(False, "Error: Token inválido ou expirado.", SolanchesNotAuthorizedError)    
         
         return function(current_user=current_user, *args, **kwargs)
 
