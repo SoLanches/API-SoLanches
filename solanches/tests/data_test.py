@@ -40,6 +40,19 @@ COMERCIOS = [
     }
 ]
 
+COMERCIO_NO_BD = {
+    "_id" : "tested01f3670d20bb66c0f0711dee397c61cb84",
+    "nome" : "comercio teste",
+    "password" : "minha senha",
+    "attributes" : {
+        "endereco" : "Av. Brasília",
+        "categoria" : "Lanchonete",
+        "horarios" : [1, 2, 3]
+    },
+    "created_at" : 1631804210.31025,
+    "cardapio" : "fcb22d01f3670d20bb66c0f0711dee397c61cb84"
+}
+
 COMERCIO = {
     "id": "3671361e6d5dc1ee674156beed67b1fd",
     "attributes": {
