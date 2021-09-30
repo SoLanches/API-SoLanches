@@ -1,4 +1,6 @@
 from unittest import mock
+
+from pymongo import errors
 import pytest
 
 from . data_test import CARDAPIO, COMERCIO, COMERCIOS, COMERCIO_TESTE, PRODUTO_TESTE, PRODUTOS_TESTE, CARDAPIO_TESTE
@@ -14,6 +16,12 @@ def um_cardapio():
 
 @pytest.fixture
 def um_comercio():
+    comercio = COMERCIO
+    return comercio
+
+
+@pytest.fixture
+def comercio_cadastrado():
     comercio = COMERCIO
     return comercio
 
@@ -276,6 +284,92 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     mock_remove_comercio.return_value = 1
     result = controller.remove_comercio(comercio_nome)
     assert result == 1
+
+
+@mock.patch('solanches.models.Comercio.to_dict')
+@mock.patch('solanches.models.Comercio.save')
+def test_cadastra_comercio(mock_comercio_save, mock_comercio_to_dict, controller, comercio_cadastrado):
+    comercio_nome = 'lanche_feliz'
+    password = "3671361e6d5dc1ee674156beed67b1fd"
+    comercio_attributes = {
+         "endereco": "orestes fialho",
+         "horarios": "11h-22h"
+    }
+    mock_comercio_to_dict.return_value = comercio_cadastrado
+    result = controller.cadastra_comercio(comercio_nome,password, comercio_attributes)
+
+    expected_fields = ["nome", "attributes", "created_at"]
+    result_fields = result.keys()
+    assert all(field in result_fields for field in expected_fields)
+
+
+def test_cadastra_comercio_nome_invalido(controller):
+    comercio_nome = 90992727
+    password = "849439030"
+    comercio_attributes = {
+        "endereco": "ruaa",
+        "horarios": "21h-24h"
+    }
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password,  comercio_attributes)
+    assert str(exinfo.value.message) == 'Erro: campo nome inválido!'
+
+
+def test_cadastra_comercio_senha_invalida(controller):
+    comercio_nome = "comercio1"
+    password = 0
+    comercio_attributes = {
+        "endereco": "ruaa",
+        "horarios": "21h-24h"
+    }
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password,  comercio_attributes)
+    assert str(exinfo.value.message) == "Erro: campo senha inválido!"
+
+
+def test_cadastra_comercio_atributos_invalidos(controller):
+    comercio_nome = 'comercio_test4'
+    password = "873838383"
+    attributes_nao_eh_dict = 48488448
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password, attributes_nao_eh_dict)
+    assert str(exinfo.value.message) == 'Erro: campo attributes inválidos!'
+
+
+def test_cadastra_comercio_attributes_sem_horarios(controller):
+    comercio_nome = 'comercio_test2'
+    password = "3838383"
+    comercio_attributes = {
+          'endereco': 'rua floriano peixoto'
+    }
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
+    assert str(exinfo.value.message) == 'Erro: campo horarios não informado!'
+
+
+def test_cadastra_comercio_attributes_sem_endereco(controller):
+    comercio_nome = 'comercio_test2'
+    password = "3838383"
+    comercio_attributes = {
+          'horarios': '21h-23h'
+    }
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
+    assert str(exinfo.value.message) == 'Erro: campo endereco não informado!'
+
+
+@mock.patch('solanches.models.Comercio.save')
+def test_cadastra_comercio_ja_cadastrado(mock_comercio_save, controller, um_comercio):
+    comercio_nome = 'já estou cadastrado'
+    password = "763738383"
+    comercio_attributes = {
+          'endereco': 'rua floriano peixoto',
+          "horarios": "21h-24h"
+    }
+    mock_comercio_save.side_effect = errors.DuplicateKeyError("chave duplicada")
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_comercio(comercio_nome, password, comercio_attributes)
+    assert str(exinfo.value.message) ==f'Erro: comercio com nome {comercio_nome} já cadastrado!'
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
