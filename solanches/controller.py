@@ -15,10 +15,10 @@ def _assert(condition, message, SolanchesError=SolanchesBadRequestError):
 
 def cadastra_comercio(nome, password, attributes):
     _assert(nome and type(nome) is str, 'Erro: campo nome inválido!')
-    _assert(password and type(password) is str, "Erro: Senha não informada!")
+    _assert(password and type(password) is str, "Erro: campo senha inválido!")
     _assert(attributes and type(attributes) is dict, 'Erro: campo attributes inválidos!')
     _assert("endereco" in attributes, 'Erro: campo endereco não informado!')
-    _assert("horarios" in attributes, 'Erro: campo horarios não informados!')
+    _assert("horarios" in attributes, 'Erro: campo horarios não informado!')
     try:
         novo_comercio = Comercio(nome, password, attributes)
         novo_comercio.save()
@@ -120,7 +120,7 @@ def _get_produtos_categoria(comercio_nome):
         result.setdefault(categoria, []).append(produto)
     return result
 
-  
+
 def get_produtos_ids(comercio_nome):
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
