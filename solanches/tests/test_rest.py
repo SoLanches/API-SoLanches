@@ -270,6 +270,30 @@ def test_remove_categoria_erro(mock_remove_categoria, client):
 
 
 @mock.patch('solanches.rest.controller.remove_categoria')
+def test_remove_categoria_json_invalido(mock_remove_categoria, client):
+    mensagem = "Erro: json inválido!"
+    comercio_nome = 'comercio1'
+    json_invalido = "não sou um json válido"
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.delete(url, data=json_invalido)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == mensagem
+
+
+@mock.patch('solanches.rest.controller.remove_categoria')
+def test_remove_categoria_nao_informada(mock_remove_categoria, client):
+    mensagem = "Erro: categoria não informada!"
+    comercio_nome = 'comercio1'
+    json_sem_categoria = {"sem campo": "informado"}
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.delete(url, json=json_sem_categoria)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == mensagem
+
+
+@mock.patch('solanches.rest.controller.remove_categoria')
 def test_remove_categoria_sucesso(mock_remove_categoria, client):
     mock_remove_categoria.return_value = CARDAPIO_TESTE
     comercio_nome = 'comercio1'
