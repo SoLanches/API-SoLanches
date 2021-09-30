@@ -33,3 +33,12 @@ def controller():
     models.DB.comercio.delete_many({})
     models.DB.cardapio.delete_many({})
     models.DB.produto.delete_many({})
+
+
+@pytest.fixture
+def models():
+    from solanches import models
+    yield models
+    models.DB.comercio.delete_many({})
+    models.DB.cardapio.delete_many({})
+    models.DB.produto.delete_many({})
