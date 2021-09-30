@@ -40,6 +40,7 @@ def jwt_required(function):
 
     return wrapper
 
+
 def revoke_token(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
