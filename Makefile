@@ -12,7 +12,7 @@ MODULE=solanches
 BIND=$(SOLANCHES_HOST):$(SOLANCHES_PORT)
 
 help:
-	@echo "uso: make [ venv | run | run-dev | test ]"
+	@echo "uso: make [ venv | run | run-dev | test | test-cov | deploy ]"
 
 venv: $(VENV)/bin/activate
 
