@@ -101,3 +101,28 @@ CARDAPIO_TESTE = {
     "destaques": [],
     "categorias": ['salgados', 'doces']
 }
+
+CARDAPIO_MODELS_TEST = {
+    "_id": "id do cardapio",
+    "categorias": [],
+    "created_at": 1632159992.3423245,
+    "destaques": [],
+    "produtos": []
+}
+
+CARDAPIO_COM_PRODUTO_MODELS_TEST = {
+    "_id": "id do cardapio",
+    "categorias": [],
+    "created_at": 1632159992.3423245,
+    "destaques": [],
+    "produtos": ["id do produto"]
+}
+
+PRODUTO_CARDAPIO_MODELS_TEST = {
+    "_id": "id do produto",
+    "attributes": {
+        "categoria": "categoria do produto"
+    },
+    "created_at": 1632249299.7731967,
+    "nome": "nome do produto"
+}
