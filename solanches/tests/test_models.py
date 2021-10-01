@@ -454,9 +454,7 @@ class TestCardapio:
         
         produtos = models.Cardapio.get_produtos(cardapio_id)
         get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
-        get_produto_by_id_param = mock_get_produto_by_id.call_args[0][0]
         assert get_cardapio_by_id_param == cardapio_id
-        assert get_produto_by_id_param == produto_id
         assert isinstance(produtos, list)
         assert produtos == []
     
@@ -474,7 +472,7 @@ class TestCardapio:
         assert produto_id in produtos
 
     @mock.patch("solanches.models.Cardapio.get_by_id")
-    def test_get_produtos_cardapio_vazio(self, mock_get_cardapio_by_id, models, um_cardapio, cardapio_no_bd):
+    def test_get_produtos_ids_cardapio_vazio(self, mock_get_cardapio_by_id, models, um_cardapio, cardapio_no_bd):
         cardapio_id = um_cardapio["_id"]
         mock_get_cardapio_by_id.return_value = um_cardapio
         
