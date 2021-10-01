@@ -36,5 +36,8 @@ $(TESTS-REQS-INSTALLED): tests-requirements.txt
 	$(PIP) install --requirement tests-requirements.txt
 	touch $(TESTS-REQS-INSTALLED)
 
+test-cov: venv $(TESTS-REQS-INSTALLED)
+	$(VENV)/bin/pytest -v --cov=solanches
+
 deploy:
 	./bin/make_deploy
