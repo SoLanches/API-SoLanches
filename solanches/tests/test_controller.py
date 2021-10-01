@@ -153,29 +153,41 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     assert result == 1
 
 
-@mock.patch('solanches.controller.Comercio.get_by_name')
-def test_edita_comercio_by_name_valido(mock_comercio_by_name, controller, um_comercio):
-    nome_valido = "id valido"
-    expected_return = um_comercio
-    mock_comercio_by_name.return_value = expected_return
-    result = controller.get_comercio_by_name(nome_valido)
-    assert result == expected_return
-
-
-def test_edita_comercio_nome_invalido(controller):
+def test_edita_comercio_com_nome_invalido(controller):
     nome_invalido = 18189
+    attributes = {"endereco": "2344222"}
     with pytest.raises(AssertionError) as excinfo:
-        controller.atualiza_comercio({"endereco": "vuvuvu"}, nome_invalido)
+        controller.atualiza_comercio(attributes, nome_invalido)
     assert str(excinfo.value) == 'Erro: nome de comercio inválido!'
 
 
-@mock.patch('solanches.controller.Comercio.get_by_name')
-def test_edita_comercio_com_atributos(mock_get_by_name, controller, um_comercio):
-    attributes = {"endereco": "2344222"}
+def test_edita_comercio_atributos_invalidos(controller):
     nome_comercio = "comercio1"
-    mock_get_by_name.return_value = um_comercio
+    attributes = "atributos"
+    with pytest.raises(AssertionError) as excinfo:
+        controller.atualiza_comercio(attributes, nome_comercio)
+    assert str(excinfo.value) == "Erro: campo attributes inválidos!"
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_edita_comercio_nao_cadastrado(mock_get_by_name, controller):
+    nome_comercio = "comercio1"
+    attributes = {"endereco": "2344222"}
+    mock_get_by_name.return_value = None
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
+        controller.atualiza_comercio(attributes, nome_comercio)
+    assert str(excinfo.value.message) == 'Erro: comercio com o nome comercio1 não cadastrado!'
+
+
+@mock.patch('solanches.controller.Comercio.update')
+@mock.patch('solanches.controller.Comercio.get_by_name')
+def test_edita_comercio_sucesso(mock_comercio_by_name, mock_update, controller, um_comercio, comercio_editado):
+    nome_comercio = "comercio1"
+    attributes = {"telefone": "4002-8922", "categoria": "1"}
+
+    mock_comercio_by_name.return_value = um_comercio
+    mock_update.return_value = comercio_editado
+    mock_comercio_by_name.return_value = comercio_editado
 
     result = controller.atualiza_comercio(attributes, nome_comercio)
-    assert "attributes" in result
-    assert isinstance(result, object)
-
+    assert result == comercio_editado

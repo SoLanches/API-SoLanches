@@ -16,10 +16,8 @@ COMERCIOS = [
     }
 ]
 
-COMERCIO_EDITADO = [
-    {
+COMERCIO_EDITADO = {
         "_id": "1d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48", 
         "nome": "comercio1",
-        "attributes": {"telefone": "37", "categoria":"1", "endereco": "rua floriano"}
-    }
-]
+        "attributes": {"telefone": "4002-8922", "categoria": "1"}
+}
