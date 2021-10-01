@@ -74,6 +74,7 @@ PRODUTO_EDITADO = {
         "created_at": 1631415611.4404533,
         "nome": "produto"
 }
+
 COMERCIO_NO_BD = {
     "_id" : "tested01f3670d20bb66c0f0711dee397c61cb84",
     "nome" : "comercio teste",
@@ -133,5 +134,5 @@ CARDAPIO_TESTE = {
     "_id": "idteste",
     "produtos": [],
     "destaques": [],
-    "categorias": ['salgados', 'doces']
+    "categorias": []
 }

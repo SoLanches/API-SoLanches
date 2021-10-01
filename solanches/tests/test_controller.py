@@ -341,14 +341,14 @@ def test_edita_produto_by_comercio_nao_cadastrado(mock_get_by_name, controller):
     mock_get_by_name.return_value = None
     with pytest.raises(SolanchesNotFoundError) as excinfo:
         controller.edita_produto(id_valido, nome_comercio, attributes, "nome_produto")
-    assert str(excinfo.value.message) == 'Erro: comercio com o nome algum não cadastrado!'
+    assert str(excinfo.value.message) == f'Erro: comercio com o nome algum não cadastrado!'
 
 
 @mock.patch('solanches.controller.Comercio.get_produto')
 @mock.patch('solanches.controller.Comercio.get_by_name')
 def test_edita_produto_nao_cadastrado_no_comercio(mock_get_by_name, mock_get_produto, controller, um_comercio):
     id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
-    nome_comercio = "comercio1"
+    nome_comercio = "algum"
     attributes = {
             "categoria": "edicao feita",
             "descricao": "descrição atualizada",

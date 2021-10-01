@@ -463,9 +463,9 @@ def test_remove_produto_comercio_inexistente(mock_remove_produto, client):
     mock_remove_produto.side_effect = SolanchesNotFoundError(exception_message)
     url = f'/comercio/{comercio_nome}/produto/{produto_id}'
     response = client.delete(url)
-    responseJson = response.json
+    response_json = response.json
     assert response.status_code == 404
-    assert responseJson['message'] == exception_message
+    assert response_json['message'] == exception_message
 
 
 @mock.patch('solanches.rest.controller.edita_produto')
