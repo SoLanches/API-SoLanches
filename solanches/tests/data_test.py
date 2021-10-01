@@ -94,7 +94,6 @@ PRODUTOS_TESTE = [
    }
 ]
 
-
 CARDAPIO_TESTE = {
     "_id": "idteste",
     "produtos": [],
@@ -110,6 +109,15 @@ CARDAPIO_MODELS_TEST = {
     "produtos": []
 }
 
+PRODUTO_CARDAPIO_MODELS_TEST = {
+    "_id": "id do produto",
+    "attributes": {
+        "categoria": "nome da categoria"
+    },
+    "created_at": 1632249299.7731967,
+    "nome": "nome do produto"
+}
+
 CARDAPIO_COM_PRODUTO_MODELS_TEST = {
     "_id": "id do cardapio",
     "categorias": [],
@@ -118,11 +126,18 @@ CARDAPIO_COM_PRODUTO_MODELS_TEST = {
     "produtos": ["id do produto"]
 }
 
-PRODUTO_CARDAPIO_MODELS_TEST = {
-    "_id": "id do produto",
-    "attributes": {
-        "categoria": "categoria do produto"
-    },
-    "created_at": 1632249299.7731967,
-    "nome": "nome do produto"
+CARDAPIO_COM_DESTAQUE_MODELS_TEST = {
+    "_id": "id do cardapio",
+    "categorias": [],
+    "created_at": 1632159992.3423245,
+    "destaques": ["id do produto"],
+    "produtos": ["id do produto"]
+}
+
+CARDAPIO_COM_CATEGORIA_MODELS_TEST = {
+    "_id": "id do cardapio",
+    "categorias": ["nome da categoria"],
+    "created_at": 1632159992.3423245,
+    "destaques": [],
+    "produtos": []
 }
