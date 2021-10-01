@@ -51,6 +51,6 @@ def revoke_token(function):
 
         token_in_block_list = BlockList.contains(token)
         
-        return function(rovoke=(token and not token_in_block_list), *args, **kwargs)
+        return function(revoke=(token and not token_in_block_list), *args, **kwargs)
 
     return wrapper

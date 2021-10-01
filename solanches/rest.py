@@ -215,12 +215,12 @@ def login():
 
 @app.route("/logout", methods=["DELETE"])
 @revoke_token
-def logout(rovoke):
+def logout(revoke):
     token = None
     if 'authorization' in request.headers:
         token = request.headers['authorization']
 
-    if rovoke:
+    if revoke:
         controller.logout(token)
 
     response = {
