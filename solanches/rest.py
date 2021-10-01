@@ -215,18 +215,19 @@ def login():
 
 @app.route("/logout", methods=["DELETE"])
 @revoke_token
-def logout():
+def logout(rovoke):
     token = None
     if 'authorization' in request.headers:
         token = request.headers['authorization']
 
-    _assert(token, "Error: Você não está logado.", SolanchesNotAuthorizedError)
-    controller.logout(token)
+    if rovoke:
+        controller.logout(token)
 
     response = {
         "message": "Logout feito com sucesso", 
         "status_code": 200
     }
+    
     return jsonify(response), 200
 
 

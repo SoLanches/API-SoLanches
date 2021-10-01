@@ -50,9 +50,7 @@ def revoke_token(function):
             token = request.headers['authorization']
 
         token_in_block_list = BlockList.contains(token)
-    
-        _assert(token and not token_in_block_list, "Error: Você não tem permissão para acessar essa rota.", SolanchesNotAuthorizedError)
         
-        return function(*args, **kwargs)
+        return function(rovoke=(token and not token_in_block_list), *args, **kwargs)
 
     return wrapper
