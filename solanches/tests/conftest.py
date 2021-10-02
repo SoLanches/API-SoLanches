@@ -33,6 +33,7 @@ def controller():
     models.DB.comercio.delete_many({})
     models.DB.cardapio.delete_many({})
     models.DB.produto.delete_many({})
+    models.DB.block_list.delete_many({})
 
 
 @pytest.fixture
@@ -42,3 +43,4 @@ def models():
     models.DB.comercio.delete_many({})
     models.DB.cardapio.delete_many({})
     models.DB.produto.delete_many({})
+    models.DB.block_list.delete_many({})

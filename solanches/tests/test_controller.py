@@ -294,6 +294,28 @@ def test_get_produtos_comercio_inexistente(mock_get_produto, mock_get_by_name, c
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+def test_get_produtos_ids_comercio_inexistente(mock_get_produtos_ids, mock_get_by_name, controller):
+    comercio_nome = 'nome qualquer'
+    mock_get_by_name.return_value = None
+    with pytest.raises(SolanchesNotFoundError) as e:
+        controller.get_produtos_ids(comercio_nome)
+    assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+def test_get_produtos_ids_sucesso(mock_get_produtos_ids, mock_get_by_name, controller):
+    comercio_nome = 'nome qualquer'
+    expected_result = ["id1", "id2"]
+    mock_get_by_name.return_value = um_comercio
+    mock_get_produtos_ids.return_value = expected_result
+   
+    result = controller.get_produtos_ids(comercio_nome)
+    assert result == expected_result
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
 @mock.patch('solanches.models.Comercio.remove_comercio')
 def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  controller):
     comercio_nome = 'comercio_test'
@@ -715,6 +737,58 @@ def test_remove_produto_comercio_inexistente(mock_get_by_name, controller):
     with pytest.raises(SolanchesNotFoundError) as e:
         controller.remove_produto(comercio_nome, produto_id)
     assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+@mock.patch('solanches.models.Comercio.get_destaques')
+@mock.patch('solanches.controller.get_cardapio')
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+@mock.patch('solanches.models.Comercio.get_by_name')
+@mock.patch('solanches.models.Comercio.remove_produto_destaques')
+def test_remove_produto_destaques_sucesso(mock_remove_produto, mock_get_by_name, mock_get_produtos_ids, mock_get_cardapio, mock_get_destaques, um_comercio, controller):
+    mock_get_by_name.return_value = um_comercio
+    comercio_nome = 'comercio2'
+    produto_id = PRODUTO_TESTE['_id']
+    mock_get_produtos_ids.return_value = [produto_id]
+    mock_get_cardapio.return_value = CARDAPIO_TESTE
+    mock_get_destaques.return_value = [produto_id]
+    result = controller.remove_produto_destaques(comercio_nome, produto_id)
+    assert CARDAPIO_TESTE == result
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_produto_destaques_comercio_inexistente(mock_get_by_name, controller):
+    mock_get_by_name.return_value = None
+    comercio_nome = 'comercio2'
+    produto_id = 'idtesteproduto'
+    with pytest.raises(SolanchesNotFoundError) as e:
+        controller.remove_produto_destaques(comercio_nome, produto_id)
+    assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_produto_destaques_fora_comercio(mock_get_by_name, mock_get_produtos_ids, controller):
+    comercio_nome = 'comercio2'
+    produto_id = 'idtesteproduto'
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_produtos_ids.return_value = []
+    with pytest.raises(SolanchesNotFoundError) as e:
+        controller.remove_produto_destaques(comercio_nome, produto_id)
+    assert str(e.value.message) == f'Erro: produto com o id {produto_id} não cadastrado no comercio!'
+
+
+@mock.patch('solanches.models.Comercio.get_destaques')
+@mock.patch('solanches.models.Comercio.get_produtos_ids')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_remove_produto_destaques_produto_fora_dos_destaques(mock_get_by_name, mock_get_produtos_ids, mock_get_destaques, controller):
+    comercio_nome = 'comercio2'
+    produto_id = 'idtesteproduto'
+    mock_get_by_name.return_value = COMERCIO_TESTE
+    mock_get_produtos_ids.return_value = [produto_id]
+    mock_get_destaques.return_value = []
+    with pytest.raises(SolanchesBadRequestError) as e:
+        controller.remove_produto_destaques(comercio_nome, produto_id)
+    assert str(e.value.message) == f'Erro: produto com id {produto_id} não está nos destaques!'
 
 
 def test_remove_categoria_invalida(controller):

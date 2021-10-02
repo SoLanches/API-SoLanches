@@ -367,7 +367,6 @@ def test_cadastra_produto_comercio_sem_nome(client):
 
 @mock.patch('solanches.rest.controller.adiciona_destaque')
 def test_adiciona_destaque_sucesso(mock_adiciona_destaque, client):
-    exception_message = f'Erro: not found'
     comercio_nome = 'comerciotest'
     produto_id = 'produtoid'
     mock_adiciona_destaque.return_value = {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
@@ -377,6 +376,44 @@ def test_adiciona_destaque_sucesso(mock_adiciona_destaque, client):
     assert response.status_code == 201
     assert response_json == {'produtos': [], 'destaques': ['produto aleatorio', 'produto teste'], 'categorias': []}
 
+
+@mock.patch('solanches.rest.controller.remove_produto_destaques')
+def test_remove_destaque_not_authorized(mock_remove_produto_destaques, client):
+    expect_message = "não autorizado"
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_remove_produto_destaques.side_effect = SolanchesNotAuthorizedError(expect_message)
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.delete(url)
+    response_json = response.json
+    assert response.status_code == 401
+    assert response_json.get("message") == expect_message
+
+
+@mock.patch('solanches.rest.controller.remove_produto_destaques')
+def test_remove_destaque_internal_server_error(mock_remove_produto_destaques, client):
+    expect_message = "erro interno"
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    mock_remove_produto_destaques.side_effect = SolanchesInternalServerError(expect_message)
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.delete(url)
+    response_json = response.json
+    assert response.status_code == 500
+    assert response_json.get("message") == expect_message
+
+
+@mock.patch('solanches.rest.controller.remove_produto_destaques')
+def test_remove_destaque_sucesso(mock_remove_produto_destaques, client):
+    comercio_nome = 'comerciotest'
+    produto_id = 'produtoid'
+    expected_result = {"cardapio": "de teste"}
+    mock_remove_produto_destaques.return_value = expected_result
+    url = f'/comercio/{comercio_nome}/destaques/{produto_id}'
+    response = client.delete(url)
+    response_json = response.json
+    assert response.status_code == 200
+    assert response_json == expected_result
 
 
 @mock.patch('solanches.rest.controller.get_cardapio')
@@ -436,6 +473,54 @@ def test_get_produtos(mock_get_produtos, client):
     response_json = response.json
     assert response.status_code == 200
     assert response_json == PRODUTOS_TESTE
+
+
+@mock.patch('solanches.rest.controller.get_produtos_ids')
+def test_get_produtos_ids(mock_get_produtos_ids, client):
+    comercio_nome = 'comercio2'
+    expected_result = ["id1", "id2"]
+    mock_get_produtos_ids.return_value = expected_result
+    url = f'/comercio/{comercio_nome}/produtos/ids'
+    response = client.get(url)
+    response_json = response.json
+    assert response.status_code == 200
+    assert response_json == expected_result
+
+
+@mock.patch('solanches.rest.controller.adiciona_categoria')
+def test_adiciona_categoria_sucesso(mock_adiciona_categoria, client):
+    comercio_nome = 'comercio1'
+    categoria = {'categoria': 'salgados'}
+    mock_adiciona_categoria.return_value = CARDAPIO_TESTE
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.post(url, json = categoria)
+    response_json = response.json
+    assert response.status_code == 201
+    assert response_json == CARDAPIO_TESTE
+
+
+@mock.patch('solanches.rest.controller.adiciona_categoria')
+def test_adiciona_categoria_json_invalido(mock_remove_categoria, client):
+    mock_remove_categoria.return_value = CARDAPIO_TESTE
+    comercio_nome = 'comercio1'
+    categoria = "não sou um json valido"
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.post(url, data = categoria)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json.get("message") == "Erro: json inválido!"
+
+
+@mock.patch('solanches.rest.controller.adiciona_categoria')
+def test_adiciona_categoria_nao_informada(mock_remove_categoria, client):
+    mock_remove_categoria.return_value = CARDAPIO_TESTE
+    comercio_nome = 'comercio1'
+    categoria = {"sem": "categoria informada"}
+    url = f'/comercio/{comercio_nome}/categoria'
+    response = client.post(url, json = categoria)
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json.get("message") == "Erro: categoria não informada!"
 
 
 @mock.patch('solanches.rest.controller.remove_categoria')

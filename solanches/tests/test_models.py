@@ -650,7 +650,7 @@ class TestProduto:
     def produto_no_bd(self, db_test):
         db_test.produto.insert(PRODUTO_NO_BD)
 
-    def test_creat_and_save_produto(self, models):
+    def test_create_and_save_produto(self, models):
         nome = "nome do produto"
         attributes = {"preco": "40"}
 
@@ -713,3 +713,37 @@ class TestProduto:
         mock_produto_get_by_id.return_value = um_produto
         result = models.Produto.get_categoria(produto_id)
         assert result == categoria
+
+
+class TestBlockList:
+
+    @pytest.fixture
+    def um_token(self):
+        return "token"
+
+    @pytest.fixture
+    def token_no_bd(self, db_test):
+        token = {"_id": "token"}
+        db_test.block_list.insert_one(token)
+
+    def test_create_and_save_produto(self, models, um_token, db_test):
+        token = um_token
+        novo_token = models.BlockList(token)
+        id_novo_token = novo_token.save()
+
+        query = {"_id": id_novo_token}
+        result = db_test.block_list.find_one(query)
+
+        assert result
+        assert result.get("_id") == id_novo_token
+        assert result.get("date")
+
+    def test_contains_false(self, models):
+        token = "token"
+        result = models.BlockList.contains(token)
+        assert not result
+
+    def test_contains_true(self, models, token_no_bd):
+        token = "token"
+        result = models.BlockList.contains(token)
+        assert result
