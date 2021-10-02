@@ -52,16 +52,22 @@ COMERCIOS = [
     }
 ]
 
+COMERCIO_EDITADO = {
+    "_id": "1d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48", 
+    "nome": "comercio1",
+    "attributes": {"telefone": "4002-8922", "categoria": "1"}
+}
+
 PRODUTO = {
-        "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
-        "attributes": {
-            "categoria": "sa",
-            "descricao": "descrição do produto de teste1",
-            "imagem": "link de imagem",
-            "preco": 20.5
-        },
-        "created_at": 1631415611.4404533,
-        "nome": "produto"
+    "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
+    "attributes": {
+        "categoria": "sa",
+        "descricao": "descrição do produto de teste1",
+        "imagem": "link de imagem",
+        "preco": 20.5
+    },
+    "created_at": 1631415611.4404533,
+    "nome": "produto"
 }
 
 
@@ -76,15 +82,15 @@ CARDAPIO = {
 }
 
 PRODUTO_EDITADO = {
-        "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
-        "attributes": {
-            "categoria": "sa",
-            "descricao": "descrição atualizada",
-            "imagem": "link de imagem",
-            "preco": 20.5
-        },
-        "created_at": 1631415611.4404533,
-        "nome": "produto"
+    "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
+    "attributes": {
+        "categoria": "sa",
+        "descricao": "descrição atualizada",
+        "imagem": "link de imagem",
+        "preco": 20.5
+    },
+    "created_at": 1631415611.4404533,
+    "nome": "produto"
 }
 
 COMERCIO_NO_BD = {

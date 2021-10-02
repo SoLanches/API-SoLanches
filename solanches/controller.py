@@ -58,7 +58,8 @@ def get_comercio_by_name(comercio_nome):
 
 
 def atualiza_comercio(attributes, comercio_nome):
-    _assert(attributes and isinstance(attributes, dict), 'Erro: attributes inválidos')
+    _assert(comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!')
+    _assert(attributes and isinstance(attributes, dict), "Erro: campo attributes inválidos!")
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}

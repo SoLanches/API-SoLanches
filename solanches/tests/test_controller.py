@@ -8,6 +8,7 @@ from solanches.tests.data_test import *
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
 
+import pytest
 
 @pytest.fixture
 def comercios():
@@ -41,6 +42,11 @@ def um_cardapio():
 @pytest.fixture
 def comercios():
     return copy.deepcopy(COMERCIOS)
+
+
+@pytest.fixture
+def comercio_editado():
+    return COMERCIO_EDITADO
 
 
 @mock.patch('solanches.controller.Comercio.get_all')
@@ -295,6 +301,46 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     mock_remove_comercio.return_value = 1
     result = controller.remove_comercio(comercio_nome)
     assert result == 1
+
+
+def test_edita_comercio_com_nome_invalido(controller):
+    nome_invalido = 18189
+    attributes = {"endereco": "2344222"}
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.atualiza_comercio(attributes, nome_invalido)
+    assert str(excinfo.value.message) == 'Erro: nome de comercio inválido!'
+
+
+def test_edita_comercio_atributos_invalidos(controller):
+    nome_comercio = "comercio1"
+    attributes = "atributos"
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.atualiza_comercio(attributes, nome_comercio)
+    assert str(excinfo.value.message) == "Erro: campo attributes inválidos!"
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_edita_comercio_nao_cadastrado(mock_get_by_name, controller):
+    nome_comercio = "comercio1"
+    attributes = {"endereco": "2344222"}
+    mock_get_by_name.return_value = None
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
+        controller.atualiza_comercio(attributes, nome_comercio)
+    assert str(excinfo.value.message) == 'Erro: comercio com o nome comercio1 não cadastrado!'
+
+
+@mock.patch('solanches.controller.Comercio.update')
+@mock.patch('solanches.controller.Comercio.get_by_name')
+def test_edita_comercio_sucesso(mock_comercio_by_name, mock_update, controller, um_comercio, comercio_editado):
+    nome_comercio = "comercio1"
+    attributes = {"telefone": "4002-8922", "categoria": "1"}
+
+    mock_comercio_by_name.return_value = um_comercio
+    mock_update.return_value = comercio_editado
+    mock_comercio_by_name.return_value = comercio_editado
+
+    result = controller.atualiza_comercio(attributes, nome_comercio)
+    assert result == comercio_editado
 
 
 @mock.patch('solanches.models.Produto.to_dict')

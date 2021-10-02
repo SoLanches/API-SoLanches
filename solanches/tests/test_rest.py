@@ -1,4 +1,5 @@
 from unittest import mock
+
 import pytest
 
 from solanches.errors import *
@@ -510,6 +511,42 @@ def test_remove_produto_comercio_inexistente(mock_remove_produto, client):
     response_json = response.json
     assert response.status_code == 404
     assert response_json['message'] == exception_message
+
+
+def test_edita_comercio_com_json_invalido(client):
+    comercio_json_invalido = 0
+    url = '/comercio/solanches'
+    response = client.patch(url, data=comercio_json_invalido)
+
+    response_json = response.json
+    assert response.status_code == 400
+    assert response_json['message'] == "Erro: json inválido!"
+
+
+def test_edita_comercio_sem_atributos(client):
+    comercio_sem_atributos = {
+        "nome": "comercio_teste1"
+    }
+    url = '/comercio/solanches'
+    response = client.patch(url, json=comercio_sem_atributos)
+    response_json = response.json
+
+    assert response.status_code == 400
+    assert isinstance(response_json, dict)
+
+
+@mock.patch('solanches.rest.controller.atualiza_comercio')
+def test_edita_comercio(mock_atualiza_comercio, client):
+    updated_base = {
+        "_id": "idTest",
+        "nome": "SoLanches Comercio", 
+        "attributes": { "telefone": "4002-8922", "email": "solanches@solania.com", "endereco": "rua floriano peixoto"},
+        "created_at": 87443324.6475
+    }
+    mock_atualiza_comercio.return_value = updated_base
+    response = client.patch("/comercio/solanches", json=updated_base)
+    assert response.status_code == 200
+    assert isinstance(response.json, dict)
 
 
 @mock.patch('solanches.rest.controller.edita_produto')
