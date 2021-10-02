@@ -12,7 +12,7 @@ MODULE=solanches
 BIND=$(SOLANCHES_HOST):$(SOLANCHES_PORT)
 
 help:
-	@echo "uso: make [ venv | run | run-dev | test ]"
+	@echo "uso: make [ venv | run | run-dev | test | test-cov | deploy ]"
 
 venv: $(VENV)/bin/activate
 
@@ -35,6 +35,9 @@ $(TESTS-REQS-INSTALLED): tests-requirements.txt
 	$(PIP) install --upgrade pip
 	$(PIP) install --requirement tests-requirements.txt
 	touch $(TESTS-REQS-INSTALLED)
+
+test-cov: venv $(TESTS-REQS-INSTALLED)
+	$(VENV)/bin/pytest -v --cov=solanches
 
 deploy:
 	./bin/make_deploy

@@ -2,7 +2,7 @@ import datetime
 import jwt
 
 from . import connect2db
-from . models import Produto, Comercio, BlockList
+from . models import Comercio, BlockList
 from . errors import SolanchesBadRequestError
 from . errors import SolanchesNotFoundError
 from . errors import SolanchesInternalServerError
@@ -16,10 +16,10 @@ def _assert(condition, message, SolanchesError=SolanchesBadRequestError):
 
 def cadastra_comercio(nome, password, attributes):
     _assert(nome and type(nome) is str, 'Erro: campo nome inválido!')
-    _assert(password and type(password) is str, "Erro: Senha não informada!")
+    _assert(password and type(password) is str, "Erro: campo senha inválido!")
     _assert(attributes and type(attributes) is dict, 'Erro: campo attributes inválidos!')
     _assert("endereco" in attributes, 'Erro: campo endereco não informado!')
-    _assert("horarios" in attributes, 'Erro: campo horarios não informados!')
+    _assert("horarios" in attributes, 'Erro: campo horarios não informado!')
     try:
         novo_comercio = Comercio(nome, password, attributes)
         novo_comercio.save()
@@ -59,7 +59,8 @@ def get_comercio_by_name(comercio_nome):
 
 
 def atualiza_comercio(attributes, comercio_nome):
-    _assert(attributes and isinstance(attributes, dict), 'Erro: attributes inválidos')
+    _assert(comercio_nome and type(comercio_nome) is str, 'Erro: nome de comercio inválido!')
+    _assert(attributes and isinstance(attributes, dict), "Erro: campo attributes inválidos!")
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     set_attributes = {f'attributes.{field}': value for field, value in attributes.items()}
@@ -91,8 +92,8 @@ def cadastra_produto(comercio_nome, nome_produto, attributes):
     _assert(type(attributes) is dict if attributes else True, "Erro: campo attributes inválidos!")
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
-    novo_produto = Produto(nome_produto, attributes)
-    produto_cadastrado = Comercio.add_produto(novo_produto, comercio_nome)
+    produto_data = {"nome": nome_produto, "attributes": attributes}
+    produto_cadastrado = Comercio.add_produto(comercio_nome, produto_data)
     result = produto_cadastrado.to_dict()
     return result
 
@@ -133,7 +134,7 @@ def edita_produto(produto_id, comercio_nome, attributes, nome):
     _assert(comercio_nome and type(comercio_nome) is str, "Erro: nome de comércio inválido")
     _assert(produto_id and type(produto_id) is str, "Erro: produto com id inválido!")
     _assert(attributes and type(attributes) is dict if attributes else True, "Erro: attributes inválidos!")
-    _assert(nome and type(nome) is str if nome else True, "Erro: nome inválido!")
+    _assert(nome and type(nome) is str if nome else True, "Erro: nome do produto inválido!")
 
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
@@ -153,7 +154,7 @@ def edita_produto(produto_id, comercio_nome, attributes, nome):
 def remove_produto(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
-    produto_no_comercio = produto_id in Comercio.get_produtos_ids(comercio_nome)
+    produto_no_comercio =  produto_id in Comercio.get_produtos_ids(comercio_nome)
     _assert(produto_no_comercio, f'Erro: produto com o id {produto_id} não cadastrado no comercio!', SolanchesNotFoundError)
     Comercio.remove_produto(comercio_nome, produto_id)
     cardapio = get_cardapio(comercio_nome)
@@ -166,7 +167,7 @@ def adiciona_destaque(comercio_nome, produto_id):
 
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
-    produto_no_comercio = produto_id in Comercio.get_produtos_ids(comercio_nome)
+    produto_no_comercio =  produto_id in Comercio.get_produtos_ids(comercio_nome)
     _assert(produto_no_comercio, f'Erro: produto com o id {produto_id} não cadastrado no comercio!', SolanchesNotFoundError)
     produto_nos_destaques = produto_id in Comercio.get_destaques(comercio_nome)
     _assert(not produto_nos_destaques, f'Erro: produto já está nos destaques!')
@@ -181,7 +182,7 @@ def remove_produto_destaques(comercio_nome, produto_id):
     comercio = Comercio.get_by_name(comercio_nome)
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     _assert(produto_id and type(produto_id) is str, 'Erro: produto com id inválido!')
-    produto_no_comercio = produto_id in Comercio.get_produtos_ids(comercio_nome)
+    produto_no_comercio =  produto_id in Comercio.get_produtos_ids(comercio_nome)
     _assert(produto_no_comercio, f'Erro: produto com o id {produto_id} não cadastrado no comercio!', SolanchesNotFoundError)
     produto_nos_destaques = produto_id in Comercio.get_destaques(comercio_nome)
     _assert(produto_nos_destaques, f'Erro: produto com id {produto_id} não está nos destaques!')
@@ -221,7 +222,7 @@ def login(comercio_nome, password, secret):
 
     payload = {
         'id': comercio.get("_id"),
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
     }
 
     token = jwt.encode(payload, secret, algorithm="HS256")
