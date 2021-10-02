@@ -220,7 +220,7 @@ def login(comercio_nome, password, secret):
 
     payload = {
         'id': comercio.get("_id"),
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
     }
 
     token = jwt.encode(payload, secret, algorithm="HS256")

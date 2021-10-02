@@ -3,7 +3,7 @@ import copy
 
 import pytest
 
-from . data_test import CARDAPIO_COM_CATEGORIA_MODELS_TEST, CARDAPIO_COM_DESTAQUE_MODELS_TEST, CARDAPIO_COM_PRODUTO_MODELS_TEST, CARDAPIO_MODELS_TEST, COMERCIO_NO_BD, PRODUTO_CARDAPIO_MODELS_TEST
+from . data_test import *
 
 
 class TestComercio:
@@ -638,3 +638,78 @@ class TestCardapio:
         assert get_cardapio_by_id_param == cardapio_id
         assert isinstance(categorias, list)
         assert categorias == []
+
+
+class TestProduto:
+    
+    @pytest.fixture
+    def um_produto(self):
+        return copy.deepcopy(PRODUTO_NO_BD)
+
+    @pytest.fixture
+    def produto_no_bd(self, db_test):
+        db_test.produto.insert(PRODUTO_NO_BD)
+
+    def test_creat_and_save_produto(self, models):
+        nome = "nome do produto"
+        attributes = {"preco": "40"}
+
+        novo_produto = models.Produto(nome, attributes)
+        novo_produto.save()
+        produto_saved = novo_produto.to_dict()
+
+        assert produto_saved.get("_id")
+        assert produto_saved.get("created_at")
+        assert produto_saved.get("nome") == nome
+        assert produto_saved.get("attributes") == attributes
+
+    def test_update_produto(self, models, um_produto, produto_no_bd, db_test):
+        produto_id = um_produto.get("_id")
+        new_attributes = {"nome": "pastel de frango açucarado", "attributes": {"valor": "3"}}
+        models.Produto.update(produto_id, new_attributes)
+        
+        query = {"_id": produto_id}
+        result = db_test.produto.find_one(query)
+
+        updated_name = result.get("nome")
+        updated_attributes = result.get("attributes")
+        
+        assert all(attr in new_attributes.get("attributes") for attr in updated_attributes)
+        assert new_attributes.get("nome") == updated_name
+
+    def test_get_by_id(self, models, um_produto, produto_no_bd):
+        produto_id = um_produto.get("_id")
+        produto = models.Produto.get_by_id(produto_id)
+        assert produto == um_produto
+
+    def test_get_produto_by_id_nao_cadastrado(self, models, produto_no_bd):
+        produto_id = "id aleatório"
+        produto = models.Produto.get_by_id(produto_id)
+        assert not produto
+    
+    def test_remove_produtos(self, models, um_produto, produto_no_bd, db_test):
+        id_produto = um_produto.get("_id")
+        models.Produto.remove_produtos([id_produto])
+        query = {"_id": id_produto}
+        result = db_test.produto.find_one(query)
+        assert not result
+  
+    def test_get_all_produtos(self, models, um_produto, produto_no_bd):
+        result = models.Produto.get_all()
+        assert isinstance(result, list)
+        assert um_produto in result
+
+    def test_remove_um_produto(self, models, um_produto, db_test, produto_no_bd):
+        produto_id = um_produto.get("_id")
+        models.Produto.remove(produto_id)
+        query = {"_id": produto_id}
+        result = db_test.produto.find_one(query)
+        assert not result
+    
+    @mock.patch("solanches.models.Produto.get_by_id")
+    def test_get_categoria(self, mock_produto_get_by_id, models, um_produto, db_test, produto_no_bd):
+        produto_id = um_produto.get("_id")
+        categoria = um_produto.get("attributes").get("categoria", "")
+        mock_produto_get_by_id.return_value = um_produto
+        result = models.Produto.get_categoria(produto_id)
+        assert result == categoria
