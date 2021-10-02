@@ -1,9 +1,20 @@
+PRODUTOS_COMERCIO = [
+    {
+         "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50", 
+        "nome": "comercio_test1",
+        "attributes": {}
+    }
+
+]
+
+
 CARDAPIO = {
     "_id": "6b6aae29176271992b0278509f15a63900f1f1a9",
     "created_at": 1631415578.674395,
     "destaques": [],
     "produtos": []
 }
+
 
 COMERCIO = {
     "_id": "6b6aae29176271992b0278509f15a63900f1f1a9",
@@ -21,6 +32,7 @@ COMERCIO = {
     "created_at": 1631415578.674395,
     "nome": "solanches"
 }
+
 
 COMERCIOS = [
     {

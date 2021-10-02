@@ -4,12 +4,16 @@ import copy
 import pytest
 from pymongo import errors
 
-from . data_test import *
+from solanches.tests.data_test import *
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
 
 
 @pytest.fixture
+def comercios():
+    return copy.deepcopy(COMERCIOS)
+
+
 def um_cardapio():
     return copy.deepcopy(CARDAPIO)
 
@@ -128,8 +132,7 @@ def test_get_comercio_by_name_nao_cadastrado(mock_comercio_by_name, controller):
     assert str(excinfo.value.message) == f'Erro: comercio com o nome {nome_invalido} não cadastrado!'
 
 
-@mock.patch('solanches.controller.Comercio.get_by_name')
-def test_get_comercio_by_name_com_nome_nao_str(mock_comercio_by_name, controller):
+def test_get_comercio_by_name_com_nome_nao_str(controller):
     nome_invalido = 123
     with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.get_comercio_by_name(nome_invalido)
@@ -292,6 +295,54 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     mock_remove_comercio.return_value = 1
     result = controller.remove_comercio(comercio_nome)
     assert result == 1
+
+
+@mock.patch('solanches.models.Produto.to_dict')
+@mock.patch('solanches.models.Comercio.add_produto')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_cadastra_produto(mock_get_by_name, mock_add_produto, mock_produto_to_dict, controller, models, um_comercio, um_produto):
+    produto_nome = "produto teste7"
+    comercio_nome = 'comercio_test1'
+    attributes = {
+        "descricao": "descrição do produto de teste1",
+        "imagem": "link de imagem",
+        "preco": 20.50,
+        "categoria": "salgados"
+    }
+
+    mock_get_by_name.return_value = um_comercio
+    mock_add_produto.return_value = mock.Mock(wraps=models.Produto)
+    mock_produto_to_dict.return_value = um_produto
+
+    result = controller.cadastra_produto(comercio_nome, produto_nome, attributes)
+    
+    expected_fields = ["nome", "attributes"]
+    result_fields = result.keys()
+    assert all(field in result_fields for field in expected_fields)
+    assert result == um_produto
+
+
+def test_cadastra_produto_nome_invalido(controller):
+    nome_produto = 0
+    nome_comercio = {'nome': "nome_comercio"}
+    attributes = {
+      "descricao": "descricao do produto",
+      "preco": 20.50
+    }
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_produto(nome_comercio, nome_produto, attributes)
+    assert str(exinfo.value.message) == "Erro: nome inválido!"
+
+
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_cadastra_produto_atributos_invalidos(mock_get_by_name, controller, um_comercio):
+    nome_produto = "nome_produto"
+    nome_comercio = "nome_comercio"
+    comercio_attributes = 3763737
+    mock_get_by_name.return_value = um_comercio
+    with pytest.raises(SolanchesBadRequestError) as exinfo:
+        controller.cadastra_produto(nome_comercio, nome_produto, comercio_attributes)
+    assert str(exinfo.value.message) == "Erro: campo attributes inválidos!"
 
 
 def test_edita_produto_comercio_invalido(controller):
