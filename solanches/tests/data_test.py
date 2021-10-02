@@ -106,28 +106,35 @@ COMERCIO_TESTE = {
 }
 
 PRODUTO_TESTE = {
-     "_id": "idtesteproduto", 
+    "_id": "idtesteproduto", 
     "nome": "produto comercio2",
     "attributes": {"preco": "40"},
 }
 
 PRODUTOS_TESTE = [
     {
-         "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50", 
+        "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50",
         "nome": "produto comercio2",
         "attributes": {"preco": "45"}
     },
     {
-         "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f51", 
+        "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f51",
         "nome": "produto comercio2",
         "attributes": {"preco": "45"}
     },
     {
-        "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f52", 
+        "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f52",
         "nome": "produto comercio2",
         "attributes": {"preco": "45"}
    }
 ]
+
+PRODUTO_NO_BD = {
+    "_id" : "tested01f3670d20bb66c0f0711dee397c61cb84",
+    "nome" : "comercio teste",
+    "created_at" : 1631804210.31025,
+    "attributes": {"preco": "45"}
+}
 
 
 CARDAPIO_TESTE = {
@@ -135,4 +142,45 @@ CARDAPIO_TESTE = {
     "produtos": [],
     "destaques": [],
     "categorias": []
+}
+
+CARDAPIO_MODELS_TEST = {
+    "_id": "id do cardapio",
+    "categorias": [],
+    "created_at": 1632159992.3423245,
+    "destaques": [],
+    "produtos": []
+}
+
+PRODUTO_CARDAPIO_MODELS_TEST = {
+    "_id": "id do produto",
+    "attributes": {
+        "categoria": "nome da categoria"
+    },
+    "created_at": 1632249299.7731967,
+    "nome": "nome do produto"
+}
+
+CARDAPIO_COM_PRODUTO_MODELS_TEST = {
+    "_id": "id do cardapio",
+    "categorias": [],
+    "created_at": 1632159992.3423245,
+    "destaques": [],
+    "produtos": ["id do produto"]
+}
+
+CARDAPIO_COM_DESTAQUE_MODELS_TEST = {
+    "_id": "id do cardapio",
+    "categorias": [],
+    "created_at": 1632159992.3423245,
+    "destaques": ["id do produto"],
+    "produtos": ["id do produto"]
+}
+
+CARDAPIO_COM_CATEGORIA_MODELS_TEST = {
+    "_id": "id do cardapio",
+    "categorias": ["nome da categoria"],
+    "created_at": 1632159992.3423245,
+    "destaques": [],
+    "produtos": []
 }

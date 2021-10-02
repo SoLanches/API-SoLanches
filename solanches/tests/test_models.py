@@ -3,7 +3,7 @@ import copy
 
 import pytest
 
-from . data_test import COMERCIO_NO_BD
+from . data_test import *
 
 
 class TestComercio:
@@ -37,7 +37,7 @@ class TestComercio:
         assert comercio_saved.get("attributes") == attributes
 
     def test_get_comercio_by_id(self, models, um_comercio, comercio_no_bd):
-        comercio_id = um_comercio["_id"]
+        comercio_id = um_comercio.get("_id")
         um_comercio.pop("password")
         comercio = models.Comercio.get_by_id(comercio_id)
         assert comercio == um_comercio
@@ -73,7 +73,7 @@ class TestComercio:
         assert result == []
 
     def test_update_comercio_attributes(self, models, um_comercio, comercio_no_bd, db_test):
-        comercio_id = um_comercio["_id"]
+        comercio_id = um_comercio.get("_id")
         new_attributes = {"attributes": {"at1": "v1", "at2": "v2"}}
         models.Comercio.update(comercio_id, new_attributes)
         query = {"_id": comercio_id}
@@ -298,3 +298,418 @@ class TestComercio:
         get_categorias_cardapio_params = mock_cardapio_get_categorias.call_args[0][0]
         assert get_categorias_cardapio_params == cardapio_id
         assert result == expected_result
+
+class TestCardapio:
+
+    @pytest.fixture
+    def um_produto(self):
+        return copy.deepcopy(PRODUTO_CARDAPIO_MODELS_TEST)
+
+    @pytest.fixture
+    def um_cardapio(self):
+        return copy.deepcopy(CARDAPIO_MODELS_TEST)
+
+    @pytest.fixture
+    def cardapio_no_bd(self, db_test):
+        db_test.cardapio.insert_one(CARDAPIO_MODELS_TEST)
+
+    @pytest.fixture
+    def um_cardapio_com_produto(self):
+        return copy.deepcopy(CARDAPIO_COM_PRODUTO_MODELS_TEST)
+    
+    @pytest.fixture
+    def cardapio_com_produto_no_bd(self, db_test):
+        db_test.cardapio.insert_one(CARDAPIO_COM_PRODUTO_MODELS_TEST)
+
+    @pytest.fixture
+    def um_cardapio_com_destaque(self):
+        return copy.deepcopy(CARDAPIO_COM_DESTAQUE_MODELS_TEST)
+
+    @pytest.fixture
+    def cardapio_com_destaque_no_bd(self, db_test):
+        db_test.cardapio.insert_one(CARDAPIO_COM_DESTAQUE_MODELS_TEST)
+   
+    @pytest.fixture
+    def um_cardapio_com_categoria(self):
+        return copy.deepcopy(CARDAPIO_COM_CATEGORIA_MODELS_TEST)
+
+    @pytest.fixture
+    def cardapio_com_categoria_no_bd(self, db_test):
+        db_test.cardapio.insert_one(CARDAPIO_COM_CATEGORIA_MODELS_TEST)
+
+    def test_create_and_save_cardapio(self, models):
+        cardapio_id = "id do cardapio"
+
+        novo_cardapio = models.Cardapio(cardapio_id)
+        novo_cardapio.save()
+        cardapio_saved = novo_cardapio.to_dict()
+
+        assert cardapio_saved.get("_id")
+        assert cardapio_saved.get("_id") == cardapio_id
+        assert cardapio_saved.get("created_at")
+        assert isinstance(cardapio_saved.get("categorias"), list)
+        assert not cardapio_saved.get("categorias")
+        assert isinstance(cardapio_saved.get("destaques"), list)
+        assert not cardapio_saved.get("destaques")
+        assert isinstance(cardapio_saved.get("produtos"), list)
+        assert not cardapio_saved.get("produtos")
+
+    def test_get_cardapio_by_id(self, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        cardapio = models.Cardapio.get_by_id(cardapio_id)
+        assert cardapio == um_cardapio
+
+    def test_get_cardapio_by_id_nao_cadastrado(self, models, cardapio_no_bd):
+        cardapio_id = "id nao cadastrado"
+        cardapio = models.Cardapio.get_by_id(cardapio_id)
+        assert not cardapio
+
+    def test_get_all_cardapios(self, models, um_cardapio, cardapio_no_bd):
+        cardapios = models.Cardapio.get_all()
+        assert isinstance(cardapios, list)
+        assert um_cardapio in cardapios
+
+    def test_get_all_cardapios_vazio(self, models):
+        cardapios = models.Cardapio.get_all()
+        assert isinstance(cardapios, list)
+        assert cardapios == []
+
+    @mock.patch("solanches.models.Produto.save")
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_add_produto_cardapio(self, mock_get_cardapio_by_id, mock_save_produto, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        produto_id = "id do produto"
+        produto_data = {"nome": "produto", "attributes": {"at1": "v1"}}
+        mock_get_cardapio_by_id.return_value = um_cardapio
+        mock_save_produto.return_value = produto_id
+        
+        result = models.Cardapio.add_produto(cardapio_id, produto_data)
+        
+        produtos = um_cardapio.get("produtos")
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert len(produtos) == 1
+        assert produto_id in produtos
+        assert isinstance(result, models.Produto)
+        
+    @mock.patch("solanches.models.Produto.remove_produtos")
+    @mock.patch("solanches.models.Cardapio.get_produtos")
+    def test_remove_cardapio(self, mock_get_produtos, mock_remove_produtos, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        produtos = um_cardapio.get("produtos")
+        mock_get_produtos.return_value = produtos
+        
+        models.Cardapio.remove_cardapio(cardapio_id)
+        
+        get_produtos_param = mock_get_produtos.call_args[0][0]
+        remove_produtos_param = mock_remove_produtos.call_args[0][0]
+        assert get_produtos_param == cardapio_id
+        assert remove_produtos_param == produtos
+
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_add_produto_destaque(self, mock_get_cardapio_by_id, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        produto_id = "id do produto"
+        mock_get_cardapio_by_id.return_value = um_cardapio
+
+        models.Cardapio.add_destaque(cardapio_id, produto_id)
+
+        destaques = um_cardapio["destaques"]
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert len(destaques) == 1
+        assert produto_id in destaques
+
+    @mock.patch("solanches.models.Produto.get_by_id")
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_produto_cardapio(self, mock_get_cardapio_by_id, mock_get_produto_by_id, models, um_cardapio_com_produto, um_produto, cardapio_com_produto_no_bd):
+        cardapio_id = um_cardapio_com_produto.get("_id")
+        produto_id = um_produto.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio_com_produto
+        mock_get_produto_by_id.return_value = um_produto
+        
+        produto = models.Cardapio.get_produto(cardapio_id, produto_id)
+        
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        get_produto_by_id_param = mock_get_produto_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert get_produto_by_id_param == produto_id
+        assert produto == um_produto
+
+    @mock.patch("solanches.models.Produto.get_by_id")
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_produto_cardapio_nao_cadastrado(self, mock_get_cardapio_by_id, mock_get_produto_by_id, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        produto_id = "id nao cadastrado"
+        mock_get_cardapio_by_id.return_value = um_cardapio
+        mock_get_produto_by_id.return_value = None
+        produto = models.Cardapio.get_produto(cardapio_id, produto_id)
+        assert not produto
+
+    @mock.patch("solanches.models.Produto.get_by_id")
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_produtos_cardapio(self, mock_get_cardapio_by_id, mock_get_produto_by_id, models, um_cardapio_com_produto, um_produto, cardapio_com_produto_no_bd):
+        cardapio_id = um_cardapio_com_produto.get("_id")
+        produto_id = um_produto.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio_com_produto
+        mock_get_produto_by_id.return_value = um_produto
+        
+        produtos = models.Cardapio.get_produtos(cardapio_id)
+        
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        get_produto_by_id_param = mock_get_produto_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert get_produto_by_id_param == produto_id
+        assert isinstance(produtos, list)
+        assert um_produto in produtos
+
+    @mock.patch("solanches.models.Produto.get_by_id")
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_produtos_cardapio_vazio(self, mock_get_cardapio_by_id, mock_get_produto_by_id, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio
+        mock_get_produto_by_id.return_value = None
+        
+        produtos = models.Cardapio.get_produtos(cardapio_id)
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(produtos, list)
+        assert produtos == []
+    
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_produtos_ids_cardapio(self, mock_get_cardapio_by_id, models, um_cardapio_com_produto, um_produto, cardapio_com_produto_no_bd):
+        cardapio_id = um_cardapio_com_produto.get("_id")
+        produto_id = um_produto.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio_com_produto
+        
+        produtos = models.Cardapio.get_produtos_ids(cardapio_id)
+
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(produtos, list)
+        assert produto_id in produtos
+
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_produtos_ids_cardapio_vazio(self, mock_get_cardapio_by_id, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio
+        
+        produtos = models.Cardapio.get_produtos_ids(cardapio_id)
+        
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(produtos, list)
+        assert produtos == []
+
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_destaques_cardapio(self, mock_get_cardapio_by_id, models, um_cardapio_com_destaque, um_produto, cardapio_com_destaque_no_bd):
+        cardapio_id = um_cardapio_com_destaque.get("_id")
+        produto_id = um_produto.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio_com_destaque
+        
+        destaques = models.Cardapio.get_destaques(cardapio_id)
+        
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(destaques, list)
+        assert len(destaques) == 1
+        assert produto_id in destaques 
+
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_destaques_cardapio_vazio(self, mock_get_cardapio_by_id, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio
+        
+        destaques = models.Cardapio.get_destaques(cardapio_id)
+        
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(destaques, list)
+        assert destaques == []
+
+    @mock.patch("solanches.models.Produto.update")
+    def test_update_produto(self, mock_update_produto, models, um_produto):
+        produto_id = um_produto.get("_id")
+        fields = {"attributes": {"at1": "v1"}}
+        
+        models.Cardapio.update_produto(produto_id, fields)
+        
+        update_produto_params = mock_update_produto.call_args[0]
+        assert update_produto_params == (produto_id, fields)
+
+    @mock.patch("solanches.models.Produto.remove")
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_remove_produto_cardapio(self, mock_get_cardapio_by_id, mock_remove_produto, models, um_cardapio_com_destaque, um_produto, cardapio_com_destaque_no_bd):
+        cardapio_id = um_cardapio_com_destaque.get("_id")
+        produto_id = um_produto.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio_com_destaque
+        
+        models.Cardapio.remove_produto(cardapio_id, produto_id)
+        
+        produtos = um_cardapio_com_destaque.get("produtos")
+        destaques = um_cardapio_com_destaque.get("destaques")
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        remove_produto_param = mock_remove_produto.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert remove_produto_param == produto_id
+        assert isinstance(produtos, list)
+        assert produto_id not in produtos
+        assert produto_id not in destaques
+
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_remove_produto_destaques_cardapio(self, mock_get_cardapio_by_id, models, um_cardapio_com_destaque, um_produto, cardapio_com_destaque_no_bd):
+        cardapio_id = um_cardapio_com_destaque.get("_id")
+        produto_id = um_produto.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio_com_destaque
+        
+        models.Cardapio.remove_produto_destaques(cardapio_id, produto_id)
+        
+        produtos = um_cardapio_com_destaque.get("produtos")
+        destaques = um_cardapio_com_destaque.get("destaques")
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(produtos, list)
+        assert produto_id in produtos
+        assert produto_id not in destaques
+
+    @mock.patch("solanches.models.Produto.get_categoria")
+    def test_get_produto_categoria(self, mock_get_categoria_produto, models, um_produto):
+        produto_id = um_produto.get("_id")
+        categoria = um_produto.get("attributes").get("categoria")
+        mock_get_categoria_produto.return_value = categoria
+        
+        result = models.Cardapio.get_produto_categoria(produto_id)
+
+        get_categoria_produto_param = mock_get_categoria_produto.call_args[0][0]
+        assert get_categoria_produto_param == produto_id
+        assert result == categoria
+    
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_add_categoria_cardapio(self, mock_get_cardapio_by_id, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        categoria = "nome da categoria"
+        mock_get_cardapio_by_id.return_value = um_cardapio
+        
+        models.Cardapio.add_categoria(cardapio_id, categoria)
+        
+        categorias = um_cardapio.get("categorias")
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(categorias, list)
+        assert len(categorias) == 1
+        assert categoria in categorias
+
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_remove_categoria_cardapio(self, mock_get_cardapio_by_id, models, um_cardapio_com_categoria, cardapio_com_categoria_no_bd):
+        cardapio_id = um_cardapio_com_categoria.get("_id")
+        categoria = um_cardapio_com_categoria.get("categorias")[0]
+        mock_get_cardapio_by_id.return_value = um_cardapio_com_categoria
+        
+        models.Cardapio.remove_categoria(cardapio_id, categoria)
+        
+        categorias = um_cardapio_com_categoria["categorias"]
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(categorias, list)
+        assert len(categorias) == 0
+        assert categoria not in categorias
+
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_categorias_cardapio(self, mock_get_cardapio_by_id, models, um_cardapio_com_categoria, cardapio_com_categoria_no_bd):
+        cardapio_id = um_cardapio_com_categoria.get("_id")
+        expected_result = um_cardapio_com_categoria.get("categorias")
+        mock_get_cardapio_by_id.return_value = um_cardapio_com_categoria
+        
+        categorias = models.Cardapio.get_categorias(cardapio_id)
+        
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(categorias, list)
+        assert categorias == expected_result
+
+    @mock.patch("solanches.models.Cardapio.get_by_id")
+    def test_get_categorias_cardapio_vazio(self, mock_get_cardapio_by_id, models, um_cardapio, cardapio_no_bd):
+        cardapio_id = um_cardapio.get("_id")
+        mock_get_cardapio_by_id.return_value = um_cardapio
+        
+        categorias = models.Cardapio.get_categorias(cardapio_id)
+        
+        get_cardapio_by_id_param = mock_get_cardapio_by_id.call_args[0][0]
+        assert get_cardapio_by_id_param == cardapio_id
+        assert isinstance(categorias, list)
+        assert categorias == []
+
+
+class TestProduto:
+    
+    @pytest.fixture
+    def um_produto(self):
+        return copy.deepcopy(PRODUTO_NO_BD)
+
+    @pytest.fixture
+    def produto_no_bd(self, db_test):
+        db_test.produto.insert(PRODUTO_NO_BD)
+
+    def test_creat_and_save_produto(self, models):
+        nome = "nome do produto"
+        attributes = {"preco": "40"}
+
+        novo_produto = models.Produto(nome, attributes)
+        novo_produto.save()
+        produto_saved = novo_produto.to_dict()
+
+        assert produto_saved.get("_id")
+        assert produto_saved.get("created_at")
+        assert produto_saved.get("nome") == nome
+        assert produto_saved.get("attributes") == attributes
+
+    def test_update_produto(self, models, um_produto, produto_no_bd, db_test):
+        produto_id = um_produto.get("_id")
+        new_attributes = {"nome": "pastel de frango açucarado", "attributes": {"valor": "3"}}
+        models.Produto.update(produto_id, new_attributes)
+        
+        query = {"_id": produto_id}
+        result = db_test.produto.find_one(query)
+
+        updated_name = result.get("nome")
+        updated_attributes = result.get("attributes")
+        
+        assert all(attr in new_attributes.get("attributes") for attr in updated_attributes)
+        assert new_attributes.get("nome") == updated_name
+
+    def test_get_by_id(self, models, um_produto, produto_no_bd):
+        produto_id = um_produto.get("_id")
+        produto = models.Produto.get_by_id(produto_id)
+        assert produto == um_produto
+
+    def test_get_produto_by_id_nao_cadastrado(self, models, produto_no_bd):
+        produto_id = "id aleatório"
+        produto = models.Produto.get_by_id(produto_id)
+        assert not produto
+    
+    def test_remove_produtos(self, models, um_produto, produto_no_bd, db_test):
+        id_produto = um_produto.get("_id")
+        models.Produto.remove_produtos([id_produto])
+        query = {"_id": id_produto}
+        result = db_test.produto.find_one(query)
+        assert not result
+  
+    def test_get_all_produtos(self, models, um_produto, produto_no_bd):
+        result = models.Produto.get_all()
+        assert isinstance(result, list)
+        assert um_produto in result
+
+    def test_remove_um_produto(self, models, um_produto, db_test, produto_no_bd):
+        produto_id = um_produto.get("_id")
+        models.Produto.remove(produto_id)
+        query = {"_id": produto_id}
+        result = db_test.produto.find_one(query)
+        assert not result
+    
+    @mock.patch("solanches.models.Produto.get_by_id")
+    def test_get_categoria(self, mock_produto_get_by_id, models, um_produto, db_test, produto_no_bd):
+        produto_id = um_produto.get("_id")
+        categoria = um_produto.get("attributes").get("categoria", "")
+        mock_produto_get_by_id.return_value = um_produto
+        result = models.Produto.get_categoria(produto_id)
+        assert result == categoria

@@ -170,6 +170,7 @@ class Cardapio:
         self.produtos = []
         self.destaques = []
         self.categorias = []
+        self.created_at = None
 
     def save(self):
         self.created_at = time.time()
@@ -305,8 +306,10 @@ class Cardapio:
 class Produto:
 
     def __init__(self, nome, attributes={}):
+        self._id = None
         self.nome = nome
         self.attributes = attributes
+        self.created_at = None
 
     @staticmethod
     def id(nome, timestamp):
