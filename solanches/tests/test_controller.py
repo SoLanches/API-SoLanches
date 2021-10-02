@@ -156,17 +156,17 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
 def test_edita_comercio_com_nome_invalido(controller):
     nome_invalido = 18189
     attributes = {"endereco": "2344222"}
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.atualiza_comercio(attributes, nome_invalido)
-    assert str(excinfo.value) == 'Erro: nome de comercio inválido!'
+    assert str(excinfo.value.message) == 'Erro: nome de comercio inválido!'
 
 
 def test_edita_comercio_atributos_invalidos(controller):
     nome_comercio = "comercio1"
     attributes = "atributos"
-    with pytest.raises(AssertionError) as excinfo:
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
         controller.atualiza_comercio(attributes, nome_comercio)
-    assert str(excinfo.value) == "Erro: campo attributes inválidos!"
+    assert str(excinfo.value.message) == "Erro: campo attributes inválidos!"
 
 
 @mock.patch('solanches.models.Comercio.get_by_name')
