@@ -170,6 +170,7 @@ class Cardapio:
         self.produtos = []
         self.destaques = []
         self.categorias = []
+        self.created_at = None
 
     def save(self):
         self.created_at = time.time()
