@@ -5,10 +5,13 @@ import mongomock
 
 DB_TEST = mongomock.MongoClient().tests_solanches
 
+
 @pytest.fixture(scope='session', autouse=True)
 def teardown():
-    with mock.patch('solanches.connect2db.DB', DB_TEST):
-        yield
+    mock.patch('solanches.authenticate.jwt_required', lambda x: x).start()
+    mock.patch('solanches.connect2db.DB', DB_TEST).start()
+    mock.patch('solanches.models.DB', DB_TEST).start()
+    yield
 
 
 @pytest.fixture
@@ -24,10 +27,18 @@ def rest():
 
 @pytest.fixture
 def controller():
-    with mock.patch('solanches.models.DB', DB_TEST):
-        from solanches import controller
-        yield controller
-        from solanches import models
-        models.DB.comercio.delete_many({})
-        models.DB.cardapio.delete_many({})
-        models.DB.produto.delete_many({})
+    from solanches import controller
+    yield controller
+    from solanches import models
+    models.DB.comercio.delete_many({})
+    models.DB.cardapio.delete_many({})
+    models.DB.produto.delete_many({})
+
+
+@pytest.fixture
+def models():
+    from solanches import models
+    yield models
+    models.DB.comercio.delete_many({})
+    models.DB.cardapio.delete_many({})
+    models.DB.produto.delete_many({})
