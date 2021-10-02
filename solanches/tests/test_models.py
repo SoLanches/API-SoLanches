@@ -3,7 +3,7 @@ import copy
 
 import pytest
 
-from . data_test import COMERCIO_NO_BD, PRODUTO_TESTE, PRODUTOS_TESTE
+from . data_test import COMERCIO_NO_BD, PRODUTO_NO_BD
 
 
 class TestComercio:
@@ -303,12 +303,12 @@ class TestComercio:
 class TestProduto:
     
     @pytest.fixture
-    def muitos_produtos(self):
-        return copy.deepcopy(PRODUTOS_TESTE)
+    def um_produto(self):
+        return copy.deepcopy(PRODUTO_NO_BD)
 
     @pytest.fixture
     def produto_no_bd(self, db_test):
-        db_test.produto.insert(PRODUTOS_TESTE)
+        db_test.produto.insert(PRODUTO_NO_BD)
 
     def test_creat_and_save_produto(self, models):
         nome = "nome do produto"
@@ -319,67 +319,57 @@ class TestProduto:
         produto_saved = novo_produto.to_dict()
 
         assert produto_saved.get("_id")
+        assert produto_saved.get("created_at")
         assert produto_saved.get("nome") == nome
         assert produto_saved.get("attributes") == attributes
 
-    @pytest.mark.skip()
-    def test_update_produto(self, models, muitos_produtos, db_test):
-        produto_id = muitos_produtos[0]["_id"]
+    def test_update_produto(self, models, um_produto, produto_no_bd, db_test):
+        produto_id = um_produto.get("_id")
         new_attributes = {"nome": "pastel de frango açucarado", "attributes": {"valor": "3"}}
         models.Produto.update(produto_id, new_attributes)
         
         query = {"_id": produto_id}
         result = db_test.produto.find_one(query)
 
-        updated_name = result("nome")
+        updated_name = result.get("nome")
         updated_attributes = result.get("attributes")
         
         assert all(attr in new_attributes.get("attributes") for attr in updated_attributes)
         assert new_attributes.get("nome") == updated_name
 
-    def test_get_by_id(self, models, muitos_produtos, produto_no_bd):
-        produto_id = muitos_produtos[0]["_id"]
+    def test_get_by_id(self, models, um_produto, produto_no_bd):
+        produto_id = um_produto.get("_id")
         produto = models.Produto.get_by_id(produto_id)
-        
-        assert produto in muitos_produtos
+        assert produto == um_produto
 
     def test_get_produto_by_id_nao_cadastrado(self, models, produto_no_bd):
         produto_id = "id aleatório"
         produto = models.Produto.get_by_id(produto_id)
-        
         assert not produto
     
-    def test_remove_produtos(self, models, muitos_produtos, db_test, produto_no_bd):
-        ids_produtos = [produto["_id"] for produto in muitos_produtos]
-        models.Produto.remove_produtos(ids_produtos)
-        
-        id_produto_escolhido = muitos_produtos[0]["_id"]
-        query = {"_id": id_produto_escolhido}
+    def test_remove_produtos(self, models, um_produto, produto_no_bd, db_test):
+        id_produto = um_produto.get("_id")
+        models.Produto.remove_produtos([id_produto])
+        query = {"_id": id_produto}
         result = db_test.produto.find_one(query)
-
         assert not result
   
-    def test_get_all_produtos(self, models, muitos_produtos, produto_no_bd):
+    def test_get_all_produtos(self, models, um_produto, produto_no_bd):
         result = models.Produto.get_all()
-        produto_escolhido = muitos_produtos[0]
-
         assert isinstance(result, list)
-        assert produto_escolhido in result
-        assert all("nome" in produto for produto in result)
+        assert um_produto in result
 
-    def test_remove_produto(self, models, muitos_produtos, db_test, produto_no_bd):
-        produto_id = muitos_produtos[0]["_id"]
-
+    def test_remove_um_produto(self, models, um_produto, db_test, produto_no_bd):
+        produto_id = um_produto.get("_id")
         models.Produto.remove(produto_id)
         query = {"_id": produto_id}
         result = db_test.produto.find_one(query)
-
         assert not result
     
     @mock.patch("solanches.models.Produto.get_by_id")
-    def test_get_categoria(self, mock_produto_get_by_id, models, muitos_produtos, db_test, produto_no_bd):
-        produto_id = muitos_produtos[0]["_id"]
-        categoria = muitos_produtos[0].get("attributes").get("categoria", "")
-        mock_produto_get_by_id.return_value = muitos_produtos[0]
+    def test_get_categoria(self, mock_produto_get_by_id, models, um_produto, db_test, produto_no_bd):
+        produto_id = um_produto.get("_id")
+        categoria = um_produto.get("attributes").get("categoria", "")
+        mock_produto_get_by_id.return_value = um_produto
         result = models.Produto.get_categoria(produto_id)
         assert result == categoria
