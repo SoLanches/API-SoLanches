@@ -1,46 +1,42 @@
 from unittest import mock
-from . data_test import CARDAPIO, COMERCIOS, PRODUTO, PRODUTO_EDITADO
+import copy
 
+import pytest
 from pymongo import errors
 
 from . data_test import *
 from solanches.errors import SolanchesNotFoundError
 from solanches.errors import SolanchesBadRequestError
-import pytest
+
 
 @pytest.fixture
 def um_cardapio():
-    cardapio = CARDAPIO
-    return cardapio
+    return copy.deepcopy(CARDAPIO)
 
 
 @pytest.fixture
 def um_comercio():
-    comercio = COMERCIO
-    return comercio
+    return copy.deepcopy(COMERCIO)
 
 
 @pytest.fixture
 def um_produto():
-    produto = PRODUTO
-    return produto
+    return copy.deepcopy(PRODUTO)
 
 
 @pytest.fixture
 def um_produto_editado():
-    produto_editado = PRODUTO_EDITADO
-    return produto_editado
+    return copy.deepcopy(PRODUTO_EDITADO)
 
 
 @pytest.fixture
 def um_cardapio():
-    cardapio = CARDAPIO
-    return cardapio
+    return copy.deepcopy(CARDAPIO)
 
 
 @pytest.fixture
 def comercios():
-    return COMERCIOS
+    return copy.deepcopy(COMERCIOS)
 
 
 @mock.patch('solanches.controller.Comercio.get_all')
