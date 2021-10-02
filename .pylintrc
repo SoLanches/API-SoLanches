@@ -83,8 +83,20 @@ disable=print-statement,
         old-ne-operator,
         old-octal-literal,
         import-star-module-level,
+        import-outside-toplevel,
+        unused-wildcard-import,
+        redefined-builtin,
+        redefined-outer-name,
+        useless-super-delegation,
+        wildcard-import,
+        attribute-defined-outside-init,
+        dangerous-default-value,
+        expression-not-assigned,
+        f-string-without-interpolation,
         non-ascii-bytes-literal,
         raw-checker-failed,
+        unidiomatic-typecheck,
+        invalid-name,
         bad-inline-option,
         locally-disabled,
         file-ignored,
@@ -152,7 +164,15 @@ disable=print-statement,
         xreadlines-attribute,
         deprecated-sys-function,
         exception-escape,
-        comprehension-escape
+        comprehension-escape,
+        missing-function-docstring,
+        missing-class-docstring,
+        missing-module-docstring,
+        import-error,
+        no-self-argument,
+        unused-argument,
+        unused-variable,
+        no-self-use
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -249,7 +269,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=100
+max-line-length=170
 
 # Maximum number of lines in a module.
 max-module-lines=1000
@@ -563,7 +583,7 @@ preferred-modules=
 ignored-parents=
 
 # Maximum number of arguments for function / method.
-max-args=5
+max-args=7
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=7
@@ -581,7 +601,7 @@ max-locals=15
 max-parents=7
 
 # Maximum number of public methods for a class (see R0904).
-max-public-methods=20
+max-public-methods=35
 
 # Maximum number of return / yield for function / method body.
 max-returns=6

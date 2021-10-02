@@ -1,7 +1,7 @@
 import datetime
+import jwt
 
 from . import connect2db
-import jwt
 from . models import Comercio, BlockList
 from . errors import SolanchesBadRequestError
 from . errors import SolanchesNotFoundError
@@ -9,7 +9,8 @@ from . errors import SolanchesInternalServerError
 
 
 def _assert(condition, message, SolanchesError=SolanchesBadRequestError):
-    if condition: return
+    if condition:
+        return
     raise SolanchesError(message)
 
 
@@ -32,7 +33,7 @@ def cadastra_comercio(nome, password, attributes):
 def get_comercios(has_categories=False):
     comercios = _get_comercios_categoria() if has_categories else Comercio.get_all()
     return comercios
-    
+
 
 def _get_comercios_categoria():
     result = {}
@@ -139,12 +140,12 @@ def edita_produto(produto_id, comercio_nome, attributes, nome):
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     produto = Comercio.get_produto(comercio_nome, produto_id)
     _assert(produto, f'Erro: produto com o id {produto_id} não cadastrado no comercio!', SolanchesNotFoundError)
-    
+
     set_fields = {f'attributes.{field}': value for field, value in attributes.items()} if attributes else {}
     set_fields["nome"] = nome if nome else None
 
     set_fields_filtered = {key:value for key, value in set_fields.items() if value}
-    
+
     Comercio.update_produto(produto_id, set_fields_filtered)
     produto = Comercio.get_produto(comercio_nome, produto_id)
     return produto
@@ -208,7 +209,7 @@ def remove_categoria(comercio_nome, categoria):
     _assert(comercio, f'Erro: comercio com o nome {comercio_nome} não cadastrado!', SolanchesNotFoundError)
     categorias = Comercio.get_cardapio_categorias(comercio_nome)
     _assert(categoria in categorias, 'Erro: categoria não faz parte do comércio')
-    
+
     Comercio.remove_categoria(comercio_nome, categoria)
     cardapio_atualizado = Comercio.get_cardapio(comercio_nome)
     return cardapio_atualizado

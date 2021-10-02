@@ -1,6 +1,6 @@
 PRODUTOS_COMERCIO = [
     {
-         "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50", 
+         "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f50",
         "nome": "comercio_test1",
         "attributes": {}
     }
@@ -36,24 +36,24 @@ COMERCIO = {
 
 COMERCIOS = [
     {
-        "_id": "1d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48", 
+        "_id": "1d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48",
         "nome": "comercio1",
         "attributes": {"telefone": "37", "categoria":"1"}
     },
     {
-        "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48", 
+        "_id": "2d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48",
         "nome": "comercio2",
         "attributes": {"telefone": "38", "categoria":"2"}
     },
     {
-        "_id": "3d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48", 
+        "_id": "3d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48",
         "nome": "comercio3",
         "attributes": {"telefone": "39", "categoria":"3"}
     }
 ]
 
 COMERCIO_EDITADO = {
-    "_id": "1d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48", 
+    "_id": "1d7a8e01d2c90840c2f7c0801ae881d6a9ce7f48",
     "nome": "comercio1",
     "attributes": {"telefone": "4002-8922", "categoria": "1"}
 }
@@ -118,13 +118,13 @@ COMERCIO = {
 }
 
 COMERCIO_TESTE = {
-    "_id": "idtestecomercio", 
+    "_id": "idtestecomercio",
     "nome": "comercio2",
     "attributes": {"telefone": "40", "categoria":"4"}
 }
 
 PRODUTO_TESTE = {
-    "_id": "idtesteproduto", 
+    "_id": "idtesteproduto",
     "nome": "produto comercio2",
     "attributes": {"preco": "40"},
 }

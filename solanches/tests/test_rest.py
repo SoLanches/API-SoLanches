@@ -27,22 +27,11 @@ def cardapio_cadastrado():
 def comercio_cadastrado():
     comercio_json = {
         "_id": "idTest",
-        "nome": "SoLanches Comercio", 
+        "nome": "SoLanches Comercio",
         "attributes": { "telefone": "99988-5678", "email": "solanches@test.com"},
         "created_at": 21345324.3456
     }
     return comercio_json
-
-
-@pytest.fixture
-def cardapio_cadastrado():
-    cardapio_json = {
-        "_id": "idTest",
-        "created_at": 1631415578.674395,
-        "destaques": [],
-        "produtos": ["d763e108f053ad2354ff9285b70c48cfc770d9f7"]   
-    }
-    return cardapio_json
 
 
 def test_status(client):
@@ -194,7 +183,7 @@ def test_get_comercios_sucesso(mock_get_comercios, comercio_cadastrado, client):
 
     response = client.get('/comercios')
     response_json = response.json
-    
+
     assert response.status_code == 200
     assert response_json == expected_return
 
@@ -280,7 +269,7 @@ def test_remove_comercio_sucesso(mock_remove_comercio, client):
     response_json = response.json
     assert response.status_code == 200
     assert response_json['message'] == f'comercio {comercio_nome} removido com sucesso'
-    
+
 
 @mock.patch('solanches.rest.controller.remove_comercio')
 def test_remove_comercio_inexistente(mock_remove_comercio, client):
@@ -571,7 +560,7 @@ def test_remove_categoria_sucesso(mock_remove_categoria, client):
     response_json = response.json
     assert response.status_code == 200
     assert response_json == CARDAPIO_TESTE
-    
+
 
 @mock.patch('solanches.rest.controller.remove_produto')
 def test_remove_produto_sucesso(mock_remove_produto, client):
@@ -624,7 +613,7 @@ def test_edita_comercio_sem_atributos(client):
 def test_edita_comercio(mock_atualiza_comercio, client):
     updated_base = {
         "_id": "idTest",
-        "nome": "SoLanches Comercio", 
+        "nome": "SoLanches Comercio",
         "attributes": { "telefone": "4002-8922", "email": "solanches@solania.com", "endereco": "rua floriano peixoto"},
         "created_at": 87443324.6475
     }
@@ -640,11 +629,11 @@ def test_edita_produto(mock_atualiza_comercio, client):
         "_id": "d763e108f053ad2354ff9285b70c48cfc770d9f7",
         "attributes": {
             "categoria": "sa",
-            "descricao": "descrição do produto de teste1",
+            "descricao": "descrição do produto",
             "imagem": "link de imagem",
-            "preco": 20.5
+            "preco": 23
         },
-        "created_at": 1631415611.4404533,
+        "created_at": 1631415609.4404533,
         "nome": "comercio6"
     }
     mock_atualiza_comercio.return_value = updated_base
@@ -666,4 +655,3 @@ def test_edita_produto_com_json_invalido(mock_get_cardapio, client, cardapio_cad
     response_json = response.json
     assert response.status_code == 400
     assert response_json['message'] == "Erro: json inválido!"
-
