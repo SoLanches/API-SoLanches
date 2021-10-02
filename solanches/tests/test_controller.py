@@ -1,7 +1,8 @@
 from unittest import mock
+import copy
 
-from pymongo import errors
 import pytest
+from pymongo import errors
 
 from . data_test import *
 from solanches.errors import SolanchesNotFoundError
@@ -10,25 +11,32 @@ from solanches.errors import SolanchesBadRequestError
 
 @pytest.fixture
 def um_cardapio():
-    cardapio = CARDAPIO
-    return cardapio
+    return copy.deepcopy(CARDAPIO)
 
 
 @pytest.fixture
 def um_comercio():
-    comercio = COMERCIO
-    return comercio
+    return copy.deepcopy(COMERCIO)
 
 
 @pytest.fixture
-def comercio_cadastrado():
-    comercio = COMERCIO
-    return comercio
+def um_produto():
+    return copy.deepcopy(PRODUTO)
+
+
+@pytest.fixture
+def um_produto_editado():
+    return copy.deepcopy(PRODUTO_EDITADO)
+
+
+@pytest.fixture
+def um_cardapio():
+    return copy.deepcopy(CARDAPIO)
 
 
 @pytest.fixture
 def comercios():
-    return COMERCIOS
+    return copy.deepcopy(COMERCIOS)
 
 
 @mock.patch('solanches.controller.Comercio.get_all')
@@ -286,6 +294,94 @@ def test_remove_comercio_sucesso(mock_remove_comercio, mock_get_by_name,  contro
     assert result == 1
 
 
+def test_edita_produto_comercio_invalido(controller):
+    comercio_nome = 0
+    produto_id = "d763e108f053ad2354ff9285b70c48cfc770d9f7"
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.edita_produto(produto_id, comercio_nome, {'sabor': "morango"}, "")
+    assert str(excinfo.value.message) == "Erro: nome de comércio inválido"
+
+
+def test_edita_produto_by_id_invalido(controller):
+    id_invalido = 0 
+    nome_comercio = "comercio1"
+    attributes = {"endereco": "jhjhdjhd"}
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.edita_produto(id_invalido, nome_comercio, attributes, "")
+    assert str(excinfo.value.message) == "Erro: produto com id inválido!"
+
+
+def test_edita_produto_by_atributos_invalidos(controller):
+    id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
+    nome_comercio = "comercio1"
+    attributes = "oioi"
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.edita_produto(id_valido, nome_comercio, attributes, "")
+    assert str(excinfo.value.message) == "Erro: attributes inválidos!"
+
+
+def test_edita_produto_by_nome_invalido(controller):
+    id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
+    nome_comercio = "comercio1"
+    attributes = {"descricao": "uhu"}
+    with pytest.raises(SolanchesBadRequestError) as excinfo:
+        controller.edita_produto(id_valido, nome_comercio, attributes, 7838383)
+    assert str(excinfo.value.message) == "Erro: nome do produto inválido!"
+
+
+@mock.patch('solanches.controller.Comercio.get_by_name')
+def test_edita_produto_by_comercio_nao_cadastrado(mock_get_by_name, controller):
+    id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
+    nome_comercio = "algum"
+    attributes = {"descricao": "uhu"}
+    mock_get_by_name.return_value = None
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
+        controller.edita_produto(id_valido, nome_comercio, attributes, "nome_produto")
+    assert str(excinfo.value.message) == f'Erro: comercio com o nome algum não cadastrado!'
+
+
+@mock.patch('solanches.controller.Comercio.get_produto')
+@mock.patch('solanches.controller.Comercio.get_by_name')
+def test_edita_produto_nao_cadastrado_no_comercio(mock_get_by_name, mock_get_produto, controller, um_comercio):
+    id_valido = "d763e108f053ad2354ff9285b70c48cfc770d9f7" 
+    nome_comercio = "algum"
+    attributes = {
+            "categoria": "edicao feita",
+            "descricao": "descrição atualizada",
+            "imagem": "link de imagem",
+            "preco": 20.5
+    }
+    mock_get_by_name.return_value = um_comercio
+    mock_get_produto.return_value = None
+    with pytest.raises(SolanchesNotFoundError) as excinfo:
+        controller.edita_produto(id_valido, nome_comercio, attributes, "nome_produto")
+    assert str(excinfo.value.message) == 'Erro: produto com o id d763e108f053ad2354ff9285b70c48cfc770d9f7 não cadastrado no comercio!'
+
+
+@mock.patch('solanches.controller.Comercio.get_produtos')
+@mock.patch('solanches.controller.Comercio.update_produto')
+@mock.patch('solanches.controller.Comercio.get_by_name')
+@mock.patch('solanches.controller.Comercio.get_produto')
+def test_edita_produto_sucesso(mock_get_produto, mock_get_by_name, mock_update_produto, mock_get_produtos, controller, um_comercio, um_produto_editado):
+
+    attributes =  {
+            "categoria": "sa",
+            "descricao": "descrição atualizada",
+            "imagem": "link de imagem",
+            "preco": 20.5
+    }
+    nome_comercio = "comercio1"
+    produto_id = "d763e108f053ad2354ff9285b70c48cfc770d9f7"
+    mock_get_by_name.return_value = um_comercio
+    mock_update_produto.return_value = um_produto_editado
+    mock_get_produto.return_value = um_produto_editado
+    mock_get_produtos.return_value = [um_produto_editado]
+
+    result = controller.edita_produto(produto_id, nome_comercio, attributes, "produto")
+    assert isinstance(result, object)
+    assert result == um_produto_editado
+   
+    
 def test_adiciona_destaque_nome_comercio_invalido(controller):
     with pytest.raises(SolanchesBadRequestError) as e:
         comercio_nome = ''
@@ -357,15 +453,14 @@ def test_adiciona_destaque_produto_sucesso(mock_get_by_name, mock_get_produtos, 
 
 
 @mock.patch('solanches.models.Comercio.to_dict')
-@mock.patch('solanches.models.Comercio.save')
-def test_cadastra_comercio(mock_comercio_save, mock_comercio_to_dict, controller, comercio_cadastrado):
+def test_cadastra_comercio( mock_comercio_to_dict, controller, um_comercio):
     comercio_nome = 'lanche_feliz'
     password = "3671361e6d5dc1ee674156beed67b1fd"
     comercio_attributes = {
          "endereco": "orestes fialho",
          "horarios": "11h-22h"
     }
-    mock_comercio_to_dict.return_value = comercio_cadastrado
+    mock_comercio_to_dict.return_value = um_comercio
     result = controller.cadastra_comercio(comercio_nome,password, comercio_attributes)
 
     expected_fields = ["nome", "attributes", "created_at"]
