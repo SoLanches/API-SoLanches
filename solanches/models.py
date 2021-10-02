@@ -305,8 +305,10 @@ class Cardapio:
 class Produto:
 
     def __init__(self, nome, attributes={}):
+        self._id = None
         self.nome = nome
         self.attributes = attributes
+        self.created_at = None
 
     @staticmethod
     def id(nome, timestamp):
