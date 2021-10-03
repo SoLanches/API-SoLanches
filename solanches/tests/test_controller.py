@@ -810,3 +810,74 @@ def test_remove_categoria_sucesso(mock_get_by_name, mock_get_categorias, mock_ge
     comercio_nome = 'comercio2'
     result = controller.remove_categoria(comercio_nome, categoria)
     assert result == CARDAPIO_TESTE
+
+
+@mock.patch('solanches.controller.jwt.encode')
+@mock.patch('solanches.models.Comercio.verify_password')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_login(mock_get_by_name, mock_verify_password, mock_jwt_encode, controller):
+    comercio = {
+        'nome': 'nome do comercio',
+        'password': 'senha'
+    }
+    comercio_nome = comercio.get('nome')
+    password = comercio.get('password')
+    token = 'token'
+    mock_get_by_name.return_value = comercio
+    mock_verify_password.return_value = True
+    mock_jwt_encode.return_value = token
+
+    result = controller.login(comercio_nome, password, '')
+
+    mock_get_by_name_param = mock_get_by_name.call_args[0][0]
+    mock_verify_password_params = mock_verify_password.call_args[0]
+    assert mock_get_by_name_param == comercio_nome
+    assert mock_verify_password_params == (comercio_nome, password)
+    assert result == token
+
+
+@mock.patch('solanches.controller.jwt.encode')
+@mock.patch('solanches.models.Comercio.verify_password')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_login_comercio_nao_cadastrado(mock_get_by_name, mock_verify_password, mock_jwt_encode, controller):
+    comercio = {
+        'nome': 'nome do comercio',
+        'password': 'senha'
+    }
+    comercio_nome = comercio.get('nome')
+    password = comercio.get('password')
+    mock_get_by_name.return_value = None
+    mock_verify_password.return_value = False
+    mock_jwt_encode.return_value = None
+
+    with pytest.raises(SolanchesNotFoundError) as e:
+        controller.login(comercio_nome, password, '')
+    assert str(e.value.message) == f'Erro: comercio com o nome {comercio_nome} não cadastrado!'
+
+
+@mock.patch('solanches.controller.jwt.encode')
+@mock.patch('solanches.models.Comercio.verify_password')
+@mock.patch('solanches.models.Comercio.get_by_name')
+def test_login_senha_incorreta(mock_get_by_name, mock_verify_password, mock_jwt_encode, controller):
+    comercio = {
+        'nome': 'nome do comercio',
+        'password': 'senha'
+    }
+    comercio_nome = comercio.get('nome')
+    password = comercio.get('password')
+    mock_get_by_name.return_value = comercio
+    mock_verify_password.return_value = False
+    mock_jwt_encode.return_value = None
+
+    with pytest.raises(SolanchesBadRequestError) as e:
+        controller.login(comercio_nome, password, '')
+    assert str(e.value.message) == 'Erro! Senha incorreta'
+
+
+@mock.patch('solanches.models.BlockList.save')
+def test_logout(mock_blockList_save, controller):
+    token = 'token'
+    mock_blockList_save.return_value = token
+    controller.logout(token)
+    mock_blockList_save_return = mock_blockList_save.return_value
+    assert mock_blockList_save_return == token

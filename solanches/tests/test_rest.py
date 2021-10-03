@@ -660,30 +660,90 @@ def test_edita_produto_com_json_invalido(mock_get_cardapio, client, cardapio_cad
 @mock.patch('solanches.rest.controller.login')
 def test_login(mock_login, client):
     comercio = {
-        "nome": "comercio teste",
-        "password": "minha senha"
-        }
-
-    mock_login.return_value = 'token aleatorio' 
+        'nome': 'nome do comercio',
+        'password': 'senha'
+    }
+    token = 'token'
+    mock_login.return_value = token 
+    
     response = client.post('/login', json=comercio)
+    
     response_json = response.json
-    token = response_json.get('token')
+    moke_logout_nome = mock_login.call_args[0][0]
+    moke_logout_password = mock_login.call_args[0][1]
+    assert moke_logout_nome == comercio.get("nome")
+    assert moke_logout_password == comercio.get("password")
+    assert isinstance(response_json, dict)
+    assert response_json.get('token') == token
+    assert response.status_code == 200
+
+
+@mock.patch('solanches.rest.controller.login')
+def test_login_json_invalido(mock_login, client):
+    comercio_json_invalido = 0
+
+    mensagem = 'Erro: json inválido!'
+    mock_login.side_effect = SolanchesBadRequestError(mensagem)
+    response = client.post('/login', data=comercio_json_invalido)
+    response_json = response.json
 
     assert isinstance(response_json, dict)
-    assert token == 'token aleatorio'
-    assert response.status_code == 200
+    assert response.status_code == 400
+    assert response_json['message'] == mensagem
+
 
 @mock.patch('solanches.rest.controller.login')
 def test_login_sem_nome(mock_login, client):
     comercio = {
-        "password": "minha senha"
-        }
+        'password': 'senha'
+    }
 
-    mensagem = f'Erro: nome não informado!'
-    mock_login.side_effect= SolanchesBadRequestError(mensagem)
+    mensagem = 'Erro: nome não informado!'
+    mock_login.side_effect = SolanchesBadRequestError(mensagem)
     response = client.post('/login', json=comercio)
     response_json = response.json
 
     assert isinstance(response_json, dict)
-    assert response_json['message'] == mensagem
     assert response.status_code == 400
+    assert response_json['message'] == mensagem
+
+
+@mock.patch('solanches.rest.controller.login')
+def test_login_sem_senha(mock_login, client):
+    comercio = {
+        'nome': 'nome do comercio'
+    }
+
+    mensagem = 'Erro: senha não informada'
+    mock_login.side_effect = SolanchesBadRequestError(mensagem)
+    response = client.post('/login', json=comercio)
+    response_json = response.json
+
+    assert isinstance(response_json, dict)
+    assert response.status_code == 400
+    assert response_json['message'] == mensagem
+
+
+@mock.patch('solanches.rest.controller.logout')
+def test_logout(mock_logout, client):
+    headers = [('authorization', '0')]
+    token = headers[0][1]
+    
+    response = client.delete('/logout', headers=headers)
+
+    response_json = response.json
+    moke_logout_param = mock_logout.call_args[0][0]
+    assert moke_logout_param == token
+    assert response.status_code == 200
+    assert response_json['message'] == 'Logout feito com sucesso'
+
+
+@mock.patch('solanches.rest.controller.logout')
+def test_logout_sem_authorization(mock_logout, client):
+    mock_logout.side_effect = None
+    
+    response = client.delete('/logout')
+
+    response_json = response.json
+    assert response.status_code == 200
+    assert response_json['message'] == 'Logout feito com sucesso'
