@@ -847,8 +847,6 @@ def test_login_comercio_nao_cadastrado(mock_get_by_name, mock_verify_password, m
     comercio_nome = comercio.get('nome')
     password = comercio.get('password')
     mock_get_by_name.return_value = None
-    mock_verify_password.return_value = False
-    mock_jwt_encode.return_value = None
 
     with pytest.raises(SolanchesNotFoundError) as e:
         controller.login(comercio_nome, password, '')
@@ -867,7 +865,6 @@ def test_login_senha_incorreta(mock_get_by_name, mock_verify_password, mock_jwt_
     password = comercio.get('password')
     mock_get_by_name.return_value = comercio
     mock_verify_password.return_value = False
-    mock_jwt_encode.return_value = None
 
     with pytest.raises(SolanchesBadRequestError) as e:
         controller.login(comercio_nome, password, '')
@@ -881,4 +878,3 @@ def test_logout(mock_blockList_save, controller):
     controller.logout(token)
     mock_blockList_save_return = mock_blockList_save.return_value
     assert mock_blockList_save_return == token
-    
