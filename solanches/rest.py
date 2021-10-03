@@ -211,7 +211,7 @@ def login():
     password = req.get('password')
 
     token = controller.login(nome, password, app.config['SECRET_KEY'])
-    return jsonify({'token': token})
+    return jsonify({'token': token}), 200
 
 
 @app.route("/logout", methods=["DELETE"])
