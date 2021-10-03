@@ -734,6 +734,7 @@ def test_logout(mock_logout, client):
     response_json = response.json
     moke_logout_param = mock_logout.call_args[0][0]
     assert moke_logout_param == token
+    assert isinstance(response.json, dict)
     assert response.status_code == 200
     assert response_json['message'] == 'Logout feito com sucesso'
 
@@ -745,5 +746,6 @@ def test_logout_sem_authorization(mock_logout, client):
     response = client.delete('/logout')
 
     response_json = response.json
+    assert isinstance(response.json, dict)
     assert response.status_code == 200
     assert response_json['message'] == 'Logout feito com sucesso'

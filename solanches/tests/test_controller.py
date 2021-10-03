@@ -881,3 +881,4 @@ def test_logout(mock_blockList_save, controller):
     controller.logout(token)
     mock_blockList_save_return = mock_blockList_save.return_value
     assert mock_blockList_save_return == token
+    
