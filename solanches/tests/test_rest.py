@@ -655,3 +655,35 @@ def test_edita_produto_com_json_invalido(mock_get_cardapio, client, cardapio_cad
     response_json = response.json
     assert response.status_code == 400
     assert response_json['message'] == "Erro: json inválido!"
+
+
+@mock.patch('solanches.rest.controller.login')
+def test_login(mock_login, client):
+    comercio = {
+        "nome": "comercio teste",
+        "password": "minha senha"
+        }
+
+    mock_login.return_value = 'token aleatorio' 
+    response = client.post('/login', json=comercio)
+    response_json = response.json
+    token = response_json.get('token')
+
+    assert isinstance(response_json, dict)
+    assert token == 'token aleatorio'
+    assert response.status_code == 200
+
+@mock.patch('solanches.rest.controller.login')
+def test_login_sem_nome(mock_login, client):
+    comercio = {
+        "password": "minha senha"
+        }
+
+    mensagem = f'Erro: nome não informado!'
+    mock_login.side_effect= SolanchesBadRequestError(mensagem)
+    response = client.post('/login', json=comercio)
+    response_json = response.json
+
+    assert isinstance(response_json, dict)
+    assert response_json['message'] == mensagem
+    assert response.status_code == 400
