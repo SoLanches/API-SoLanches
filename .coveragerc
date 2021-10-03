@@ -1,0 +1,5 @@
+[run]
+omit =
+     */tests/*
+     solanches/__main__.py
+     solanches/__init__.py

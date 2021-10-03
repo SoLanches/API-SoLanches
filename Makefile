@@ -37,7 +37,7 @@ $(TESTS-REQS-INSTALLED): tests-requirements.txt
 	touch $(TESTS-REQS-INSTALLED)
 
 test-cov: venv $(TESTS-REQS-INSTALLED)
-	$(VENV)/bin/pytest -v --cov-report html --cov=solanches
+	$(VENV)/bin/pytest -v --cov=solanches
 
 checkstyle: venv
 	$(VENV)/bin/pylint solanches

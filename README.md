@@ -65,6 +65,8 @@ Se optar por executar manualmente, instale as dependências presentes no arquivo
 $ python3 -m pytest
 ```
 
+Para analisar a cobertura dos testes, utilize o comando `make test-cov`.
+
 ## 📌 Equipe do SoLanches
 
 - [Ana Carolina](https://github.com/anacarolinacv)
